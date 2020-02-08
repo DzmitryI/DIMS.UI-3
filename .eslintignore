@@ -3,3 +3,4 @@
 /docs
 /public
 /.vs
+/src/serviceWorker.js
