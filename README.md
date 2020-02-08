@@ -1,4 +1,4 @@
-The link to principal ideaof design, you do not have to follow it, just use it as a guide
+## The link to principal idea of design, you do not have to follow it, just use it as a guide
 [design](https://symu.co/freebies/templates-4/merkury-dashboard-psd-template/)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
