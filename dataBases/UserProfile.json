@@ -1,0 +1,32 @@
+[
+  {
+    "UserId": 1,
+    "DirectionId": "Java",
+    "Name": "Ivan",
+    "Email": "3prn@tut.by",
+    "LastName": "Ivanov",
+    "Sex": "Male",
+    "Education": "BSU",
+    "UniversityAverageScore": 7,
+    "MathScore": 7,
+    "Address": "",
+    "MobilePhone": "",
+    "Scype": "",
+    "StartDate": ""
+  },
+  {
+    "UserId": 1,
+    "DirectionId": "Java",
+    "Name": "Ivan",
+    "Email": "3prn@tut.by",
+    "LastName": "Ivanov",
+    "Sex": "Male",
+    "Education": "BSU",
+    "UniversityAverageScore": 7,
+    "MathScore": 7,
+    "Address": "",
+    "MobilePhone": "",
+    "Scype": "",
+    "StartDate": ""
+  }
+]
