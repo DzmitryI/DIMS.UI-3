@@ -1,0 +1,68 @@
+.memberWrap {
+  width: 90%;
+  margin: 0 auto;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.memberForm {
+  width: 70%;
+  border: 1px solid black;
+  margin: 0 auto;
+}
+
+.formGroup {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  text-align: center;
+}
+
+.row {
+  justify-content: space-evenly;
+}
+
+label {
+  padding: 0 15px;
+  margin-bottom: 0;
+  font-size: inherit;
+  font-weight: bold;
+  display: block;
+}
+
+input,
+select {
+  width: 100%;
+  margin-right: 15px;
+  margin-left: 15px;
+  font-size: inherit;
+}
+
+.btnAbb,
+.btnClose {
+  width: 120px;
+  height: 40px;
+}
+
+.btnAbb {
+  background-color: rgba(42, 235, 35, 0.6);
+  color: #fff;
+}
+.btnAbb:hover {
+  cursor: pointer;
+  background-color: rgba(42, 235, 35, 1);
+}
+.btnClose {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.6);
+}
+.btnClose:hover {
+  cursor: pointer;
+  border-color: rgba(0, 0, 0, 1);
+  color: rgba(0, 0, 0, 1);
+}

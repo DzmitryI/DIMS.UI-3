@@ -9,3 +9,16 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  margin: 5px auto;
+}
+
+.title {
+  color: rgba(230, 30, 30, 1);
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
