@@ -1,14 +1,25 @@
 .memberWrap {
+  display: block;
   width: 90%;
   margin: 0 auto;
   padding-top: 30px;
   padding-bottom: 30px;
+  z-index: 200;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.close {
+  display: none;
 }
 
 .memberForm {
   width: 70%;
   border: 1px solid black;
   margin: 0 auto;
+  background-color: rgba(240, 248, 255, 1);
 }
 
 .formGroup {
@@ -27,11 +38,11 @@
 }
 
 label {
+  display: block;
   padding: 0 15px;
   margin-bottom: 0;
   font-size: inherit;
   font-weight: bold;
-  display: block;
 }
 
 input,

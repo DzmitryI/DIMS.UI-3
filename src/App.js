@@ -5,7 +5,7 @@ import MemberPage from './components/memberPage';
 
 export default class App extends Component {
   state = {
-    isRegister: true,
+    isRegister: false,
   };
 
   onRegisterClickHandler = () => {
@@ -15,11 +15,8 @@ export default class App extends Component {
   render() {
     return (
       <Layout>
-        {this.state.isRegister ? (
-          <MembersGrid onRegisterClick={this.onRegisterClickHandler} />
-        ) : (
-          <MemberPage onRegisterClick={this.onRegisterClickHandler} />
-        )}
+        <MembersGrid onRegisterClick={this.onRegisterClickHandler} />
+        <MemberPage onRegisterClick={this.onRegisterClickHandler} isOpen={this.state.isRegister} />
       </Layout>
     );
   }

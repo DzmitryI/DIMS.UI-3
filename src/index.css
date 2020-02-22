@@ -14,6 +14,19 @@ code {
   border: 1px solid transparent;
   border-radius: 5px;
   margin: 5px auto;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14);
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:hover {
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.25);
+}
+
+.btn:active {
+  box-shadow: inset 2px 2px 1px rgba(0, 0, 0, 0.3);
 }
 
 .title {
