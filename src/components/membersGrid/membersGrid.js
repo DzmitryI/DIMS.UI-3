@@ -42,11 +42,11 @@ export default class MembersGrid extends Component {
               return (
                 <tr key={member.value[0]}>
                   <td className='td'>{index + 1}</td>
-                  <td className='td'>{`${member.value[1].Name} ${member.value[1].LastName}`}</td>
-                  <td className='td'>{`${member.value[1].DirectionId}`}</td>
-                  <td className='td'>{`${member.value[1].Education}`}</td>
-                  <td className='td'>{`${member.value[1].StartDate}`}</td>
-                  <td className='td'>{`${member.value[1].StartDate}`}</td>
+                  <td className='td'>{`${member.value[1].Name.value} ${member.value[1].LastName.value}`}</td>
+                  <td className='td'>{`${member.value[1].DirectionId.value}`}</td>
+                  <td className='td'>{`${member.value[1].Education.value}`}</td>
+                  <td className='td'>{`${member.value[1].StartDate.value}`}</td>
+                  <td className='td'>{`${member.value[1].StartDate.value}`}</td>
                   <td className='td buttonsWrap'>
                     <button className='btn btnProgress'>Progress</button>
                     <button className='btn btnTasks'>Tasks</button>

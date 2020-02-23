@@ -18,6 +18,7 @@
 .memberForm {
   width: 70%;
   border: 1px solid black;
+  border-radius: 5px;
   margin: 0 auto;
   background-color: rgba(240, 248, 255, 1);
 }
@@ -45,12 +46,18 @@ label {
   font-weight: bold;
 }
 
+.invalid label {
+  color: rgb(223, 18, 18);
+}
+
 input,
 select {
   width: 100%;
   margin-right: 15px;
   margin-left: 15px;
   font-size: inherit;
+  outline: none;
+  box-sizing: border-box;
 }
 
 .btnAbb,
@@ -63,17 +70,33 @@ select {
   background-color: rgba(42, 235, 35, 0.6);
   color: #fff;
 }
+
 .btnAbb:hover {
   cursor: pointer;
   background-color: rgba(42, 235, 35, 1);
 }
+
+.btnAbb:disabled {
+  cursor: not-allowed;
+  background-color: #ccc;
+  color: #000;
+}
+
 .btnClose {
   background-color: rgba(255, 255, 255, 1);
   border-color: rgba(0, 0, 0, 0.6);
   color: rgba(0, 0, 0, 0.6);
 }
+
 .btnClose:hover {
   cursor: pointer;
   border-color: rgba(0, 0, 0, 1);
   color: rgba(0, 0, 0, 1);
+}
+
+span {
+  color: rgb(223, 18, 18);
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0 15px;
 }
