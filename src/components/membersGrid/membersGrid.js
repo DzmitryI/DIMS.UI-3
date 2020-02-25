@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import SwapiService from '../../services/swapi-service';
+import Spinner from '../spinner';
 
 export default class MembersGrid extends Component {
   state = {
     itemList: null,
     members: [],
+    loading: true,
   };
 
   swapiService = new SwapiService();
@@ -14,6 +16,7 @@ export default class MembersGrid extends Component {
     const members = await getData();
     this.setState({
       members,
+      loading: false,
     });
   }
 
@@ -25,8 +28,12 @@ export default class MembersGrid extends Component {
   }
 
   render() {
-    const { members } = this.state;
+    const { members, loading } = this.state;
     const { onRegisterClick } = this.props;
+    if (loading) {
+      return <Spinner />;
+    }
+
     return (
       <div className='members-wrap'>
         <button type='button' className='btn btn-register' onClick={this.props.onRegisterClick}>
