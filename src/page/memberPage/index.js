@@ -1,4 +1,4 @@
 import MemberPage from './memberPage';
-import './memberPage.css';
+import './memberPage.scss';
 
 export default MemberPage;

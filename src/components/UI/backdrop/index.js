@@ -1,5 +1,5 @@
 import Backdrop from './backdrop';
 
-import './backdrop.css';
+import './backdrop.scss';
 
 export default Backdrop;

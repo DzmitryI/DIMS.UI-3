@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Layout from './hoc/layout';
 import MembersGrid from './components/membersGrid';
-import MemberPage from './components/memberPage';
+import MemberPage from './page/memberPage';
 
 export default class App extends Component {
   state = {

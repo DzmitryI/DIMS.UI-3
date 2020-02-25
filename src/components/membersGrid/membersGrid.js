@@ -9,19 +9,27 @@ export default class MembersGrid extends Component {
 
   swapiService = new SwapiService();
 
-  componentDidMount() {
-    const getData = this.swapiService.getAllPeople;
-    getData().then((members) => {
-      this.setState({
-        members,
-      });
+  async componentDidMount() {
+    const getData = this.swapiService.getAllMember;
+    const members = await getData();
+    this.setState({
+      members,
     });
   }
 
+  countAge(value) {
+    const curDate = new Date();
+    const birthDate = new Date(value);
+    const age = curDate.getFullYear() - birthDate.getFullYear();
+    return curDate.setFullYear(1972) < birthDate.setFullYear(1972) ? age - 1 : age;
+  }
+
   render() {
+    const { members } = this.state;
+    const { onRegisterClick } = this.props;
     return (
-      <div className='membersWrap'>
-        <button type='button' className='btn btnRegister' onClick={this.props.onRegisterClick}>
+      <div className='members-wrap'>
+        <button type='button' className='btn btn-register' onClick={this.props.onRegisterClick}>
           Register
         </button>
         <table border='1'>
@@ -38,22 +46,24 @@ export default class MembersGrid extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.members.map((member, index) => {
+            {members.map((member, index) => {
+              const { value } = member;
+              const [userId, { name, lastName, direction, education, startDate, birthDate }] = value;
               return (
-                <tr key={member.value[0]}>
+                <tr key={userId}>
                   <td className='td'>{index + 1}</td>
-                  <td className='td'>{`${member.value[1].Name.value} ${member.value[1].LastName.value}`}</td>
-                  <td className='td'>{`${member.value[1].DirectionId.value}`}</td>
-                  <td className='td'>{`${member.value[1].Education.value}`}</td>
-                  <td className='td'>{`${member.value[1].StartDate.value}`}</td>
-                  <td className='td'>{`${member.value[1].StartDate.value}`}</td>
-                  <td className='td buttonsWrap'>
-                    <button className='btn btnProgress'>Progress</button>
-                    <button className='btn btnTasks'>Tasks</button>
-                    <button className='btn btnEdit' onClick={this.props.onRegisterClick}>
+                  <td className='td'>{`${name} ${lastName}`}</td>
+                  <td className='td'>{`${direction}`}</td>
+                  <td className='td'>{`${education}`}</td>
+                  <td className='td'>{`${startDate}`}</td>
+                  <td className='td'>{`${this.countAge(birthDate)}`}</td>
+                  <td className='td buttons-wrap'>
+                    <button className='btn btn-progress'>Progress</button>
+                    <button className='btn btn-tasks'>Tasks</button>
+                    <button className='btn btn-edit' onClick={onRegisterClick}>
                       Edit
                     </button>
-                    <button className='btn btnDelete'>Delete</button>
+                    <button className='btn btn-delete'>Delete</button>
                   </td>
                 </tr>
               );
