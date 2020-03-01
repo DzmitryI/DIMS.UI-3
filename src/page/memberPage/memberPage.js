@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
+import Select from '../../components/UI/select';
 
 export default class MemberPage extends Component {
   state = {
@@ -140,6 +141,43 @@ export default class MemberPage extends Component {
         },
       },
     },
+    memberSelect: {
+      direction: {
+        label: 'Direction',
+        options: [
+          {
+            name: '.NET',
+            value: 'direction1',
+            defaultValue: true,
+          },
+          {
+            name: 'Java',
+            value: 'direction2',
+            defaultValue: false,
+          },
+          {
+            name: 'JavaScript',
+            value: 'direction3',
+            defaultValue: false,
+          },
+        ],
+      },
+      sex: {
+        label: 'Sex',
+        options: [
+          {
+            name: 'Male',
+            value: 'sex1',
+            defaultValue: true,
+          },
+          {
+            name: 'Female',
+            value: 'sex2',
+            defaultValue: false,
+          },
+        ],
+      },
+    },
     member: {
       name: '',
       lastName: '',
@@ -221,6 +259,21 @@ export default class MemberPage extends Component {
     this.props.onRegisterClick([], '');
   };
 
+  buttonCloseClick = () => {
+    const memberInput = { ...this.state.memberInput };
+    const member = { ...this.state.member };
+    Object.keys(memberInput).forEach((key) => {
+      if (memberInput[key] !== undefined) {
+        memberInput[key].value = '';
+        memberInput[key].touched = false;
+        memberInput[key].valid = false;
+        member[key] = '';
+      }
+    });
+    this.setState({ memberInput, memberId: '', isFormValid: false, member });
+    this.props.onRegisterClick([], '');
+  };
+
   renderInputs() {
     return Object.keys(this.state.memberInput).map((controlName, index) => {
       const control = this.state.memberInput[controlName];
@@ -240,9 +293,23 @@ export default class MemberPage extends Component {
     });
   }
 
+  renderSelect() {
+    return Object.keys(this.state.memberSelect).map((controlName, index) => {
+      const control = this.state.memberSelect[controlName];
+      return (
+        <Select
+          key={controlName}
+          options={control.options}
+          label={control.label}
+          onChange={(event) => this.handleSelect(event, controlName)}
+        />
+      );
+    });
+  }
+
   render() {
     const { name, lastName } = this.state.member;
-    const { isOpen, onRegisterClick, title } = this.props;
+    const { isOpen, title } = this.props;
     const cls = ['member-wrap'];
     if (!isOpen) {
       cls.push('close');
@@ -255,27 +322,8 @@ export default class MemberPage extends Component {
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
 
             {this.renderInputs()}
+            {this.renderSelect()}
 
-            <div className='form-group'>
-              <label htmlFor='direction'>Direction</label>
-              <select id='direction' name='select' onChange={this.handleSelect}>
-                <option defaultValue value='direct1'>
-                  Java
-                </option>
-                <option value='direct2'>.NET</option>
-                <option value='direct3'>JavaScript</option>
-                <option value='direct4'>SalesFore</option>
-              </select>
-            </div>
-            <div className='form-group'>
-              <label htmlFor='sex'>Sex</label>
-              <select id='sex' name='select' onChange={this.handleSelect}>
-                <option defaultValue value='sex1'>
-                  Male
-                </option>
-                <option value='sex2'>Female</option>
-              </select>
-            </div>
             <div className='form-group row'>
               <button
                 className='btn btn-add'
@@ -285,7 +333,7 @@ export default class MemberPage extends Component {
               >
                 Save
               </button>
-              <button className='btn btn-close' onClick={() => onRegisterClick([], '')} type='button'>
+              <button className='btn btn-close' onClick={this.buttonCloseClick} type='button'>
                 Back to grid
               </button>
             </div>
