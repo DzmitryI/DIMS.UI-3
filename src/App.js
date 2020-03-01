@@ -6,17 +6,29 @@ import MemberPage from './page/memberPage';
 export default class App extends Component {
   state = {
     isRegister: false,
+    titleMember: '',
+    curMember: [],
   };
 
-  onRegisterClickHandler = () => {
-    this.setState({ isRegister: !this.state.isRegister });
+  onRegisterClickHandler = (member, title) => {
+    this.setState({
+      isRegister: !this.state.isRegister,
+      titleMember: title,
+      curMember: member,
+    });
   };
 
   render() {
+    const { isRegister, titleMember, curMember } = this.state;
     return (
       <Layout>
         <MembersGrid onRegisterClick={this.onRegisterClickHandler} />
-        <MemberPage onRegisterClick={this.onRegisterClickHandler} isOpen={this.state.isRegister} />
+        <MemberPage
+          onRegisterClick={this.onRegisterClickHandler}
+          isOpen={isRegister}
+          title={titleMember}
+          member={curMember}
+        />
       </Layout>
     );
   }

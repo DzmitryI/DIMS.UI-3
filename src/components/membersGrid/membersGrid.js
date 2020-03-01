@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SwapiService from '../../services/swapi-service';
+import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 
 export default class MembersGrid extends Component {
@@ -9,10 +9,10 @@ export default class MembersGrid extends Component {
     loading: true,
   };
 
-  swapiService = new SwapiService();
+  fetchService = new FetchService();
 
   async componentDidMount() {
-    const getData = this.swapiService.getAllMember;
+    const getData = this.fetchService.getAllMember;
     const members = await getData();
     this.setState({
       members,
@@ -27,6 +27,31 @@ export default class MembersGrid extends Component {
     return curDate.setFullYear(1972) < birthDate.setFullYear(1972) ? age - 1 : age;
   }
 
+  onChangeClick = ({ target }) => {
+    const editMemberId = target.closest('tr').id;
+    const curMembers = [...this.state.members].filter((el) => el.value[0] === editMemberId);
+    const [{ value }] = curMembers;
+    this.props.onRegisterClick(value, 'Edit Member page');
+  };
+
+  onDeleteClick = async ({ target }) => {
+    const delMemberId = target.closest('tr').id;
+    const curMembers = [...this.state.members];
+    this.setState({ members: curMembers.filter((el) => el.value[0] !== delMemberId) });
+    const getData = this.fetchService.delMember;
+    try {
+      await getData(delMemberId);
+    } catch (err) {
+      alert(err); // TypeError: failed to fetch
+    }
+
+    // const members = await getData(delMember);
+    // this.setState({
+    //   members,
+    //   loading: false,
+    // });
+  };
+
   render() {
     const { members, loading } = this.state;
     const { onRegisterClick } = this.props;
@@ -36,7 +61,7 @@ export default class MembersGrid extends Component {
 
     return (
       <div className='members-wrap'>
-        <button type='button' className='btn btn-register' onClick={this.props.onRegisterClick}>
+        <button type='button' className='btn btn-register' onClick={() => onRegisterClick([], 'Create Member page')}>
           Register
         </button>
         <table border='1'>
@@ -57,9 +82,11 @@ export default class MembersGrid extends Component {
               const { value } = member;
               const [userId, { name, lastName, direction, education, startDate, birthDate }] = value;
               return (
-                <tr key={userId}>
+                <tr key={userId} id={userId}>
                   <td className='td'>{index + 1}</td>
-                  <td className='td'>{`${name} ${lastName}`}</td>
+                  <td className='td'>
+                    <span onClick={this.onChangeClick}>{`${name} ${lastName}`}</span>
+                  </td>
                   <td className='td'>{`${direction}`}</td>
                   <td className='td'>{`${education}`}</td>
                   <td className='td'>{`${startDate}`}</td>
@@ -67,10 +94,12 @@ export default class MembersGrid extends Component {
                   <td className='td buttons-wrap'>
                     <button className='btn btn-progress'>Progress</button>
                     <button className='btn btn-tasks'>Tasks</button>
-                    <button className='btn btn-edit' onClick={onRegisterClick}>
+                    <button className='btn btn-edit' onClick={() => onRegisterClick('Edit Member page')}>
                       Edit
                     </button>
-                    <button className='btn btn-delete'>Delete</button>
+                    <button className='btn btn-delete' onClick={this.onDeleteClick}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );

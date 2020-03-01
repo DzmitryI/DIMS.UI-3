@@ -1,4 +1,4 @@
-export default class SwapiService {
+export default class FetchService {
   API_BASE = `https://dims-f1a5f.firebaseio.com/`;
 
   getResource = async (url) => {
@@ -30,5 +30,27 @@ export default class SwapiService {
 
   setMember = async (body) => {
     return await this.setResource(`/UserProfile.json`, body);
+  };
+
+  editResource = async (url, body) => {
+    const res = await fetch(`${this.API_BASE}${url}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  };
+
+  editMember = async (memberId, body) => {
+    return await this.editResource(`/UserProfile/${memberId}`, body);
+  };
+
+  delResource = async (url) => {
+    await fetch(`${this.API_BASE}${url}`, {
+      method: 'DELETE',
+    }).then((response) => response.json());
+  };
+
+  delMember = async (memberId) => {
+    return await this.delResource(`/UserProfile/${memberId}`);
   };
 }

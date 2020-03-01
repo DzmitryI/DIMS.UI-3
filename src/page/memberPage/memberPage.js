@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SwapiService from '../../services/swapi-service';
+import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 
@@ -155,9 +155,10 @@ export default class MemberPage extends Component {
       direction: 'direct1',
       sex: 'sex1',
     },
+    memberId: null,
   };
 
-  swapiService = new SwapiService();
+  fetchService = new FetchService();
 
   validateControl(value, validation) {
     if (!validation) {
@@ -165,13 +166,28 @@ export default class MemberPage extends Component {
     }
     let isValid = true;
     if (validation.required) {
-      isValid = value.trim() !== '' && isValid;
+      isValid = value.trim() !== '';
     }
     return isValid;
   }
 
   isInValid(valid, touched, shouldValidation) {
     return !valid && touched && shouldValidation;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
+      const memberInput = { ...this.state.memberInput };
+      const [memberId, curMember] = this.props.member;
+      Object.entries(curMember).forEach(([key, val]) => {
+        if (memberInput[key] !== undefined) {
+          memberInput[key].value = val;
+          memberInput[key].touched = true;
+          memberInput[key].valid = true;
+        }
+      });
+      this.setState({ memberInput, memberId, isFormValid: true, member: curMember });
+    }
   }
 
   handleImput = ({ target: { value } }, controlName) => {
@@ -195,9 +211,14 @@ export default class MemberPage extends Component {
   };
 
   createMemberHandler = () => {
-    this.swapiService.setMember(this.state.member);
-    this.setState({ member: {}, memberInput: {} });
-    this.props.onRegisterClick();
+    const { memberId, member } = this.state;
+    if (!memberId) {
+      this.fetchService.setMember(member);
+    } else {
+      this.fetchService.editMember(memberId, member);
+    }
+    this.setState({ member: {}, memberInput: {}, memberId: '' });
+    this.props.onRegisterClick([], '');
   };
 
   renderInputs() {
@@ -221,7 +242,7 @@ export default class MemberPage extends Component {
 
   render() {
     const { name, lastName } = this.state.member;
-    const { isOpen, onRegisterClick } = this.props;
+    const { isOpen, onRegisterClick, title } = this.props;
     const cls = ['member-wrap'];
     if (!isOpen) {
       cls.push('close');
@@ -229,7 +250,7 @@ export default class MemberPage extends Component {
     return (
       <>
         <div className={cls.join(' ')}>
-          <h1 className='title'>Create Member page</h1>
+          <h1 className='title'>{title}</h1>
           <form className='member-form'>
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
 
@@ -264,7 +285,7 @@ export default class MemberPage extends Component {
               >
                 Save
               </button>
-              <button className='btn btn-close' onClick={onRegisterClick} type='button'>
+              <button className='btn btn-close' onClick={() => onRegisterClick([], '')} type='button'>
                 Back to grid
               </button>
             </div>
