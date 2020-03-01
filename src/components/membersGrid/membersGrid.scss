@@ -12,13 +12,6 @@ table {
   border: 1px solid gray;
 }
 
-caption {
-  margin: 10px auto;
-  color: rgb(230, 30, 30);
-  font-size: 30px;
-  font-weight: bold;
-}
-
 th {
   background-color: rgba(57, 126, 237, 1);
   padding: 10px 2px;
@@ -55,7 +48,8 @@ td {
 .btn-progress,
 .btn-tasks,
 .btn-edit,
-.btn-delete {
+.btn-delete,
+.btn-success {
   width: 45%;
   min-width: 65px;
   padding: 5px;

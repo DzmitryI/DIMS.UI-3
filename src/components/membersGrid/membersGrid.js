@@ -31,7 +31,11 @@ export default class MembersGrid extends Component {
     const editMemberId = target.closest('tr').id;
     const curMembers = [...this.state.members].filter((el) => el.value[0] === editMemberId);
     const [{ value }] = curMembers;
-    this.props.onRegisterClick(value, 'Edit Member page');
+    if (target.tagName === 'SPAN') {
+      this.props.onRegisterClick(value, 'Edit Member page');
+    } else {
+      this.props.onRegisterClick(value, 'Detail Member page');
+    }
   };
 
   onDeleteClick = async ({ target }) => {
@@ -54,18 +58,21 @@ export default class MembersGrid extends Component {
 
   render() {
     const { members, loading } = this.state;
-    const { onRegisterClick } = this.props;
+    const { onRegisterClick, onTaskClick, isOpen } = this.props;
     if (loading) {
       return <Spinner />;
     }
-
+    const cls = ['members-wrap'];
+    if (isOpen) {
+      cls.push('close');
+    }
     return (
-      <div className='members-wrap'>
+      <div className={cls.join(' ')}>
+        <h1>Members Manage Grid</h1>
         <button type='button' className='btn btn-register' onClick={() => onRegisterClick([], 'Create Member page')}>
           Register
         </button>
         <table border='1'>
-          <caption>Members Manage Grid</caption>
           <thead>
             <tr>
               <th>#</th>
@@ -93,8 +100,10 @@ export default class MembersGrid extends Component {
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>
                   <td className='td buttons-wrap'>
                     <button className='btn btn-progress'>Progress</button>
-                    <button className='btn btn-tasks'>Tasks</button>
-                    <button className='btn btn-edit' onClick={() => onRegisterClick('Edit Member page')}>
+                    <button className='btn btn-tasks' onClick={() => onTaskClick(name)}>
+                      Tasks
+                    </button>
+                    <button className='btn btn-edit' onClick={this.onChangeClick}>
                       Edit
                     </button>
                     <button className='btn btn-delete' onClick={this.onDeleteClick}>
