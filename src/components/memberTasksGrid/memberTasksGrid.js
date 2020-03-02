@@ -24,20 +24,22 @@ export default class MemberTasksGrid extends Component {
             </tr>
           </thead>
           <tbody>
-            <td className='td'>{1}</td>
-            <td className='td'>
-              <span onClick={this.onChangeClick}>{`Task`}</span>
-            </td>
-            <td className='td'>{`1`}</td>
-            <td className='td'>{`2`}</td>
-            <td className='td'>{`Sucess`}</td>
-            <td className='td'>
-              <button className='btn btn-progress'>Track</button>
-            </td>
-            <td className='td'>
-              <button className='btn btn-success'>Success</button>
-              <button className='btn btn-delete'>Fail</button>
-            </td>
+            <tr>
+              <td className='td'>{1}</td>
+              <td className='td'>
+                <span onClick={this.onChangeClick}>{`Task`}</span>
+              </td>
+              <td className='td'>{`1`}</td>
+              <td className='td'>{`2`}</td>
+              <td className='td'>{`Sucess`}</td>
+              <td className='td'>
+                <button className='btn btn-progress'>Track</button>
+              </td>
+              <td className='td'>
+                <button className='btn btn-success'>Success</button>
+                <button className='btn btn-delete'>Fail</button>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

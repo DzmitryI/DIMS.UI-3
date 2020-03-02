@@ -9,6 +9,37 @@ export default class FetchService {
     return await res.json();
   };
 
+  setResource = async (url, body) => {
+    const res = await fetch(`${this.API_BASE}${url}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    }
+    return await res.json();
+  };
+
+  editResource = async (url, body) => {
+    const res = await fetch(`${this.API_BASE}${url}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    }
+    return await res.json();
+  };
+
+  delResource = async (url) => {
+    const res = await fetch(`${this.API_BASE}${url}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    }
+  };
+
   getAllMember = async () => {
     const res = await this.getResource(`/UserProfile.json`);
     const members = [];
@@ -20,34 +51,25 @@ export default class FetchService {
     return members;
   };
 
-  setResource = async (url, body) => {
-    const res = await fetch(`${this.API_BASE}${url}`, {
-      method: 'POST',
-      body: JSON.stringify(body),
+  getDirection = async () => {
+    const res = await this.getResource(`/Direction.json`);
+    const direction = [];
+    Object.entries(res).forEach((key) => {
+      const [value, { name }] = key;
+      direction.push({
+        value,
+        name,
+      });
     });
-    return await res.json();
+    return direction;
   };
 
   setMember = async (body) => {
     return await this.setResource(`/UserProfile.json`, body);
   };
 
-  editResource = async (url, body) => {
-    const res = await fetch(`${this.API_BASE}${url}`, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-    });
-    return await res.json();
-  };
-
   editMember = async (memberId, body) => {
     return await this.editResource(`/UserProfile/${memberId}`, body);
-  };
-
-  delResource = async (url) => {
-    await fetch(`${this.API_BASE}${url}`, {
-      method: 'DELETE',
-    }).then((response) => response.json());
   };
 
   delMember = async (memberId) => {

@@ -6,6 +6,7 @@ export default class MembersGrid extends Component {
   state = {
     itemList: null,
     members: [],
+    directions: [],
     loading: true,
   };
 
@@ -14,8 +15,11 @@ export default class MembersGrid extends Component {
   async componentDidMount() {
     const getData = this.fetchService.getAllMember;
     const members = await getData();
+    const getDirection = this.fetchService.getDirection;
+    const directions = await getDirection();
     this.setState({
       members,
+      directions,
       loading: false,
     });
   }
@@ -31,10 +35,11 @@ export default class MembersGrid extends Component {
     const editMemberId = target.closest('tr').id;
     const curMembers = [...this.state.members].filter((el) => el.value[0] === editMemberId);
     const [{ value }] = curMembers;
+    const { directions } = this.state;
     if (target.tagName === 'SPAN') {
-      this.props.onRegisterClick(value, 'Edit Member page');
+      this.props.onRegisterClick(value, directions, 'Edit Member page');
     } else {
-      this.props.onRegisterClick(value, 'Detail Member page');
+      this.props.onRegisterClick(value, directions, 'Detail Member page');
     }
   };
 
@@ -46,7 +51,7 @@ export default class MembersGrid extends Component {
     try {
       await getData(delMemberId);
     } catch (err) {
-      alert(err); // TypeError: failed to fetch
+      alert(err);
     }
 
     // const members = await getData(delMember);
@@ -57,7 +62,7 @@ export default class MembersGrid extends Component {
   };
 
   render() {
-    const { members, loading } = this.state;
+    const { members, directions, loading } = this.state;
     const { onRegisterClick, onTaskClick, isOpen } = this.props;
     if (loading) {
       return <Spinner />;
@@ -69,7 +74,11 @@ export default class MembersGrid extends Component {
     return (
       <div className={cls.join(' ')}>
         <h1>Members Manage Grid</h1>
-        <button type='button' className='btn btn-register' onClick={() => onRegisterClick([], 'Create Member page')}>
+        <button
+          type='button'
+          className='btn btn-register'
+          onClick={() => onRegisterClick([], directions, 'Create Member page')}
+        >
           Register
         </button>
         <table border='1'>
@@ -88,13 +97,19 @@ export default class MembersGrid extends Component {
             {members.map((member, index) => {
               const { value } = member;
               const [userId, { name, lastName, direction, education, startDate, birthDate }] = value;
+              const { name: curDirect } = directions.find((val) => {
+                const { value } = val;
+                if (value === direction) {
+                  return value;
+                }
+              });
               return (
                 <tr key={userId} id={userId}>
                   <td className='td'>{index + 1}</td>
                   <td className='td'>
                     <span onClick={this.onChangeClick}>{`${name} ${lastName}`}</span>
                   </td>
-                  <td className='td'>{`${direction}`}</td>
+                  <td className='td'>{`${curDirect}`}</td>
                   <td className='td'>{`${education}`}</td>
                   <td className='td'>{`${startDate}`}</td>
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>

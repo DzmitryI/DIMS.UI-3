@@ -144,23 +144,7 @@ export default class MemberPage extends Component {
     memberSelect: {
       direction: {
         label: 'Direction',
-        options: [
-          {
-            name: '.NET',
-            value: 'direction1',
-            defaultValue: true,
-          },
-          {
-            name: 'Java',
-            value: 'direction2',
-            defaultValue: false,
-          },
-          {
-            name: 'JavaScript',
-            value: 'direction3',
-            defaultValue: false,
-          },
-        ],
+        options: [],
       },
       sex: {
         label: 'Sex',
@@ -168,12 +152,10 @@ export default class MemberPage extends Component {
           {
             name: 'Male',
             value: 'sex1',
-            defaultValue: true,
           },
           {
             name: 'Female',
             value: 'sex2',
-            defaultValue: false,
           },
         ],
       },
@@ -214,9 +196,12 @@ export default class MemberPage extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const {
+      member: [memberId, curMember],
+      direction,
+    } = this.props;
     if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
       const memberInput = { ...this.state.memberInput };
-      const [memberId, curMember] = this.props.member;
       Object.entries(curMember).forEach(([key, val]) => {
         if (memberInput[key] !== undefined) {
           memberInput[key].value = val;
@@ -224,7 +209,25 @@ export default class MemberPage extends Component {
           memberInput[key].valid = true;
         }
       });
-      this.setState({ memberInput, memberId, isFormValid: true, member: curMember });
+
+      const memberSelect = { ...this.state.memberSelect };
+      Object.keys(memberSelect).forEach((key) => {
+        if (key === 'direction') {
+          memberSelect[key].options = this.props.direction;
+          memberSelect[key].options.map((el, index) => {
+            if (el.value === curMember.direction) {
+              memberSelect[key].options[index].selected = true;
+            }
+          });
+        } else if (key === 'sex') {
+          memberSelect[key].options.map((el, index) => {
+            if (el.value === curMember.sex) {
+              memberSelect[key].options[index].selected = true;
+            }
+          });
+        }
+      });
+      this.setState({ memberInput, memberSelect, memberId, isFormValid: true, member: curMember, direction });
     }
   }
 
@@ -249,17 +252,18 @@ export default class MemberPage extends Component {
   };
 
   createMemberHandler = () => {
-    const { memberId, member } = this.state;
+    const { memberId, member, direction } = this.state;
     if (!memberId) {
       this.fetchService.setMember(member);
     } else {
       this.fetchService.editMember(memberId, member);
     }
     this.setState({ member: {}, memberInput: {}, memberId: '' });
-    this.props.onRegisterClick([], '');
+    this.props.onRegisterClick([], direction, '');
   };
 
   buttonCloseClick = () => {
+    const { direction } = this.state;
     const memberInput = { ...this.state.memberInput };
     const member = { ...this.state.member };
     Object.keys(memberInput).forEach((key) => {
@@ -271,7 +275,7 @@ export default class MemberPage extends Component {
       }
     });
     this.setState({ memberInput, memberId: '', isFormValid: false, member });
-    this.props.onRegisterClick([], '');
+    this.props.onRegisterClick([], direction, '');
   };
 
   renderInputs() {
@@ -294,7 +298,7 @@ export default class MemberPage extends Component {
   }
 
   renderSelect() {
-    return Object.keys(this.state.memberSelect).map((controlName, index) => {
+    return Object.keys(this.state.memberSelect).map((controlName) => {
       const control = this.state.memberSelect[controlName];
       return (
         <Select
