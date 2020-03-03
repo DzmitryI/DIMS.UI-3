@@ -43,11 +43,15 @@ export default class FetchService {
   getAllMember = async () => {
     const res = await this.getResource(`/UserProfile.json`);
     const members = [];
-    Object.entries(res).forEach((key) => {
-      members.push({
-        value: key,
+    if (res) {
+      Object.entries(res).forEach((key) => {
+        const [userId, values] = key;
+        members.push({
+          userId,
+          values,
+        });
       });
-    });
+    }
     return members;
   };
 
@@ -69,10 +73,10 @@ export default class FetchService {
   };
 
   editMember = async (memberId, body) => {
-    return await this.editResource(`/UserProfile/${memberId}`, body);
+    return await this.editResource(`/UserProfile/${memberId}.json`, body);
   };
 
   delMember = async (memberId) => {
-    return await this.delResource(`/UserProfile/${memberId}`);
+    return await this.delResource(`/UserProfile/${memberId}.json`);
   };
 }

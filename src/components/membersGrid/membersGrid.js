@@ -13,10 +13,8 @@ export default class MembersGrid extends Component {
   fetchService = new FetchService();
 
   async componentDidMount() {
-    const getData = this.fetchService.getAllMember;
-    const members = await getData();
-    const getDirection = this.fetchService.getDirection;
-    const directions = await getDirection();
+    const members = await this.fetchService.getAllMember();
+    const directions = await this.fetchService.getDirection();
     this.setState({
       members,
       directions,
@@ -28,18 +26,17 @@ export default class MembersGrid extends Component {
     const curDate = new Date();
     const birthDate = new Date(value);
     const age = curDate.getFullYear() - birthDate.getFullYear();
-    return curDate.setFullYear(1972) < birthDate.setFullYear(1972) ? age - 1 : age;
+    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
   }
 
   onChangeClick = ({ target }) => {
     const editMemberId = target.closest('tr').id;
-    const curMembers = [...this.state.members].filter((el) => el.value[0] === editMemberId);
-    const [{ value }] = curMembers;
+    const curMembers = this.state.members.filter((el) => el.userId === editMemberId);
     const { directions } = this.state;
-    if (target.tagName === 'SPAN') {
-      this.props.onRegisterClick(value, directions, 'Edit Member page');
+    if (target.tagName === 'BUTTON') {
+      this.props.onRegisterClick(curMembers, directions, 'Edit Member page');
     } else {
-      this.props.onRegisterClick(value, directions, 'Detail Member page');
+      this.props.onRegisterClick(curMembers, directions, 'Detail Member page');
     }
   };
 
@@ -53,12 +50,6 @@ export default class MembersGrid extends Component {
     } catch (err) {
       alert(err);
     }
-
-    // const members = await getData(delMember);
-    // this.setState({
-    //   members,
-    //   loading: false,
-    // });
   };
 
   render() {
@@ -95,21 +86,18 @@ export default class MembersGrid extends Component {
           </thead>
           <tbody>
             {members.map((member, index) => {
-              const { value } = member;
-              const [userId, { name, lastName, direction, education, startDate, birthDate }] = value;
-              const { name: curDirect } = directions.find((val) => {
-                const { value } = val;
-                if (value === direction) {
-                  return value;
-                }
-              });
+              const {
+                userId,
+                values: { name, lastName, directionId, education, startDate, birthDate },
+              } = member;
+              const curDirect = directions.find((el) => el.value === directionId);
               return (
                 <tr key={userId} id={userId}>
                   <td className='td'>{index + 1}</td>
                   <td className='td'>
                     <span onClick={this.onChangeClick}>{`${name} ${lastName}`}</span>
                   </td>
-                  <td className='td'>{`${curDirect}`}</td>
+                  <td className='td'>{`${curDirect.name}`}</td>
                   <td className='td'>{`${education}`}</td>
                   <td className='td'>{`${startDate}`}</td>
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>

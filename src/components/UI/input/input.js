@@ -2,7 +2,7 @@ import React from 'react';
 
 const Input = (props) => {
   const inputType = props.type || 'text';
-  const htmlFor = inputType + Math.random();
+  const htmlFor = props.id;
   const cls = ['form-group'];
   function isInvalid({ valid, touched, shouldValidation }) {
     return !valid && touched && shouldValidation;

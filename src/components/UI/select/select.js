@@ -1,16 +1,16 @@
 import React from 'react';
 
 const Select = (props) => {
-  const { id, options, label, onChange } = props;
+  const { id, options, label, name, onChange, defaultValue } = props;
   const htmlFor = id;
   const cls = ['form-group'];
 
   return (
     <div className={cls.join(' ')}>
       <label htmlFor={htmlFor}>{label}</label>
-      <select id={htmlFor} onChange={onChange}>
+      <select id={htmlFor} name={name} value={defaultValue} onChange={onChange}>
         {options.map((c, index) => (
-          <option value={c.value} selected={c.selected} key={index}>
+          <option value={c.value} key={index}>
             {c.name}
           </option>
         ))}

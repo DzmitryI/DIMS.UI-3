@@ -172,10 +172,11 @@ export default class MemberPage extends Component {
       mobilePhone: '',
       skype: '',
       startDate: '',
-      direction: 'direct1',
+      directionId: 'direction1',
       sex: 'sex1',
     },
-    memberId: null,
+    userId: null,
+    directions: [],
   };
 
   fetchService = new FetchService();
@@ -196,38 +197,44 @@ export default class MemberPage extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      member: [memberId, curMember],
-      direction,
-    } = this.props;
-    if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
-      const memberInput = { ...this.state.memberInput };
-      Object.entries(curMember).forEach(([key, val]) => {
-        if (memberInput[key] !== undefined) {
-          memberInput[key].value = val;
-          memberInput[key].touched = true;
-          memberInput[key].valid = true;
-        }
-      });
+    const { member, directions } = this.props;
+    if (member.length > 0) {
+      const [{ userId, values }] = member;
+      if (this.state.memberSelect.direction.options.length === 0) {
+        const memberSelect = { ...this.state.memberSelect };
+        memberSelect.direction.options = directions;
+        this.setState({ memberSelect });
+      }
 
-      const memberSelect = { ...this.state.memberSelect };
-      Object.keys(memberSelect).forEach((key) => {
-        if (key === 'direction') {
-          memberSelect[key].options = this.props.direction;
-          memberSelect[key].options.map((el, index) => {
-            if (el.value === curMember.direction) {
-              memberSelect[key].options[index].selected = true;
-            }
-          });
-        } else if (key === 'sex') {
-          memberSelect[key].options.map((el, index) => {
-            if (el.value === curMember.sex) {
-              memberSelect[key].options[index].selected = true;
-            }
-          });
-        }
-      });
-      this.setState({ memberInput, memberSelect, memberId, isFormValid: true, member: curMember, direction });
+      if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
+        const memberInput = { ...this.state.memberInput };
+        Object.entries(values).forEach(([key, val]) => {
+          if (memberInput[key] !== undefined) {
+            memberInput[key].value = val;
+            memberInput[key].touched = true;
+            memberInput[key].valid = true;
+          }
+        });
+
+        const memberSelect = { ...this.state.memberSelect };
+        Object.keys(memberSelect).forEach((key) => {
+          if (key === 'direction') {
+            memberSelect[key].options = directions;
+            memberSelect[key].options.forEach((el, index) => {
+              if (el.value === values.directionId) {
+                memberSelect[key].options[index].selected = true;
+              }
+            });
+          } else if (key === 'sex') {
+            memberSelect[key].options.forEach((el, index) => {
+              if (el.value === values.sex) {
+                memberSelect[key].options[index].selected = true;
+              }
+            });
+          }
+        });
+        this.setState({ memberInput, memberSelect, userId, isFormValid: true, member: values, directions });
+      }
     }
   }
 
@@ -247,23 +254,27 @@ export default class MemberPage extends Component {
 
   handleSelect = ({ target }) => {
     const member = { ...this.state.member };
-    member[target.id] = target.options[target.selectedIndex].value;
+    if (target.id === 'direction') {
+      member['directionId'] = target.options[target.selectedIndex].value;
+    } else {
+      member[target.id] = target.options[target.selectedIndex].value;
+    }
     this.setState({ member });
   };
 
-  createMemberHandler = () => {
-    const { memberId, member, direction } = this.state;
-    if (!memberId) {
+  createMemberHandler = async () => {
+    const { userId, member, directions } = this.state;
+    if (!userId) {
       this.fetchService.setMember(member);
     } else {
-      this.fetchService.editMember(memberId, member);
+      this.fetchService.editMember(userId, member);
     }
-    this.setState({ member: {}, memberInput: {}, memberId: '' });
-    this.props.onRegisterClick([], direction, '');
+    this.setState({ member: {}, memberInput: {}, userId: '' });
+    this.props.onRegisterClick([], directions, '');
   };
 
   buttonCloseClick = () => {
-    const { direction } = this.state;
+    const { directions } = this.state;
     const memberInput = { ...this.state.memberInput };
     const member = { ...this.state.member };
     Object.keys(memberInput).forEach((key) => {
@@ -274,8 +285,8 @@ export default class MemberPage extends Component {
         member[key] = '';
       }
     });
-    this.setState({ memberInput, memberId: '', isFormValid: false, member });
-    this.props.onRegisterClick([], direction, '');
+    this.setState({ memberInput, userId: '', isFormValid: false, member });
+    this.props.onRegisterClick([], directions, '');
   };
 
   renderInputs() {
@@ -284,6 +295,7 @@ export default class MemberPage extends Component {
       return (
         <Input
           key={controlName + index}
+          id={controlName}
           type={control.type}
           value={control.value}
           valid={control.valid}
@@ -300,11 +312,21 @@ export default class MemberPage extends Component {
   renderSelect() {
     return Object.keys(this.state.memberSelect).map((controlName) => {
       const control = this.state.memberSelect[controlName];
+      let defaultValue = false;
+      const member = { ...this.state.member };
+      if (controlName === 'direction') {
+        defaultValue = member.directionId;
+      } else {
+        defaultValue = member[controlName];
+      }
       return (
         <Select
           key={controlName}
           options={control.options}
+          defaultValue={defaultValue}
           label={control.label}
+          name={controlName}
+          id={controlName}
           onChange={(event) => this.handleSelect(event, controlName)}
         />
       );
