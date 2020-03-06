@@ -14,7 +14,7 @@ export default class App extends Component {
     directions: [],
   };
 
-  onRegisterClickHandler = (member, directions, title) => {
+  onRegisterClickHandler = (directions, title = '', member = []) => {
     this.setState({
       isRegister: !this.state.isRegister,
       titleMember: title,

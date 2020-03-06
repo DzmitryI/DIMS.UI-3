@@ -268,7 +268,7 @@ export default class MemberPage extends Component {
       this.fetchService.editMember(userId, member);
     }
     this.setState({ member: {}, memberInput: {}, userId: '' });
-    this.props.onRegisterClick([], directions, '');
+    this.props.onRegisterClick(directions);
   };
 
   buttonCloseClick = () => {
@@ -284,7 +284,7 @@ export default class MemberPage extends Component {
       }
     });
     this.setState({ memberInput, userId: '', isFormValid: false, member });
-    this.props.onRegisterClick([], directions, '');
+    this.props.onRegisterClick(directions);
   };
 
   renderInputs() {

@@ -1,28 +1,21 @@
 import React, { Component } from 'react';
 import Button from '../UI/button';
+import HeaderTable from '../UI/headerTable';
 
 export default class MemberTasksGrid extends Component {
+  state = {
+    headetTable: ['#', 'Name', 'Start', 'Deadline', 'Status', '', '(Available only for Admin)'],
+  };
   render() {
     const { isOpen, title } = this.props;
-    const cls = ['tasks-wrap'];
-    if (!isOpen) {
-      cls.push('close');
-    }
+    const { headetTable } = this.state;
     return (
-      <div className={cls.join(' ')}>
+      <div className={!isOpen ? `tasks-wrap close` : `tasks-wrap`}>
         <h1>Member's Tasks Manage Grid</h1>
         <table border='1'>
           <caption>{`Hi, dear ${title}! This is your current tasks:`}</caption>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Start</th>
-              <th>Deadline</th>
-              <th>Status</th>
-              <th></th>
-              <th>(Available only for Admin)</th>
-            </tr>
+            <HeaderTable arr={headetTable} />
           </thead>
           <tbody>
             <tr>
