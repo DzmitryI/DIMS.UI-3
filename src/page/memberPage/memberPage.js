@@ -192,10 +192,6 @@ export default class MemberPage extends Component {
     return isValid;
   }
 
-  isInValid(valid, touched, shouldValidation) {
-    return !valid && touched && shouldValidation;
-  }
-
   componentDidUpdate(prevProps) {
     const { member, directions } = this.props;
     if (member.length > 0) {
@@ -206,7 +202,7 @@ export default class MemberPage extends Component {
         this.setState({ memberSelect });
       }
 
-      if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
+      if (this.props.member !== prevProps.member) {
         const memberInput = { ...this.state.memberInput };
         Object.entries(values).forEach(([key, val]) => {
           if (memberInput[key] !== undefined) {
@@ -354,7 +350,7 @@ export default class MemberPage extends Component {
               <button
                 className='btn btn-add'
                 disabled={!this.state.isFormValid}
-                type='submin'
+                type='submit'
                 onClick={this.createMemberHandler}
               >
                 Save
