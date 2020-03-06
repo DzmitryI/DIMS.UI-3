@@ -3,6 +3,7 @@ import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
+import Button from '../../components/UI/button';
 
 export default class MemberPage extends Component {
   state = {
@@ -194,6 +195,7 @@ export default class MemberPage extends Component {
 
   componentDidUpdate(prevProps) {
     const { member, directions } = this.props;
+
     if (member.length > 0) {
       const [{ userId, values }] = member;
       if (this.state.memberSelect.direction.options.length === 0) {
@@ -202,7 +204,7 @@ export default class MemberPage extends Component {
         this.setState({ memberSelect });
       }
 
-      if (this.props.member !== prevProps.member) {
+      if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
         const memberInput = { ...this.state.memberInput };
         Object.entries(values).forEach(([key, val]) => {
           if (memberInput[key] !== undefined) {
@@ -309,16 +311,20 @@ export default class MemberPage extends Component {
     return Object.keys(this.state.memberSelect).map((controlName) => {
       const control = this.state.memberSelect[controlName];
       let defaultValue = false;
+      let options = [];
+      const { directions } = this.props;
       const member = { ...this.state.member };
       if (controlName === 'direction') {
         defaultValue = member.directionId;
+        options = directions;
       } else {
         defaultValue = member[controlName];
+        options = control.options;
       }
       return (
         <Select
           key={controlName}
-          options={control.options}
+          options={options}
           defaultValue={defaultValue}
           label={control.label}
           name={controlName}
@@ -332,32 +338,23 @@ export default class MemberPage extends Component {
   render() {
     const { name, lastName } = this.state.member;
     const { isOpen, title } = this.props;
-    const cls = ['member-wrap'];
-    if (!isOpen) {
-      cls.push('close');
-    }
     return (
       <>
-        <div className={cls.join(' ')}>
+        <div className={!isOpen ? `member-wrap close` : `member-wrap`}>
           <h1 className='title'>{title}</h1>
           <form className='member-form'>
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-
             {this.renderInputs()}
             {this.renderSelect()}
-
             <div className='form-group row'>
-              <button
+              <Button
                 className='btn btn-add'
                 disabled={!this.state.isFormValid}
                 type='submit'
                 onClick={this.createMemberHandler}
-              >
-                Save
-              </button>
-              <button className='btn btn-close' onClick={this.buttonCloseClick} type='button'>
-                Back to grid
-              </button>
+                name='Save'
+              />
+              <Button className='btn btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
             </div>
           </form>
         </div>

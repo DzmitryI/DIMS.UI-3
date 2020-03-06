@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Button from '../UI/button';
 
 export default class MemberTasksGrid extends Component {
   render() {
@@ -33,11 +34,11 @@ export default class MemberTasksGrid extends Component {
               <td className='td'>{`2`}</td>
               <td className='td'>{`Sucess`}</td>
               <td className='td'>
-                <button className='btn btn-progress'>Track</button>
+                <Button className='btn btn-progress' name='Track' />
               </td>
               <td className='td'>
-                <button className='btn btn-success'>Success</button>
-                <button className='btn btn-delete'>Fail</button>
+                <Button className='btn btn-success' name='Success' />
+                <Button className='btn btn-delete' name='Fail' />
               </td>
             </tr>
           </tbody>

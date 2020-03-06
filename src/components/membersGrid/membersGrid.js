@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
+import Button from '../UI/button';
 
 export default class MembersGrid extends Component {
   state = {
@@ -42,8 +43,8 @@ export default class MembersGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const delMemberId = target.closest('tr').id;
-    const curMembers = [...this.state.members];
-    this.setState({ members: curMembers.filter((el) => el.value[0] !== delMemberId) });
+    const curMembers = this.state.members;
+    this.setState({ members: curMembers.filter((el) => el.userId !== delMemberId) });
     const getData = this.fetchService.delMember;
     try {
       await getData(delMemberId);
@@ -58,20 +59,14 @@ export default class MembersGrid extends Component {
     if (loading) {
       return <Spinner />;
     }
-    const cls = ['members-wrap'];
-    if (isOpen) {
-      cls.push('close');
-    }
     return (
-      <div className={cls.join(' ')}>
+      <div className={isOpen ? `member-wrap close` : `member-wrap`}>
         <h1>Members Manage Grid</h1>
-        <button
-          type='button'
+        <Button
           className='btn btn-register'
           onClick={() => onRegisterClick([], directions, 'Create Member page')}
-        >
-          Register
-        </button>
+          name='Register'
+        />
         <table border='1'>
           <thead>
             <tr>
@@ -102,16 +97,10 @@ export default class MembersGrid extends Component {
                   <td className='td'>{`${startDate}`}</td>
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>
                   <td className='td buttons-wrap'>
-                    <button className='btn btn-progress'>Progress</button>
-                    <button className='btn btn-tasks' onClick={() => onTaskClick(name)}>
-                      Tasks
-                    </button>
-                    <button className='btn btn-edit' onClick={this.onChangeClick}>
-                      Edit
-                    </button>
-                    <button className='btn btn-delete' onClick={this.onDeleteClick}>
-                      Delete
-                    </button>
+                    <Button className='btn btn-progress' name='Progress' />
+                    <Button className='btn btn-tasks' onClick={() => onTaskClick(name)} name='Tasks' />
+                    <Button className='btn btn-edit' onClick={this.onChangeClick} name='Edit' />
+                    <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
                   </td>
                 </tr>
               );
