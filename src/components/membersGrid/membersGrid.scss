@@ -1,0 +1,41 @@
+.members-wrap {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  padding: 30px 0;
+  z-index: 100;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid gray;
+}
+
+th {
+  background-color: rgba(57, 126, 237, 1);
+  padding: 10px 2px;
+  color: #fff;
+}
+
+td {
+  padding: 10px 2px;
+  text-align: center;
+  vertical-align: center;
+  & span {
+    text-decoration-line: underline;
+    color: rgb(57, 126, 237);
+  }
+  & span:hover {
+    cursor: pointer;
+    color: rgb(230, 30, 30);
+  }
+}
+
+.buttons-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  height: 100%;
+  padding: 0;
+}

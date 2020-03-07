@@ -9,3 +9,29 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+main {
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  margin: 10px auto;
+  color: rgb(230, 30, 30);
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+caption {
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 20px;
+}
+
+.title {
+  color: rgba(230, 30, 30, 1);
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
