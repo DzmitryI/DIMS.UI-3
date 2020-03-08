@@ -55,6 +55,25 @@ export default class FetchService {
     return members;
   };
 
+  getAllTask = async () => {
+    const res = await this.getResource(`/Task.json`);
+    const tasks = [];
+    if (res) {
+      Object.entries(res).forEach((key) => {
+        const [taskId, values] = key;
+        const { name, description, startDate, deadlineDate } = values;
+        tasks.push({
+          taskId,
+          name,
+          description,
+          startDate,
+          deadlineDate,
+        });
+      });
+    }
+    return tasks;
+  };
+
   getDirection = async () => {
     const res = await this.getResource(`/Direction.json`);
     const direction = [];
@@ -72,11 +91,23 @@ export default class FetchService {
     return await this.setResource(`/UserProfile.json`, body);
   };
 
+  setTask = async (body) => {
+    return await this.setResource(`/Task.json`, body);
+  };
+
   editMember = async (memberId, body) => {
     return await this.editResource(`/UserProfile/${memberId}.json`, body);
   };
 
+  editTask = async (taskId, body) => {
+    return await this.editResource(`/Task/${taskId}.json`, body);
+  };
+
   delMember = async (memberId) => {
     return await this.delResource(`/UserProfile/${memberId}.json`);
+  };
+
+  delTask = async (taskId) => {
+    return await this.delResource(`/Task/${taskId}.json`);
   };
 }

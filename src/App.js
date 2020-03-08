@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Layout from './hoc/layout';
-import MembersGrid from './components/membersGrid';
-import MemberPage from './page/memberPage';
-import MemberTasksGrid from './components/memberTasksGrid';
+// import MembersGrid from './components/membersGrid';
+// import MemberPage from './page/memberPage';
+// import MemberTasksGrid from './components/memberTasksGrid';
+import TasksGrid from './components/tasksGrid';
+import TaskPage from './page/taskPage';
 
 export default class App extends Component {
   state = {
@@ -11,6 +13,7 @@ export default class App extends Component {
     titleMember: '',
     titleTask: '',
     curMember: [],
+    curTask: [],
     directions: [],
   };
 
@@ -30,11 +33,20 @@ export default class App extends Component {
     });
   };
 
+  onCreateTaskClickHandler = (title = '', task = []) => {
+    this.setState({
+      isTask: !this.state.isTask,
+      titleTask: title,
+      curTask: task,
+    });
+  };
+
   render() {
-    const { isRegister, titleMember, titleTask, curMember, isTask, directions } = this.state;
+    // const { isRegister, titleMember, titleTask, curMember, isTask, directions } = this.state;
+    const { titleTask, curTask, isTask } = this.state;
     return (
       <Layout>
-        <MembersGrid
+        {/* <MembersGrid
           onRegisterClick={this.onRegisterClickHandler}
           onTaskClick={this.onTaskClickHandler}
           isOpen={isTask}
@@ -46,7 +58,9 @@ export default class App extends Component {
           member={curMember}
           directions={directions}
         />
-        <MemberTasksGrid isOpen={isTask} title={titleTask} />
+        <MemberTasksGrid isOpen={isTask} title={titleTask} /> */}
+        <TasksGrid onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={titleTask} task={curTask} />
       </Layout>
     );
   }

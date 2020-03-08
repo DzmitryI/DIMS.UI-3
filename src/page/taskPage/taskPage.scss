@@ -1,0 +1,54 @@
+.task-wrap {
+  display: block;
+  width: 90%;
+  margin: 0 auto;
+  padding-bottom: 1em;
+  z-index: 200;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.close {
+  display: none;
+}
+
+.task-form {
+  max-width: 650px;
+  width: 70%;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 0 auto;
+  background-color: rgba(240, 248, 255, 1);
+}
+
+.subtitle {
+  text-align: center;
+}
+
+.row {
+  justify-content: space-evenly;
+}
+
+.form-group {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+label {
+  display: block;
+  margin: 0 1em;
+  font-size: inherit;
+  font-weight: bold;
+}
+
+.column {
+  width: 200px;
+  height: 100px;
+  overflow: auto;
+  border: solid 1px #c3e4fe;
+  background: white;
+}
