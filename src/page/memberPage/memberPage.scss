@@ -38,34 +38,3 @@ select {
   font-size: inherit;
   outline: none;
 }
-
-.btn-add,
-.btn-close {
-  width: 120px;
-  height: 40px;
-}
-
-.btn-add {
-  background-color: rgba(42, 235, 35, 0.6);
-  color: #fff;
-  &:hover {
-    cursor: pointer;
-    background-color: rgba(42, 235, 35, 1);
-  }
-  &:disabled {
-    cursor: not-allowed;
-    background-color: #ccc;
-    color: #000;
-  }
-}
-
-.btn-close {
-  background-color: rgba(255, 255, 255, 1);
-  border-color: rgba(0, 0, 0, 0.6);
-  color: rgba(0, 0, 0, 0.6);
-  &:hover {
-    cursor: pointer;
-    border-color: rgba(0, 0, 0, 1);
-    color: rgba(0, 0, 0, 1);
-  }
-}

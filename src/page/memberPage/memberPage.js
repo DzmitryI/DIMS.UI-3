@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
+import Select from '../../components/UI/select';
+import Button from '../../components/UI/button';
 
 export default class MemberPage extends Component {
   state = {
@@ -140,6 +142,25 @@ export default class MemberPage extends Component {
         },
       },
     },
+    memberSelect: {
+      direction: {
+        label: 'Direction',
+        options: [],
+      },
+      sex: {
+        label: 'Sex',
+        options: [
+          {
+            name: 'Male',
+            value: 'sex1',
+          },
+          {
+            name: 'Female',
+            value: 'sex2',
+          },
+        ],
+      },
+    },
     member: {
       name: '',
       lastName: '',
@@ -152,10 +173,11 @@ export default class MemberPage extends Component {
       mobilePhone: '',
       skype: '',
       startDate: '',
-      direction: 'direct1',
+      directionId: 'direction1',
       sex: 'sex1',
     },
-    memberId: null,
+    userId: null,
+    directions: [],
   };
 
   fetchService = new FetchService();
@@ -171,22 +193,46 @@ export default class MemberPage extends Component {
     return isValid;
   }
 
-  isInValid(valid, touched, shouldValidation) {
-    return !valid && touched && shouldValidation;
-  }
-
   componentDidUpdate(prevProps) {
-    if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
-      const memberInput = { ...this.state.memberInput };
-      const [memberId, curMember] = this.props.member;
-      Object.entries(curMember).forEach(([key, val]) => {
-        if (memberInput[key] !== undefined) {
-          memberInput[key].value = val;
-          memberInput[key].touched = true;
-          memberInput[key].valid = true;
-        }
-      });
-      this.setState({ memberInput, memberId, isFormValid: true, member: curMember });
+    const { member, directions } = this.props;
+
+    if (member.length > 0) {
+      const [{ userId, values }] = member;
+      if (this.state.memberSelect.direction.options.length === 0) {
+        const memberSelect = { ...this.state.memberSelect };
+        memberSelect.direction.options = directions;
+        this.setState({ memberSelect });
+      }
+
+      if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
+        const memberInput = { ...this.state.memberInput };
+        Object.entries(values).forEach(([key, val]) => {
+          if (memberInput[key] !== undefined) {
+            memberInput[key].value = val;
+            memberInput[key].touched = true;
+            memberInput[key].valid = true;
+          }
+        });
+
+        const memberSelect = { ...this.state.memberSelect };
+        Object.keys(memberSelect).forEach((key) => {
+          if (key === 'direction') {
+            memberSelect[key].options = directions;
+            memberSelect[key].options.forEach((el, index) => {
+              if (el.value === values.directionId) {
+                memberSelect[key].options[index].selected = true;
+              }
+            });
+          } else if (key === 'sex') {
+            memberSelect[key].options.forEach((el, index) => {
+              if (el.value === values.sex) {
+                memberSelect[key].options[index].selected = true;
+              }
+            });
+          }
+        });
+        this.setState({ memberInput, memberSelect, userId, isFormValid: true, member: values, directions });
+      }
     }
   }
 
@@ -206,19 +252,39 @@ export default class MemberPage extends Component {
 
   handleSelect = ({ target }) => {
     const member = { ...this.state.member };
-    member[target.id] = target.options[target.selectedIndex].value;
+    if (target.id === 'direction') {
+      member['directionId'] = target.options[target.selectedIndex].value;
+    } else {
+      member[target.id] = target.options[target.selectedIndex].value;
+    }
     this.setState({ member });
   };
 
-  createMemberHandler = () => {
-    const { memberId, member } = this.state;
-    if (!memberId) {
+  createMemberHandler = async () => {
+    const { userId, member, directions } = this.state;
+    if (!userId) {
       this.fetchService.setMember(member);
     } else {
-      this.fetchService.editMember(memberId, member);
+      this.fetchService.editMember(userId, member);
     }
-    this.setState({ member: {}, memberInput: {}, memberId: '' });
-    this.props.onRegisterClick([], '');
+    this.setState({ member: {}, memberInput: {}, userId: '' });
+    this.props.onRegisterClick(directions);
+  };
+
+  buttonCloseClick = () => {
+    const { directions } = this.state;
+    const memberInput = { ...this.state.memberInput };
+    const member = { ...this.state.member };
+    Object.keys(memberInput).forEach((key) => {
+      if (memberInput[key] !== undefined) {
+        memberInput[key].value = '';
+        memberInput[key].touched = false;
+        memberInput[key].valid = false;
+        member[key] = '';
+      }
+    });
+    this.setState({ memberInput, userId: '', isFormValid: false, member });
+    this.props.onRegisterClick(directions);
   };
 
   renderInputs() {
@@ -227,6 +293,7 @@ export default class MemberPage extends Component {
       return (
         <Input
           key={controlName + index}
+          id={controlName}
           type={control.type}
           value={control.value}
           valid={control.valid}
@@ -240,54 +307,54 @@ export default class MemberPage extends Component {
     });
   }
 
+  renderSelect() {
+    return Object.keys(this.state.memberSelect).map((controlName) => {
+      const control = this.state.memberSelect[controlName];
+      let defaultValue = false;
+      let options = [];
+      const { directions } = this.props;
+      const member = { ...this.state.member };
+      if (controlName === 'direction') {
+        defaultValue = member.directionId;
+        options = directions;
+      } else {
+        defaultValue = member[controlName];
+        options = control.options;
+      }
+      return (
+        <Select
+          key={controlName}
+          options={options}
+          defaultValue={defaultValue}
+          label={control.label}
+          name={controlName}
+          id={controlName}
+          onChange={(event) => this.handleSelect(event, controlName)}
+        />
+      );
+    });
+  }
+
   render() {
     const { name, lastName } = this.state.member;
-    const { isOpen, onRegisterClick, title } = this.props;
-    const cls = ['member-wrap'];
-    if (!isOpen) {
-      cls.push('close');
-    }
+    const { isOpen, title } = this.props;
     return (
       <>
-        <div className={cls.join(' ')}>
+        <div className={!isOpen ? `member-wrap close` : `member-wrap`}>
           <h1 className='title'>{title}</h1>
           <form className='member-form'>
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-
             {this.renderInputs()}
-
-            <div className='form-group'>
-              <label htmlFor='direction'>Direction</label>
-              <select id='direction' name='select' onChange={this.handleSelect}>
-                <option defaultValue value='direct1'>
-                  Java
-                </option>
-                <option value='direct2'>.NET</option>
-                <option value='direct3'>JavaScript</option>
-                <option value='direct4'>SalesFore</option>
-              </select>
-            </div>
-            <div className='form-group'>
-              <label htmlFor='sex'>Sex</label>
-              <select id='sex' name='select' onChange={this.handleSelect}>
-                <option defaultValue value='sex1'>
-                  Male
-                </option>
-                <option value='sex2'>Female</option>
-              </select>
-            </div>
+            {this.renderSelect()}
             <div className='form-group row'>
-              <button
+              <Button
                 className='btn btn-add'
                 disabled={!this.state.isFormValid}
-                type='submin'
+                type='submit'
                 onClick={this.createMemberHandler}
-              >
-                Save
-              </button>
-              <button className='btn btn-close' onClick={() => onRegisterClick([], '')} type='button'>
-                Back to grid
-              </button>
+                name='Save'
+              />
+              <Button className='btn btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
             </div>
           </form>
         </div>

@@ -11,13 +11,15 @@ export default class App extends Component {
     titleMember: '',
     titleTask: '',
     curMember: [],
+    directions: [],
   };
 
-  onRegisterClickHandler = (member, title) => {
+  onRegisterClickHandler = (directions, title = '', member = []) => {
     this.setState({
       isRegister: !this.state.isRegister,
       titleMember: title,
       curMember: member,
+      directions,
     });
   };
 
@@ -29,7 +31,7 @@ export default class App extends Component {
   };
 
   render() {
-    const { isRegister, titleMember, titleTask, curMember, isTask } = this.state;
+    const { isRegister, titleMember, titleTask, curMember, isTask, directions } = this.state;
     return (
       <Layout>
         <MembersGrid
@@ -42,6 +44,7 @@ export default class App extends Component {
           isOpen={isRegister}
           title={titleMember}
           member={curMember}
+          directions={directions}
         />
         <MemberTasksGrid isOpen={isTask} title={titleTask} />
       </Layout>
