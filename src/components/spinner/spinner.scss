@@ -1,39 +1,39 @@
-@keyframes ldio-kpdxv7w12ms {
+@keyframes ldio {
   0% {
-    top: 65.76px;
-    left: 65.76px;
+    top: 65px;
+    left: 65px;
     width: 0;
     height: 0;
     opacity: 1;
   }
   100% {
-    top: 12.330000000000002px;
-    left: 12.330000000000002px;
-    width: 106.86000000000001px;
-    height: 106.86000000000001px;
+    top: 12px;
+    left: 12px;
+    width: 106px;
+    height: 106px;
     opacity: 0;
   }
 }
 
-.ldio-kpdxv7w12ms div {
+.ldio div {
   position: absolute;
   border-width: 2.74px;
   border-style: solid;
   opacity: 1;
   border-radius: 50%;
-  animation: ldio-kpdxv7w12ms 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  animation: ldio 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
 }
 
-.ldio-kpdxv7w12ms div:nth-child(1) {
+.ldio div:nth-child(1) {
   border-color: #e61e1e;
 }
 
-.ldio-kpdxv7w12ms div:nth-child(2) {
+.ldio div:nth-child(2) {
   border-color: #397eed;
   animation-delay: -0.5s;
 }
 
-.loadingio-spinner-ripple-byvqo72txar {
+.loadingio-spinner-ripple {
   margin-top: 150px;
   width: 137px;
   height: 137px;
@@ -42,7 +42,7 @@
   background: #ffffff;
 }
 
-.ldio-kpdxv7w12ms {
+.ldio {
   width: 100%;
   height: 100%;
   position: relative;
@@ -51,6 +51,6 @@
   transform-origin: 0 0;
 }
 
-.ldio-kpdxv7w12ms div {
+.ldio div {
   box-sizing: content-box;
 }

@@ -204,10 +204,10 @@ export default class MemberPage extends Component {
         this.setState({ memberSelect });
       }
 
-      if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
+      if (member !== prevProps.member) {
         const memberInput = { ...this.state.memberInput };
         Object.entries(values).forEach(([key, val]) => {
-          if (memberInput[key] !== undefined) {
+          if (memberInput[key]) {
             memberInput[key].value = val;
             memberInput[key].touched = true;
             memberInput[key].valid = true;
@@ -263,9 +263,9 @@ export default class MemberPage extends Component {
   createMemberHandler = async () => {
     const { userId, member, directions } = this.state;
     if (!userId) {
-      this.fetchService.setMember(member);
+      await this.fetchService.setMember(member);
     } else {
-      this.fetchService.editMember(userId, member);
+      await this.fetchService.editMember(userId, member);
     }
     this.setState({ member: {}, memberInput: {}, userId: '' });
     this.props.onRegisterClick(directions);
@@ -358,7 +358,7 @@ export default class MemberPage extends Component {
             </div>
           </form>
         </div>
-        {isOpen ? <Backdrop /> : null}
+        {isOpen && <Backdrop />}
       </>
     );
   }

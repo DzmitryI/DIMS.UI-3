@@ -5,6 +5,7 @@ import Layout from './hoc/layout';
 // import MemberTasksGrid from './components/memberTasksGrid';
 import TasksGrid from './components/tasksGrid';
 import TaskPage from './page/taskPage';
+import Header from './components/UI/header';
 
 export default class App extends Component {
   state = {
@@ -46,6 +47,7 @@ export default class App extends Component {
     const { titleTask, curTask, isTask } = this.state;
     return (
       <Layout>
+        <Header />
         {/* <MembersGrid
           onRegisterClick={this.onRegisterClickHandler}
           onTaskClick={this.onTaskClickHandler}

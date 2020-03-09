@@ -10,7 +10,7 @@ export default class MemberTasksGrid extends Component {
     const { isOpen, title } = this.props;
     const { headetTable } = this.state;
     return (
-      <div className={!isOpen ? `tasks-wrap close` : `tasks-wrap`}>
+      <div className={`tasks-wrap ${isOpen ? 'close' : ''}`}>
         <h1>Member's Tasks Manage Grid</h1>
         <table border='1'>
           <caption>{`Hi, dear ${title}! This is your current tasks:`}</caption>
@@ -31,7 +31,7 @@ export default class MemberTasksGrid extends Component {
               </td>
               <td className='td'>
                 <Button className='btn btn-success' name='Success' />
-                <Button className='btn btn-delete' name='Fail' />
+                <Button className='btn btn-fail' name='Fail' />
               </td>
             </tr>
           </tbody>

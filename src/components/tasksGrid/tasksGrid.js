@@ -48,13 +48,13 @@ export default class TasksGrid extends Component {
 
   render() {
     const { headerTable, h1TaskPage, tasks, loading } = this.state;
-    const { onCreateTaskClick, isOpen } = this.props;
+    const { onCreateTaskClick } = this.props;
 
     if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={isOpen ? `tasks-wrap` : `tasks-wrap`}>
+      <div className={'tasks-wrap'}>
         <h1>Tasks Manage Grid</h1>
         <Button
           className='btn btn-register'

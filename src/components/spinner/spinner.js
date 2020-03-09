@@ -2,8 +2,8 @@ import React from 'react';
 
 const spinner = () => {
   return (
-    <div className='loadingio-spinner-ripple-byvqo72txar'>
-      <div className='ldio-kpdxv7w12ms'>
+    <div className='loadingio-spinner-ripple'>
+      <div className='ldio'>
         <div></div>
         <div></div>
       </div>

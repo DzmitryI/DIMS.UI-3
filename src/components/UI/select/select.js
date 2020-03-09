@@ -8,9 +8,9 @@ const Select = (props) => {
     <div className={`form-group`}>
       <label htmlFor={htmlFor}>{label}</label>
       <select id={htmlFor} name={name} value={defaultValue} onChange={onChange}>
-        {options.map((c, index) => (
-          <option value={c.value} key={index}>
-            {c.name}
+        {options.map((elem, index) => (
+          <option value={elem.value} key={index}>
+            {elem.name}
           </option>
         ))}
       </select>

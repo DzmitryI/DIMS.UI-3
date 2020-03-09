@@ -63,10 +63,10 @@ export default class TaskPage extends Component {
       const [value] = task;
       const { taskId, ...values } = value;
 
-      if (this.props.task !== prevProps.task && this.props.task.length !== 0) {
+      if (task !== prevProps.task) {
         const taskInput = { ...this.state.taskInput };
         Object.entries(values).forEach(([key, val]) => {
-          if (taskInput[key] !== undefined) {
+          if (taskInput[key]) {
             taskInput[key].value = val;
             taskInput[key].touched = true;
             taskInput[key].valid = true;
@@ -108,9 +108,9 @@ export default class TaskPage extends Component {
   createTaskHandler = async () => {
     const { taskId, task } = this.state;
     if (!taskId) {
-      this.fetchService.setTask(task);
+      await this.fetchService.setTask(task);
     } else {
-      this.fetchService.editTask(taskId, task);
+      await this.fetchService.editTask(taskId, task);
     }
     this.setState({ task: {}, taskInput: {}, taskId: '' });
     this.props.onCreateTaskClick();
@@ -236,7 +236,7 @@ export default class TaskPage extends Component {
             </div>
           </form>
         </div>
-        {isOpen ? <Backdrop /> : null}
+        {isOpen && <Backdrop />}
       </>
     );
   }
