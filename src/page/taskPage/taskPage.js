@@ -5,6 +5,8 @@ import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
 
 export default class TaskPage extends Component {
+  fetchService = new FetchService();
+
   state = {
     isFormValid: false,
     taskInput: {
@@ -54,11 +56,8 @@ export default class TaskPage extends Component {
     taskId: null,
   };
 
-  fetchService = new FetchService();
-
   componentDidUpdate(prevProps) {
     const { task } = this.props;
-
     if (task.length > 0) {
       const [value] = task;
       const { taskId, ...values } = value;
@@ -72,7 +71,6 @@ export default class TaskPage extends Component {
             taskInput[key].valid = true;
           }
         });
-
         this.setState({ taskInput, taskId, isFormValid: true, task: values });
       }
     }
@@ -107,12 +105,13 @@ export default class TaskPage extends Component {
 
   createTaskHandler = async () => {
     const { taskId, task } = this.state;
+    let res = {};
     if (!taskId) {
-      await this.fetchService.setTask(task);
+      res = await this.fetchService.setTask(task);
     } else {
-      await this.fetchService.editTask(taskId, task);
+      res = await this.fetchService.editTask(taskId, task);
     }
-    this.setState({ task: {}, taskInput: {}, taskId: '' });
+    this.setState({ task: res, taskInput: {}, taskId: '' });
     this.props.onCreateTaskClick();
   };
 
@@ -138,52 +137,26 @@ export default class TaskPage extends Component {
 
   renderInputs() {
     const { description } = this.state.task;
-    // const { description } = value;
     return Object.keys(this.state.taskInput).map((controlName, index) => {
       const control = this.state.taskInput[controlName];
-
-      // let textArea =
-      // (<div className='form-group'>
-      //         <label htmlFor='description'>Description</label>
-      //         <textarea
-      //           id='description'
-      //           name='description'
-      //           // cols='54'
-      //           rows='7'
-      //           onChange={this.handleTextArea}>
-      //         </textarea>
-      //       </div >);
-
+      let textArea = null;
       if (index === 0) {
-        return (
-          <>
-            <Input
-              key={controlName + index}
-              id={controlName}
-              type={control.type}
-              value={control.value}
-              valid={control.valid}
-              touched={control.touched}
-              label={control.label}
-              errorMessage={control.errorMessage}
-              shouldValidation={!!control.validation}
-              onChange={(event) => this.handleImput(event, controlName)}
-            />
-            <div className='form-group'>
-              <label htmlFor='description'>Description</label>
-              <textarea
-                id='description'
-                name='description'
-                // cols='54'
-                value={description}
-                rows='7'
-                onChange={this.handleTextArea}
-              ></textarea>
-            </div>
-          </>
+        textArea = (
+          <div className='form-group'>
+            <label htmlFor='description'>Description</label>
+            <textarea
+              id='description'
+              name='description'
+              // cols='54'
+              value={description}
+              rows='7'
+              onChange={this.handleTextArea}
+            ></textarea>
+          </div>
         );
-      } else {
-        return (
+      }
+      return (
+        <React.Fragment key={index}>
           <Input
             key={controlName + index}
             id={controlName}
@@ -196,8 +169,9 @@ export default class TaskPage extends Component {
             shouldValidation={!!control.validation}
             onChange={(event) => this.handleImput(event, controlName)}
           />
-        );
-      }
+          {textArea}
+        </React.Fragment>
+      );
     });
   }
 

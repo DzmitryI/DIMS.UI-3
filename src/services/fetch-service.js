@@ -2,33 +2,45 @@ export default class FetchService {
   API_BASE = `https://dims-f1a5f.firebaseio.com/`;
 
   getResource = async (url) => {
-    const res = await fetch(`${this.API_BASE}${url}`);
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    try {
+      const res = await fetch(`${this.API_BASE}${url}`);
+      if (!res.ok) {
+        throw new Error(`Could not fetch ${url}, received ${res.status}`);
+      }
+      return await res.json();
+    } catch (err) {
+      console.log(err);
     }
-    return await res.json();
   };
 
   setResource = async (url, body) => {
-    const res = await fetch(`${this.API_BASE}${url}`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    try {
+      const res = await fetch(`${this.API_BASE}${url}`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        throw new Error(`Could not fetch ${url}, received ${res.status}`);
+      }
+      return await res.json();
+    } catch (err) {
+      console.log(err);
     }
-    return await res.json();
   };
 
   editResource = async (url, body) => {
-    const res = await fetch(`${this.API_BASE}${url}`, {
-      method: 'PUT',
-      body: JSON.stringify(body),
-    });
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, received ${res.status}`);
+    try {
+      const res = await fetch(`${this.API_BASE}${url}`, {
+        method: 'PUT',
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        throw new Error(`Could not fetch ${url}, received ${res.status}`);
+      }
+      return await res.json();
+    } catch (err) {
+      console.log(err);
     }
-    return await res.json();
   };
 
   delResource = async (url) => {
@@ -96,11 +108,13 @@ export default class FetchService {
   };
 
   editMember = async (memberId, body) => {
-    return await this.editResource(`/UserProfile/${memberId}.json`, body);
+    const res = await this.editResource(`/UserProfile/${memberId}.json`, body);
+    return res;
   };
 
   editTask = async (taskId, body) => {
-    return await this.editResource(`/Task/${taskId}.json`, body);
+    const res = await this.editResource(`/Task/${taskId}.json`, body);
+    return res;
   };
 
   delMember = async (memberId) => {

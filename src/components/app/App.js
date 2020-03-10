@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import Layout from './hoc/layout';
-// import MembersGrid from './components/membersGrid';
-// import MemberPage from './page/memberPage';
-// import MemberTasksGrid from './components/memberTasksGrid';
-import TasksGrid from './components/tasksGrid';
-import TaskPage from './page/taskPage';
-import Header from './components/UI/header';
+import { Route, Switch } from 'react-router-dom';
+import Layout from '../../hoc/layout';
+import MembersGrid from '../membersGrid';
+import MemberPage from '../../page/memberPage';
+import MemberTasksGrid from '../memberTasksGrid';
+import TasksGrid from '../tasksGrid';
+import TaskPage from '../../page/taskPage';
+import Header from '../UI/header';
 
 export default class App extends Component {
   state = {
@@ -43,16 +44,28 @@ export default class App extends Component {
   };
 
   render() {
-    // const { isRegister, titleMember, titleTask, curMember, isTask, directions } = this.state;
-    const { titleTask, curTask, isTask } = this.state;
+    const { isRegister, isTask, titleMember, titleTask, curMember, curTask, directions } = this.state;
     return (
       <Layout>
         <Header />
-        {/* <MembersGrid
-          onRegisterClick={this.onRegisterClickHandler}
-          onTaskClick={this.onTaskClickHandler}
-          isOpen={isTask}
-        />
+        <Switch>
+          <Route path='/' render={() => <h2>Welcome to DIMS</h2>} exact />
+          <Route
+            path='/MembersGrid'
+            render={(props) => (
+              <MembersGrid
+                {...props}
+                onRegisterClick={this.onRegisterClickHandler}
+                onTaskClick={this.onTaskClickHandler}
+              />
+            )}
+          />
+          <Route
+            path='/TasksGrid'
+            render={(props) => <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} />}
+          />
+          <Route path='/MemberTasksGrid' render={(props) => <MemberTasksGrid {...props} title={titleTask} />} />
+        </Switch>
         <MemberPage
           onRegisterClick={this.onRegisterClickHandler}
           isOpen={isRegister}
@@ -60,8 +73,6 @@ export default class App extends Component {
           member={curMember}
           directions={directions}
         />
-        <MemberTasksGrid isOpen={isTask} title={titleTask} /> */}
-        <TasksGrid onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
         <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={titleTask} task={curTask} />
       </Layout>
     );

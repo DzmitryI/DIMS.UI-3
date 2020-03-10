@@ -1,24 +1,34 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 
-const Header = () => {
-  return (
-    <div className='header'>
-      <h3>
-        <a href='#/'>DIMS</a>
-      </h3>
-      <ul className='main-menu'>
-        <li>
-          <a href='#/MemberGrid'>Members Grid</a>
-        </li>
-        <li>
-          <a href='#/TasksGrid'>Tasks Grid</a>
-        </li>
-        <li>
-          <a href='#/MembersTasksGrid'>Members Tasks Grid</a>
-        </li>
-      </ul>
-    </div>
-  );
-};
+export default class Header extends Component {
+  state = {
+    links: [
+      { to: '/MembersGrid', label: 'Members Grid' },
+      { to: '/TasksGrid', label: 'Tasks Grid' },
+      { to: '/MemberTasksGrid', label: 'Member Tasks Grid' },
+    ],
+  };
 
-export default Header;
+  renderLinks() {
+    const { links } = this.state;
+    return links.map((link, index) => {
+      return (
+        <li key={index}>
+          <NavLink to={link.to}>{link.label}</NavLink>
+        </li>
+      );
+    });
+  }
+
+  render() {
+    return (
+      <div className='header'>
+        <h3>
+          <NavLink to='/'>DIMS</NavLink>
+        </h3>
+        <ul className='nav'>{this.renderLinks()}</ul>
+      </div>
+    );
+  }
+}
