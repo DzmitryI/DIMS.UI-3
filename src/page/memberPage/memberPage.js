@@ -293,7 +293,7 @@ export default class MemberPage extends Component {
       return (
         <Input
           key={controlName + index}
-          id={controlName}
+          id={controlName + index}
           type={control.type}
           value={control.value}
           valid={control.valid}

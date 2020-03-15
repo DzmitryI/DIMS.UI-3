@@ -43,7 +43,7 @@ export default class TaskPage extends Component {
         touched: false,
         validation: {
           required: true,
-          deadline: true,
+          deadlineDate: true,
         },
       },
     },
@@ -105,13 +105,13 @@ export default class TaskPage extends Component {
 
   createTaskHandler = async () => {
     const { taskId, task } = this.state;
-    let res = {};
+    // let res = {};
     if (!taskId) {
-      res = await this.fetchService.setTask(task);
+      await this.fetchService.setTask(task);
     } else {
-      res = await this.fetchService.editTask(taskId, task);
+      await this.fetchService.editTask(taskId, task);
     }
-    this.setState({ task: res, taskInput: {}, taskId: '' });
+    this.setState({ task: {}, taskInput: {}, taskId: '' });
     this.props.onCreateTaskClick();
   };
 

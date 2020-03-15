@@ -7,6 +7,7 @@ import MemberTasksGrid from '../memberTasksGrid';
 import TasksGrid from '../tasksGrid';
 import TaskPage from '../../page/taskPage';
 import Header from '../UI/header';
+import Auth from '../auth';
 
 export default class App extends Component {
   state = {
@@ -48,6 +49,7 @@ export default class App extends Component {
     return (
       <Layout>
         <Header />
+        <Auth />
         <Switch>
           <Route path='/' render={() => <h2>Welcome to DIMS</h2>} exact />
           <Route

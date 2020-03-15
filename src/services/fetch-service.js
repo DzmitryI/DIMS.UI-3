@@ -1,46 +1,47 @@
 export default class FetchService {
   API_BASE = `https://dims-f1a5f.firebaseio.com/`;
+  // API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
 
   getResource = async (url) => {
-    try {
-      const res = await fetch(`${this.API_BASE}${url}`);
-      if (!res.ok) {
-        throw new Error(`Could not fetch ${url}, received ${res.status}`);
-      }
-      return await res.json();
-    } catch (err) {
-      console.log(err);
+    // try {
+    const res = await fetch(`${this.API_BASE}${url}`);
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
     }
+    return await res.json();
+    // } catch (err) {
+    // console.log(err);
+    // }
   };
 
   setResource = async (url, body) => {
-    try {
-      const res = await fetch(`${this.API_BASE}${url}`, {
-        method: 'POST',
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        throw new Error(`Could not fetch ${url}, received ${res.status}`);
-      }
-      return await res.json();
-    } catch (err) {
-      console.log(err);
+    // try {
+    const res = await fetch(`${this.API_BASE}${url}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
     }
+    return await res.json();
+    // } catch (err) {
+    // console.log(err);
+    // }
   };
 
   editResource = async (url, body) => {
-    try {
-      const res = await fetch(`${this.API_BASE}${url}`, {
-        method: 'PUT',
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        throw new Error(`Could not fetch ${url}, received ${res.status}`);
-      }
-      return await res.json();
-    } catch (err) {
-      console.log(err);
+    // try {
+    const res = await fetch(`${this.API_BASE}${url}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, received ${res.status}`);
     }
+    return await res.json();
+    // } catch (err) {
+    // console.log(err);
+    // }
   };
 
   delResource = async (url) => {
@@ -99,6 +100,25 @@ export default class FetchService {
     return direction;
   };
 
+  registerAuth = async (url, body) => {
+    // try {
+    const API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
+    const response = await fetch(`${url}${API_Key}`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      throw new Error(`Could not fetch ${url}, received ${response.status}`);
+    }
+    return await response.json();
+    // } catch (err) {
+    // console.log(err, '1');
+    // }
+  };
+
   setMember = async (body) => {
     return await this.setResource(`/UserProfile.json`, body);
   };
@@ -108,13 +128,11 @@ export default class FetchService {
   };
 
   editMember = async (memberId, body) => {
-    const res = await this.editResource(`/UserProfile/${memberId}.json`, body);
-    return res;
+    return await this.editResource(`/UserProfile/${memberId}.json`, body);
   };
 
   editTask = async (taskId, body) => {
-    const res = await this.editResource(`/Task/${taskId}.json`, body);
-    return res;
+    return await this.editResource(`/Task/${taskId}.json`, body);
   };
 
   delMember = async (memberId) => {

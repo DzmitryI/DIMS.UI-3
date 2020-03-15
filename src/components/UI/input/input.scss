@@ -16,6 +16,10 @@ label {
   color: rgb(223, 18, 18);
 }
 
+.invalid input {
+  border: 1px solid rgb(223, 18, 18);
+}
+
 input {
   display: block;
   width: 100%;
