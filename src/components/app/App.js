@@ -59,6 +59,7 @@ export default class App extends Component {
                 {...props}
                 onRegisterClick={this.onRegisterClickHandler}
                 onTaskClick={this.onTaskClickHandler}
+                isRegister={isRegister}
               />
             )}
           />

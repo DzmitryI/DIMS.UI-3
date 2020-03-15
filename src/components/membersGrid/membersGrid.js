@@ -6,11 +6,10 @@ import HeaderTable from '../UI/headerTable';
 
 export default class MembersGrid extends Component {
   state = {
-    itemList: null,
+    headerTable: ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''],
     members: [],
     directions: [],
     loading: true,
-    headerTable: ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''],
     h1MemberPage: null,
   };
 
@@ -31,6 +30,15 @@ export default class MembersGrid extends Component {
     });
   }
 
+  async componentDidUpdate(prevProps) {
+    if (this.props.isRegister !== prevProps.isRegister) {
+      const members = await this.fetchService.getAllMember();
+      this.setState({
+        members,
+      });
+    }
+  }
+
   countAge(value) {
     const curDate = new Date();
     const birthDate = new Date(value);
@@ -38,11 +46,16 @@ export default class MembersGrid extends Component {
     return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
   }
 
-  onChangeClick = ({ target }) => {
-    const editMemberId = target.closest('tr').id;
-    const curMembers = this.state.members.filter((el) => el.userId === editMemberId);
+  onRegisterClick = () => {
     const { directions, h1MemberPage } = this.state;
-    if (target.tagName === 'BUTTON') {
+    this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+  };
+
+  onChangeClick = ({ target }) => {
+    const { directions, h1MemberPage, members } = this.state;
+    const editMemberId = target.closest('tr').id;
+    const curMembers = members.filter((el) => el.userId === editMemberId);
+    if (target.className === 'btn btn-tasks') {
       this.props.onRegisterClick(directions, h1MemberPage.get('Edit'), curMembers);
     } else {
       this.props.onRegisterClick(directions, h1MemberPage.get('Detail'), curMembers);
@@ -51,30 +64,28 @@ export default class MembersGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const delMemberId = target.closest('tr').id;
-    const curMembers = this.state.members;
-    this.setState({ members: curMembers.filter((el) => el.userId !== delMemberId) });
-    const getData = this.fetchService.delMember;
-    try {
-      await getData(delMemberId);
-    } catch (err) {
-      alert(err);
+    const [member] = this.state.members.filter((el) => el.userId === delMemberId);
+    const {
+      values: { name, lastName },
+    } = member;
+    const response = await this.fetchService.delMember(delMemberId);
+    if (response.statusText) {
+      alert(`${name} ${lastName} was deleted`);
     }
+    const members = await this.fetchService.getAllMember();
+    this.setState({ members });
   };
 
   render() {
-    const { members, directions, loading, headerTable, h1MemberPage } = this.state;
-    const { onRegisterClick, onTaskClick, isOpen } = this.props;
+    const { members, directions, loading, headerTable } = this.state;
+    const { onTaskClick, isOpen } = this.props;
     if (loading) {
       return <Spinner />;
     }
     return (
       <div className={`members-wrap ${isOpen ? 'close' : ''}`}>
         <h1>Members Manage Grid</h1>
-        <Button
-          className='btn btn-register'
-          onClick={() => onRegisterClick(directions, h1MemberPage.get('Create'))}
-          name='Register'
-        />
+        <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
         <table border='1'>
           <thead>
             <HeaderTable arr={headerTable} />

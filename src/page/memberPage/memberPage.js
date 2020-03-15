@@ -4,6 +4,7 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
+import { validateControl } from '../../services/helpers.js';
 
 export default class MemberPage extends Component {
   state = {
@@ -182,17 +183,6 @@ export default class MemberPage extends Component {
 
   fetchService = new FetchService();
 
-  validateControl(value, validation) {
-    if (!validation) {
-      return true;
-    }
-    let isValid = true;
-    if (validation.required) {
-      isValid = value.trim() !== '';
-    }
-    return isValid;
-  }
-
   componentDidUpdate(prevProps) {
     const { member, directions } = this.props;
 
@@ -213,7 +203,6 @@ export default class MemberPage extends Component {
             memberInput[key].valid = true;
           }
         });
-
         const memberSelect = { ...this.state.memberSelect };
         Object.keys(memberSelect).forEach((key) => {
           if (key === 'direction') {
@@ -241,7 +230,7 @@ export default class MemberPage extends Component {
     const member = { ...this.state.member };
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
-    memberInput[controlName].valid = this.validateControl(value, memberInput[controlName].validation);
+    memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
     member[controlName] = value;
     let isFormValid = true;
     Object.keys(memberInput).forEach((name) => {
@@ -260,19 +249,25 @@ export default class MemberPage extends Component {
     this.setState({ member });
   };
 
+  submitHandler = (event) => {
+    event.preventDefault();
+  };
+
   createMemberHandler = async () => {
     const { userId, member, directions } = this.state;
     if (!userId) {
-      await this.fetchService.setMember(member);
+      const getData = await this.fetchService.setMember(member);
+      console.log(getData.data);
     } else {
-      await this.fetchService.editMember(userId, member);
+      const getData = await this.fetchService.editMember(userId, member);
+      console.log(getData.data);
     }
-    this.setState({ member: {}, memberInput: {}, userId: '' });
+    const { memberInput } = this.clearMemberInput();
+    this.setState({ member: '', memberInput, userId: '' });
     this.props.onRegisterClick(directions);
   };
 
-  buttonCloseClick = () => {
-    const { directions } = this.state;
+  clearMemberInput = () => {
     const memberInput = { ...this.state.memberInput };
     const member = { ...this.state.member };
     Object.keys(memberInput).forEach((key) => {
@@ -283,7 +278,28 @@ export default class MemberPage extends Component {
         member[key] = '';
       }
     });
-    this.setState({ memberInput, userId: '', isFormValid: false, member });
+    const res = {
+      memberInput,
+      member,
+    };
+
+    return res;
+  };
+
+  buttonCloseClick = () => {
+    const { directions } = this.state;
+    const { memberInput, member } = this.clearMemberInput();
+    // const memberInput = { ...this.state.memberInput };
+    // const member = { ...this.state.member };
+    // Object.keys(memberInput).forEach((key) => {
+    //   if (memberInput[key] !== undefined) {
+    //     memberInput[key].value = '';
+    //     memberInput[key].touched = false;
+    //     memberInput[key].valid = false;
+    //     member[key] = '';
+    //   }
+    // });
+    this.setState({ memberInput, member, userId: '', isFormValid: false });
     this.props.onRegisterClick(directions);
   };
 
@@ -342,7 +358,7 @@ export default class MemberPage extends Component {
       <>
         <div className={!isOpen ? `member-wrap close` : `member-wrap`}>
           <h1 className='title'>{title}</h1>
-          <form className='member-form'>
+          <form onSubmit={this.submitHandler} className='member-form'>
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
             {this.renderInputs()}
             {this.renderSelect()}
