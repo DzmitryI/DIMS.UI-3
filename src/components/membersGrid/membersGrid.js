@@ -3,14 +3,13 @@ import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
+import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 
 export default class MembersGrid extends Component {
   state = {
-    headerTable: ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''],
     members: [],
     directions: [],
     loading: true,
-    h1MemberPage: null,
   };
 
   fetchService = new FetchService();
@@ -18,15 +17,10 @@ export default class MembersGrid extends Component {
   async componentDidMount() {
     const members = await this.fetchService.getAllMember();
     const directions = await this.fetchService.getDirection();
-    let h1MemberPage = new Map();
-    h1MemberPage.set('Create', 'Create Member page');
-    h1MemberPage.set('Edit', 'Edit Member page');
-    h1MemberPage.set('Detail', 'Detail Member page');
     this.setState({
       members,
       directions,
       loading: false,
-      h1MemberPage,
     });
   }
 
@@ -47,28 +41,28 @@ export default class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions, h1MemberPage } = this.state;
+    const { directions } = this.state;
     this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
   };
 
   onChangeClick = ({ target }) => {
-    const { directions, h1MemberPage, members } = this.state;
-    const editMemberId = target.closest('tr').id;
-    const curMembers = members.filter((el) => el.userId === editMemberId);
-    if (target.className === 'btn btn-tasks') {
-      this.props.onRegisterClick(directions, h1MemberPage.get('Edit'), curMembers);
+    const { directions, members } = this.state;
+    const memberId = target.closest('tr').id;
+    const member = members.filter((member) => member.userId === memberId);
+    if (target.className === 'btn btn-edit') {
+      this.props.onRegisterClick(directions, h1MemberPage.get('Edit'), member);
     } else {
-      this.props.onRegisterClick(directions, h1MemberPage.get('Detail'), curMembers);
+      this.props.onRegisterClick(directions, h1MemberPage.get('Detail'), member);
     }
   };
 
   onDeleteClick = async ({ target }) => {
-    const delMemberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((el) => el.userId === delMemberId);
+    const memberId = target.closest('tr').id;
+    const [member] = this.state.members.filter((member) => member.userId === memberId);
     const {
       values: { name, lastName },
     } = member;
-    const response = await this.fetchService.delMember(delMemberId);
+    const response = await this.fetchService.delMember(memberId);
     if (response.statusText) {
       alert(`${name} ${lastName} was deleted`);
     }
@@ -76,9 +70,11 @@ export default class MembersGrid extends Component {
     this.setState({ members });
   };
 
+  onShowClick = () => {};
+
   render() {
-    const { members, directions, loading, headerTable } = this.state;
-    const { onTaskClick, isOpen } = this.props;
+    const { members, directions, loading } = this.state;
+    const { isOpen } = this.props;
     if (loading) {
       return <Spinner />;
     }
@@ -88,7 +84,7 @@ export default class MembersGrid extends Component {
         <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
         <table border='1'>
           <thead>
-            <HeaderTable arr={headerTable} />
+            <HeaderTable arr={headerMembersGrid} />
           </thead>
           <tbody>
             {members.map((member, index) => {
@@ -96,7 +92,7 @@ export default class MembersGrid extends Component {
                 userId,
                 values: { name, lastName, directionId, education, startDate, birthDate },
               } = member;
-              const curDirect = directions.find((el) => el.value === directionId);
+              const curDirect = directions.find((direction) => direction.value === directionId);
               return (
                 <tr key={userId} id={userId}>
                   <td className='td'>{index + 1}</td>
@@ -109,7 +105,7 @@ export default class MembersGrid extends Component {
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>
                   <td className='td buttons-wrap'>
                     <Button className='btn btn-progress' name='Progress' />
-                    <Button className='btn btn-tasks' onClick={() => onTaskClick(name)} name='Tasks' />
+                    <Button className='btn btn-tasks' onClick={this.onShowClick} name='Tasks' />
                     <Button className='btn btn-edit' onClick={this.onChangeClick} name='Edit' />
                     <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
                   </td>

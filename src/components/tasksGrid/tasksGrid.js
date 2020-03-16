@@ -3,52 +3,60 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
+import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
 
 export default class TasksGrid extends Component {
   state = {
-    tasks: null,
+    tasks: [],
     loading: true,
-    headerTable: ['#', 'Name', 'Start', 'Deadline', ''],
-    h1TaskPage: null,
   };
-
   fetchService = new FetchService();
 
   async componentDidMount() {
     const tasks = await this.fetchService.getAllTask();
-    let h1TaskPage = new Map();
-    h1TaskPage.set('Create', 'Create Task page');
-    h1TaskPage.set('Edit', 'Edit Task page');
-    h1TaskPage.set('Detail', 'Detail Task page');
-    this.setState({ tasks, loading: false, h1TaskPage });
+    this.setState({
+      tasks,
+      loading: false,
+    });
   }
 
+  async componentDidUpdate(prevProps) {
+    if (this.props.isTask !== prevProps.isTask) {
+      const tasks = await this.fetchService.getAllTask();
+      this.setState({
+        tasks,
+      });
+    }
+  }
+
+  onCreateTaskClick = () => {
+    this.props.onCreateTaskClick(h1TaskPage.get('Create'));
+  };
+
   onChangeClick = ({ target }) => {
-    const editTaskId = target.closest('tr').id;
-    const curTask = this.state.tasks.filter((el) => el.taskId === editTaskId);
-    const { h1TaskPage } = this.state;
-    if (target.tagName === 'BUTTON') {
-      this.props.onCreateTaskClick(h1TaskPage.get('Edit'), curTask);
+    const taskId = target.closest('tr').id;
+    const task = this.state.tasks.filter((task) => task.taskId === taskId);
+    if (target.className === 'btn btn-edit') {
+      this.props.onCreateTaskClick(h1TaskPage.get('Edit'), task);
     } else {
-      this.props.onCreateTaskClick(h1TaskPage.get('Detail'), curTask);
+      this.props.onCreateTaskClick(h1TaskPage.get('Detail'), task);
     }
   };
 
   onDeleteClick = async ({ target }) => {
-    const delTaskId = target.closest('tr').id;
-    const curTask = this.state.tasks;
-    const getData = this.fetchService.delTask;
-    this.setState({ tasks: curTask.filter((el) => el.taskId !== delTaskId) });
-    try {
-      await getData(delTaskId);
-    } catch (err) {
-      alert(err);
+    const taskId = target.closest('tr').id;
+    const [task] = this.state.tasks.filter((task) => task.taskId === taskId);
+    const { name } = task;
+    const response = await this.fetchService.delTask(taskId);
+    if (response.statusText) {
+      alert(`task: ${name} was deleted`);
     }
+    const tasks = await this.fetchService.getAllTask();
+    this.setState({ tasks });
   };
 
   render() {
-    const { headerTable, h1TaskPage, tasks, loading } = this.state;
-    const { onCreateTaskClick } = this.props;
+    const { tasks, loading } = this.state;
 
     if (loading) {
       return <Spinner />;
@@ -56,34 +64,29 @@ export default class TasksGrid extends Component {
     return (
       <div className={'tasks-wrap'}>
         <h1>Tasks Manage Grid</h1>
-        <Button
-          className='btn btn-register'
-          name='Create'
-          onClick={() => onCreateTaskClick(h1TaskPage.get('Create'))}
-        />
+        <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
         <table border='1'>
           <thead>
-            <HeaderTable arr={headerTable} />
+            <HeaderTable arr={headerTasksGrid} />
           </thead>
           <tbody>
-            {tasks
-              ? tasks.map((val, index) => {
-                  return (
-                    <tr key={val.taskId} id={val.taskId}>
-                      <td className='td'>{index + 1}</td>
-                      <td className='td'>
-                        <span onClick={this.onChangeClick}>{val.name}</span>
-                      </td>
-                      <td className='td'>{val.startDate}</td>
-                      <td className='td'>{val.deadlineDate}</td>
-                      <td className='td'>
-                        <Button className='btn btn-edit' name='Edit' onClick={this.onChangeClick} />
-                        <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
-                      </td>
-                    </tr>
-                  );
-                })
-              : null}
+            {tasks.map((task, index) => {
+              const { taskId, name, startDate, deadlineDate } = task;
+              return (
+                <tr key={task.taskId} id={taskId}>
+                  <td className='td'>{index + 1}</td>
+                  <td className='td'>
+                    <span onClick={this.onChangeClick}>{name}</span>
+                  </td>
+                  <td className='td'>{startDate}</td>
+                  <td className='td'>{deadlineDate}</td>
+                  <td className='td'>
+                    <Button className='btn btn-edit' name='Edit' onClick={this.onChangeClick} />
+                    <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

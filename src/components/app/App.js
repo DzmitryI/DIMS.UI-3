@@ -44,6 +44,10 @@ export default class App extends Component {
     });
   };
 
+  mainPage = () => {
+    return <h2>Welcome to DIMS</h2>;
+  };
+
   render() {
     const { isRegister, isTask, titleMember, titleTask, curMember, curTask, directions } = this.state;
     return (
@@ -51,7 +55,7 @@ export default class App extends Component {
         <Header />
         <Auth />
         <Switch>
-          <Route path='/' render={() => <h2>Welcome to DIMS</h2>} exact />
+          <Route path='/' render={this.mainPage} exact />
           <Route
             path='/MembersGrid'
             render={(props) => (
@@ -65,7 +69,9 @@ export default class App extends Component {
           />
           <Route
             path='/TasksGrid'
-            render={(props) => <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} />}
+            render={(props) => (
+              <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isTask={isTask} />
+            )}
           />
           <Route path='/MemberTasksGrid' render={(props) => <MemberTasksGrid {...props} title={titleTask} />} />
         </Switch>

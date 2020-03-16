@@ -3,6 +3,8 @@ import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
+import { validateControl } from '../../services/helpers.js';
+import { clearOblectValue } from '../helpersPage';
 
 export default class TaskPage extends Component {
   fetchService = new FetchService();
@@ -58,15 +60,14 @@ export default class TaskPage extends Component {
 
   componentDidUpdate(prevProps) {
     const { task } = this.props;
-    if (task.length > 0) {
+    if (task.length) {
       const [value] = task;
       const { taskId, ...values } = value;
-
       if (task !== prevProps.task) {
         const taskInput = { ...this.state.taskInput };
-        Object.entries(values).forEach(([key, val]) => {
+        Object.entries(values).forEach(([key, value]) => {
           if (taskInput[key]) {
-            taskInput[key].value = val;
+            taskInput[key].value = value;
             taskInput[key].touched = true;
             taskInput[key].valid = true;
           }
@@ -76,51 +77,12 @@ export default class TaskPage extends Component {
     }
   }
 
-  validateControl(value, validation) {
-    if (!validation) {
-      return true;
-    }
-    let isValid = true;
-    if (validation.required) {
-      isValid = value.trim() !== '';
-    }
-    return isValid;
-  }
-
-  buttonCloseClick = () => {
-    const taskInput = { ...this.state.taskInput };
-    const task = { ...this.state.task };
-    Object.keys(taskInput).forEach((key) => {
-      if (taskInput[key] !== undefined) {
-        taskInput[key].value = '';
-        taskInput[key].touched = false;
-        taskInput[key].valid = false;
-        task[key] = '';
-      }
-    });
-    task['description'] = '';
-    this.setState({ taskInput, taskId: null, isFormValid: false, task });
-    this.props.onCreateTaskClick();
-  };
-
-  createTaskHandler = async () => {
-    const { taskId, task } = this.state;
-    // let res = {};
-    if (!taskId) {
-      await this.fetchService.setTask(task);
-    } else {
-      await this.fetchService.editTask(taskId, task);
-    }
-    this.setState({ task: {}, taskInput: {}, taskId: '' });
-    this.props.onCreateTaskClick();
-  };
-
   handleImput = ({ target: { value } }, controlName) => {
     const taskInput = { ...this.state.taskInput };
     const task = { ...this.state.task };
     taskInput[controlName].value = value;
     taskInput[controlName].touched = true;
-    taskInput[controlName].valid = this.validateControl(value, taskInput[controlName].validation);
+    taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
     task[controlName] = value;
     let isFormValid = true;
     Object.keys(taskInput).forEach((name) => {
@@ -133,6 +95,35 @@ export default class TaskPage extends Component {
     const task = { ...this.state.task };
     task[id] = value;
     this.setState({ task });
+  };
+
+  submitHandler = (event) => {
+    event.preventDefault();
+  };
+
+  createTaskHandler = async () => {
+    const { taskId, task, taskInput } = this.state;
+    if (!taskId) {
+      const response = await this.fetchService.setTask(task);
+      if (response.statusText) {
+        alert(`add new task: ${task.name}`);
+      }
+    } else {
+      const response = await this.fetchService.editTask(taskId, task);
+      if (response.statusText) {
+        alert(`edit task: ${task.name}`);
+      }
+    }
+    const res = clearOblectValue(taskInput, task);
+    this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '' });
+    this.props.onCreateTaskClick();
+  };
+
+  buttonCloseClick = () => {
+    const { task, taskInput } = this.state;
+    const res = clearOblectValue(taskInput, task);
+    this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', isFormValid: false });
+    this.props.onCreateTaskClick();
   };
 
   renderInputs() {
@@ -156,7 +147,7 @@ export default class TaskPage extends Component {
         );
       }
       return (
-        <React.Fragment key={index}>
+        <React.Fragment key={'form-group' + index}>
           <Input
             key={controlName + index}
             id={controlName}
@@ -182,7 +173,7 @@ export default class TaskPage extends Component {
       <>
         <div className={!isOpen ? `task-wrap close` : `task-wrap`}>
           <h1 className='title'>{title}</h1>
-          <form className='task-form'>
+          <form onSubmit={this.submitHandler} className='task-form'>
             <h1 className='subtitle'>{name}</h1>
             <div className='form-group'>{this.renderInputs()}</div>
             <div className='form-group'>

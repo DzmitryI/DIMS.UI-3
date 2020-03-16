@@ -5,6 +5,7 @@ import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import { validateControl } from '../../services/helpers.js';
+import { clearOblectValue } from '../helpersPage';
 
 export default class MemberPage extends Component {
   state = {
@@ -185,20 +186,19 @@ export default class MemberPage extends Component {
 
   componentDidUpdate(prevProps) {
     const { member, directions } = this.props;
-
-    if (member.length > 0) {
+    const { direction } = this.state.memberSelect;
+    if (member.length) {
       const [{ userId, values }] = member;
-      if (this.state.memberSelect.direction.options.length === 0) {
+      if (direction.options.length === 0) {
         const memberSelect = { ...this.state.memberSelect };
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });
       }
-
       if (member !== prevProps.member) {
         const memberInput = { ...this.state.memberInput };
-        Object.entries(values).forEach(([key, val]) => {
+        Object.entries(values).forEach(([key, value]) => {
           if (memberInput[key]) {
-            memberInput[key].value = val;
+            memberInput[key].value = value;
             memberInput[key].touched = true;
             memberInput[key].valid = true;
           }
@@ -207,14 +207,14 @@ export default class MemberPage extends Component {
         Object.keys(memberSelect).forEach((key) => {
           if (key === 'direction') {
             memberSelect[key].options = directions;
-            memberSelect[key].options.forEach((el, index) => {
-              if (el.value === values.directionId) {
+            memberSelect[key].options.forEach((direction, index) => {
+              if (direction.value === values.directionId) {
                 memberSelect[key].options[index].selected = true;
               }
             });
           } else if (key === 'sex') {
-            memberSelect[key].options.forEach((el, index) => {
-              if (el.value === values.sex) {
+            memberSelect[key].options.forEach((sex, index) => {
+              if (sex.value === values.sex) {
                 memberSelect[key].options[index].selected = true;
               }
             });
@@ -254,52 +254,27 @@ export default class MemberPage extends Component {
   };
 
   createMemberHandler = async () => {
-    const { userId, member, directions } = this.state;
+    const { userId, member, memberInput, directions } = this.state;
     if (!userId) {
-      const getData = await this.fetchService.setMember(member);
-      console.log(getData.data);
+      const response = await this.fetchService.setMember(member);
+      if (response.statusText) {
+        alert(`add new member: ${member.name} ${member.lastName}`);
+      }
     } else {
-      const getData = await this.fetchService.editMember(userId, member);
-      console.log(getData.data);
+      const response = await this.fetchService.editMember(userId, member);
+      if (response.statusText) {
+        alert(`edit member: ${member.name} ${member.lastName}`);
+      }
     }
-    const { memberInput } = this.clearMemberInput();
-    this.setState({ member: '', memberInput, userId: '' });
+    const res = clearOblectValue(memberInput, member);
+    this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
     this.props.onRegisterClick(directions);
   };
 
-  clearMemberInput = () => {
-    const memberInput = { ...this.state.memberInput };
-    const member = { ...this.state.member };
-    Object.keys(memberInput).forEach((key) => {
-      if (memberInput[key] !== undefined) {
-        memberInput[key].value = '';
-        memberInput[key].touched = false;
-        memberInput[key].valid = false;
-        member[key] = '';
-      }
-    });
-    const res = {
-      memberInput,
-      member,
-    };
-
-    return res;
-  };
-
   buttonCloseClick = () => {
-    const { directions } = this.state;
-    const { memberInput, member } = this.clearMemberInput();
-    // const memberInput = { ...this.state.memberInput };
-    // const member = { ...this.state.member };
-    // Object.keys(memberInput).forEach((key) => {
-    //   if (memberInput[key] !== undefined) {
-    //     memberInput[key].value = '';
-    //     memberInput[key].touched = false;
-    //     memberInput[key].valid = false;
-    //     member[key] = '';
-    //   }
-    // });
-    this.setState({ memberInput, member, userId: '', isFormValid: false });
+    const { directions, memberInput, member } = this.state;
+    const res = clearOblectValue(memberInput, member);
+    this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '', isFormValid: false });
     this.props.onRegisterClick(directions);
   };
 

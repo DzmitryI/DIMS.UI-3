@@ -1,9 +1,9 @@
 import React from 'react';
 
 const HeaderTable = ({ arr }) => {
-  const renderItems = (arr) => {
-    return arr.map((el, index) => {
-      return <th key={index}>{el}</th>;
+  const renderItems = (headers) => {
+    return headers.map((header, index) => {
+      return <th key={header + index}>{header}</th>;
     });
   };
 

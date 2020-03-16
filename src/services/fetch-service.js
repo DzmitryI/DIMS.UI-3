@@ -37,7 +37,7 @@ export default class FetchService {
   getAllMember = async () => {
     const response = await this.getSource(`/UserProfile.json`);
     const members = [];
-    if (response.data) {
+    if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [userId, values] = key;
         members.push({
@@ -52,7 +52,7 @@ export default class FetchService {
   getAllTask = async () => {
     const response = await this.getSource(`/Task.json`);
     const tasks = [];
-    if (response.data) {
+    if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [taskId, values] = key;
         const { name, description, startDate, deadlineDate } = values;
@@ -71,7 +71,7 @@ export default class FetchService {
   getDirection = async () => {
     const response = await this.getSource(`/Direction.json`);
     const direction = [];
-    if (response.data) {
+    if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [value, { name }] = key;
         direction.push({
