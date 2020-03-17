@@ -43,6 +43,7 @@ export default class FetchService {
         members.push({
           userId,
           values,
+          fullName: `${values.name} ${values.lastName}`,
         });
       });
     }

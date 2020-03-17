@@ -4,7 +4,7 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
 import { createControl, validateControl } from '../../services/helpers.js';
-import { clearOblectValue } from '../helpersPage';
+import { clearOblectValue, updateInput } from '../helpersPage';
 
 export default class TaskPage extends Component {
   fetchService = new FetchService();
@@ -43,28 +43,28 @@ export default class TaskPage extends Component {
       deadlineDate: '',
     },
     taskId: null,
+    members: [],
   };
 
-  componentDidUpdate(prevProps) {
+  async componentDidMount() {
+    const members = await this.fetchService.getAllMember();
+    this.setState({ members });
+  }
+
+  async componentDidUpdate(prevProps) {
     const { task } = this.props;
     if (task.length) {
       const [value] = task;
       const { taskId, ...values } = value;
       if (task !== prevProps.task) {
-        const taskInput = { ...this.state.taskInput };
-        Object.entries(values).forEach(([key, value]) => {
-          if (taskInput[key]) {
-            taskInput[key].value = value;
-            taskInput[key].touched = true;
-            taskInput[key].valid = true;
-          }
-        });
-        this.setState({ taskInput, taskId, isFormValid: true, task: values });
+        const members = await this.fetchService.getAllMember();
+        const taskInput = updateInput(this.state.taskInput, values);
+        this.setState({ taskInput, taskId, isFormValid: true, task: values, members });
       }
     }
   }
 
-  handleImput = ({ target: { value } }, controlName) => {
+  handleInput = ({ target: { value } }, controlName) => {
     const taskInput = { ...this.state.taskInput };
     const task = { ...this.state.task };
     taskInput[controlName].value = value;
@@ -144,7 +144,7 @@ export default class TaskPage extends Component {
             label={control.label}
             errorMessage={control.errorMessage}
             shouldValidation={!!control.validation}
-            onChange={(event) => this.handleImput(event, controlName)}
+            onChange={(event) => this.handleInput(event, controlName)}
           />
           {textArea}
         </React.Fragment>
@@ -152,12 +152,24 @@ export default class TaskPage extends Component {
     });
   }
 
+  renderCheckbox = () => {
+    const { members } = this.state;
+    return members.map((member) => {
+      return (
+        <label key={member.userId}>
+          <input type='checkbox' className='checkbox' id={member.userId} value={member.userId} />
+          {member.fullName}
+        </label>
+      );
+    });
+  };
+
   render() {
     const { isOpen, title } = this.props;
     const { name } = this.state.task;
     return (
       <>
-        <div className={!isOpen ? `page-wrap close` : `page-wrap`}>
+        <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             <h1 className='subtitle'>{name}</h1>
@@ -165,14 +177,7 @@ export default class TaskPage extends Component {
             <div className='form-group'>
               <label htmlFor='members'>Members</label>
               <div id='members' className='column'>
-                <label>
-                  <input type='checkbox' value='Авиамоторная' />
-                  Авиамоторная
-                </label>
-                <label>
-                  <input type='checkbox' value='Автозаводская' />
-                  Автозаводская
-                </label>
+                {this.renderCheckbox()}
               </div>
             </div>
             <div className='form-group row'>

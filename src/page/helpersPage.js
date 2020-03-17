@@ -25,4 +25,15 @@ function clearOblectValue(objInput, objElem) {
   return res;
 }
 
-export { clearOblectValue };
+function updateInput(objInput, objValues) {
+  const objInputUpdate = { ...objInput };
+  Object.entries(objValues).forEach(([key, value]) => {
+    if (objInputUpdate[key]) {
+      objInputUpdate[key].value = value;
+      objInputUpdate[key].touched = true;
+      objInputUpdate[key].valid = true;
+    }
+  });
+  return objInputUpdate;
+}
+export { clearOblectValue, updateInput };

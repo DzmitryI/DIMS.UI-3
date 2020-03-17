@@ -5,7 +5,7 @@ import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import { createControl, validateControl } from '../../services/helpers.js';
-import { clearOblectValue } from '../helpersPage';
+import { clearOblectValue, updateInput } from '../helpersPage';
 
 export default class MemberPage extends Component {
   state = {
@@ -96,10 +96,12 @@ export default class MemberPage extends Component {
     memberSelect: {
       direction: {
         label: 'Direction',
+        name: 'direction',
         options: [],
       },
       sex: {
         label: 'Sex',
+        name: 'sex',
         options: [
           {
             name: 'Male',
@@ -135,7 +137,7 @@ export default class MemberPage extends Component {
 
   componentDidUpdate(prevProps) {
     const { member, directions } = this.props;
-    const { direction } = this.state.memberSelect;
+    const { direction, sex } = this.state.memberSelect;
     if (member.length) {
       const [{ userId, values }] = member;
       if (direction.options.length === 0) {
@@ -144,24 +146,17 @@ export default class MemberPage extends Component {
         this.setState({ memberSelect });
       }
       if (member !== prevProps.member) {
-        const memberInput = { ...this.state.memberInput };
-        Object.entries(values).forEach(([key, value]) => {
-          if (memberInput[key]) {
-            memberInput[key].value = value;
-            memberInput[key].touched = true;
-            memberInput[key].valid = true;
-          }
-        });
+        const memberInput = updateInput(this.state.memberInput, values);
         const memberSelect = { ...this.state.memberSelect };
         Object.keys(memberSelect).forEach((key) => {
-          if (key === 'direction') {
+          if (key === direction.name) {
             memberSelect[key].options = directions;
             memberSelect[key].options.forEach((direction, index) => {
               if (direction.value === values.directionId) {
                 memberSelect[key].options[index].selected = true;
               }
             });
-          } else if (key === 'sex') {
+          } else if (key === sex.name) {
             memberSelect[key].options.forEach((sex, index) => {
               if (sex.value === values.sex) {
                 memberSelect[key].options[index].selected = true;
@@ -174,7 +169,7 @@ export default class MemberPage extends Component {
     }
   }
 
-  handleImput = ({ target: { value } }, controlName) => {
+  handleInput = ({ target: { value } }, controlName) => {
     const memberInput = { ...this.state.memberInput };
     const member = { ...this.state.member };
     memberInput[controlName].value = value;
@@ -190,7 +185,8 @@ export default class MemberPage extends Component {
 
   handleSelect = ({ target }) => {
     const member = { ...this.state.member };
-    if (target.id === 'direction') {
+    const { direction } = this.state.memberSelect;
+    if (target.id === direction.name) {
       member['directionId'] = target.options[target.selectedIndex].value;
     } else {
       member[target.id] = target.options[target.selectedIndex].value;
@@ -241,20 +237,21 @@ export default class MemberPage extends Component {
           label={control.label}
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
-          onChange={(event) => this.handleImput(event, controlName)}
+          onChange={(event) => this.handleInput(event, controlName)}
         />
       );
     });
   }
 
   renderSelect() {
+    const { direction } = this.state.memberSelect;
     return Object.keys(this.state.memberSelect).map((controlName) => {
       const control = this.state.memberSelect[controlName];
       let defaultValue = false;
       let options = [];
       const { directions } = this.props;
       const member = { ...this.state.member };
-      if (controlName === 'direction') {
+      if (controlName === direction.name) {
         defaultValue = member.directionId;
         options = directions;
       } else {
@@ -280,7 +277,7 @@ export default class MemberPage extends Component {
     const { isOpen, title } = this.props;
     return (
       <>
-        <div className={!isOpen ? `page-wrap close` : `page-wrap`}>
+        <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
