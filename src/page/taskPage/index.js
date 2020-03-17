@@ -1,5 +1,5 @@
 import TaskPage from './taskPage';
 
-import './taskPage.scss';
+import '../page.scss';
 
 export default TaskPage;

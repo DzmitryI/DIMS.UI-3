@@ -1,4 +1,4 @@
-.member-wrap {
+.page-wrap {
   display: block;
   width: 90%;
   margin: 0 auto;
@@ -10,11 +10,7 @@
   right: 0;
 }
 
-.close {
-  display: none;
-}
-
-.member-form {
+.page-form {
   max-width: 650px;
   width: 70%;
   border: 1px solid black;
@@ -23,19 +19,22 @@
   background-color: rgba(240, 248, 255, 1);
 }
 
-.subtitle {
-  text-align: center;
-  height: 40px;
+.close {
+  display: none;
 }
 
-.row {
-  justify-content: space-evenly;
+.column {
+  width: 200px;
+  height: 100px;
+  overflow: auto;
+  border: solid 1px #c3e4fe;
+  background: white;
 }
 
-select {
+textarea {
   display: block;
   width: 100%;
-  margin: 0 1em;
+  margin: 0 1rem;
   font-size: inherit;
   outline: none;
 }

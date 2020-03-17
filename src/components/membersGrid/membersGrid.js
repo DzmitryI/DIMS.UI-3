@@ -79,7 +79,7 @@ export default class MembersGrid extends Component {
       return <Spinner />;
     }
     return (
-      <div className={`members-wrap ${isOpen ? 'close' : ''}`}>
+      <div className={`grid-wrap ${isOpen ? 'close' : ''}`}>
         <h1>Members Manage Grid</h1>
         <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
         <table border='1'>

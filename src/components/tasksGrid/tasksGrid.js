@@ -62,7 +62,7 @@ export default class TasksGrid extends Component {
       return <Spinner />;
     }
     return (
-      <div className={'tasks-wrap'}>
+      <div className={'grid-wrap'}>
         <h1>Tasks Manage Grid</h1>
         <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
         <table border='1'>

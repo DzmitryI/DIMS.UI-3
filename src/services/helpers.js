@@ -18,4 +18,14 @@ function validateControl(value, validation) {
   return isValid;
 }
 
-export { validateControl };
+function createControl(config, validation) {
+  return {
+    ...config,
+    validation,
+    valid: !validation,
+    touched: false,
+    value: '',
+  };
+}
+
+export { validateControl, createControl };

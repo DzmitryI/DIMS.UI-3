@@ -1,37 +1,29 @@
 import React, { Component } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import { validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers.js';
 import axios from 'axios';
 
 export default class Auth extends Component {
   state = {
     isFormValid: false,
     authInput: {
-      email: {
-        value: '',
-        type: 'email',
-        label: 'Email',
-        errorMessage: 'enter email',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          email: true,
+      email: createControl(
+        {
+          label: 'Email',
+          errorMessage: 'enter correct email',
+          type: 'email',
         },
-      },
-      password: {
-        value: '',
-        type: 'password',
-        label: 'Password',
-        errorMessage: 'Enter password',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          minLenght: 6,
+        { required: true, email: true },
+      ),
+      password: createControl(
+        {
+          label: 'Password',
+          errorMessage: 'enter password',
+          type: 'password',
         },
-      },
+        { required: true, minLenght: 6 },
+      ),
     },
     authData: {
       email: '',
@@ -81,8 +73,9 @@ export default class Auth extends Component {
   };
 
   renderInputs() {
-    return Object.keys(this.state.authInput).map((controlName, index) => {
-      const control = this.state.authInput[controlName];
+    const { authInput } = this.state;
+    return Object.keys(authInput).map((controlName, index) => {
+      const control = authInput[controlName];
       return (
         <Input
           key={controlName + index}

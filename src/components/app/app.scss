@@ -42,6 +42,11 @@ caption {
   text-align: center;
 }
 
+.subtitle {
+  text-align: center;
+  height: 40px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -68,10 +73,22 @@ td {
   }
 }
 
+.grid-wrap {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  padding: 30px 0;
+  z-index: 100;
+}
+
 .buttons-wrap {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
   height: 100%;
   padding: 0;
+}
+
+.row {
+  justify-content: space-evenly;
 }

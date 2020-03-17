@@ -7,7 +7,7 @@ export default class MemberTasksGrid extends Component {
   render() {
     const { isOpen, title } = this.props;
     return (
-      <div className={`tasks-wrap ${isOpen ? 'close' : ''}`}>
+      <div className={`grid-wrap ${isOpen ? 'close' : ''}`}>
         <h1>Member's Tasks Manage Grid</h1>
         <table border='1'>
           <caption>{`Hi, dear ${title}! This is your current tasks:`}</caption>

@@ -4,145 +4,94 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
-import { validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue } from '../helpersPage';
 
 export default class MemberPage extends Component {
   state = {
     isFormValid: false,
     memberInput: {
-      name: {
-        value: '',
-        type: 'text',
-        label: 'Name',
-        errorMessage: 'enter user name',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          name: true,
+      name: createControl(
+        {
+          label: 'Name',
+          errorMessage: 'enter user name',
         },
-      },
-      lastName: {
-        value: '',
-        type: 'text',
-        label: 'Last name',
-        errorMessage: 'enter user last name',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          lastName: true,
+        { required: true },
+      ),
+      lastName: createControl(
+        {
+          label: 'Last name',
+          errorMessage: 'enter user last name',
         },
-      },
-      email: {
-        value: '',
-        type: 'text',
-        label: 'Email',
-        errorMessage: 'Enter email',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          email: true,
+        { required: true },
+      ),
+      email: createControl(
+        {
+          label: 'Email',
+          errorMessage: 'enter correct email',
         },
-      },
-      education: {
-        value: '',
-        type: 'text',
-        label: 'Education',
-        errorMessage: 'Enter education',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          education: true,
+        { required: true, email: true },
+      ),
+      education: createControl(
+        {
+          label: 'Education',
+          errorMessage: 'enter education',
         },
-      },
-      birthDate: {
-        value: '',
-        type: 'date',
-        label: 'Bith date',
-        errorMessage: 'Enter bith date',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          birthDate: true,
+        { required: true },
+      ),
+      birthDate: createControl(
+        {
+          label: 'Bith date',
+          errorMessage: 'enter bith date',
+          type: 'date',
         },
-      },
-      universityAverageScore: {
-        value: '',
-        type: 'number',
-        label: 'University average score',
-        errorMessage: 'Enter university average score',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          universityAverageScore: true,
+        { required: true },
+      ),
+      universityAverageScore: createControl(
+        {
+          label: 'University average score',
+          errorMessage: 'enter university average score',
+          type: 'number',
         },
-      },
-      mathScore: {
-        value: '',
-        type: 'number',
-        label: 'Math score',
-        errorMessage: 'Enter math score',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          mathScore: true,
+        { required: true },
+      ),
+      mathScore: createControl(
+        {
+          label: 'Math score',
+          errorMessage: 'enter math score',
+          type: 'number',
         },
-      },
-      address: {
-        value: '',
-        type: 'text',
-        label: 'Address',
-        errorMessage: 'Enter address',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          address: true,
+        { required: true },
+      ),
+      address: createControl(
+        {
+          label: 'Address',
+          errorMessage: 'enter address',
         },
-      },
-      mobilePhone: {
-        value: '',
-        type: 'text',
-        label: 'Mobile phone',
-        errorMessage: 'Enter mobile phone',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          mobilePhone: true,
+        { required: true },
+      ),
+      mobilePhone: createControl(
+        {
+          label: 'Mobile phone',
+          errorMessage: 'enter mobile phone',
         },
-      },
-      skype: {
-        value: '',
-        type: 'text',
-        label: 'Skype',
-        errorMessage: 'Enter skype',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          skype: true,
+        { required: true },
+      ),
+      skype: createControl(
+        {
+          label: 'Skype',
+          errorMessage: 'enter skype',
         },
-      },
-      startDate: {
-        value: '',
-        type: 'date',
-        label: 'Start date',
-        errorMessage: 'Enter start date',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          startDate: true,
+        { required: true },
+      ),
+      startDate: createControl(
+        {
+          label: 'Start date',
+          errorMessage: 'enter start date',
+          type: 'date',
         },
-      },
+        { required: true },
+      ),
     },
     memberSelect: {
       direction: {
@@ -331,9 +280,9 @@ export default class MemberPage extends Component {
     const { isOpen, title } = this.props;
     return (
       <>
-        <div className={!isOpen ? `member-wrap close` : `member-wrap`}>
+        <div className={!isOpen ? `page-wrap close` : `page-wrap`}>
           <h1 className='title'>{title}</h1>
-          <form onSubmit={this.submitHandler} className='member-form'>
+          <form onSubmit={this.submitHandler} className='page-form'>
             <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
             {this.renderInputs()}
             {this.renderSelect()}

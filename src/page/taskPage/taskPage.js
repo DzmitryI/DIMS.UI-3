@@ -3,7 +3,7 @@ import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
-import { validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue } from '../helpersPage';
 
 export default class TaskPage extends Component {
@@ -12,42 +12,29 @@ export default class TaskPage extends Component {
   state = {
     isFormValid: false,
     taskInput: {
-      name: {
-        value: '',
-        type: 'text',
-        label: 'Task name',
-        errorMessage: 'enter task name',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          name: true,
+      name: createControl(
+        {
+          label: 'Task name',
+          errorMessage: 'enter task name',
         },
-      },
-      startDate: {
-        value: '',
-        type: 'date',
-        label: 'Start',
-        errorMessage: 'Enter start date',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          startDate: true,
+        { required: true },
+      ),
+      startDate: createControl(
+        {
+          type: 'date',
+          label: 'Start',
+          errorMessage: 'Enter start date',
         },
-      },
-      deadlineDate: {
-        value: '',
-        type: 'date',
-        label: 'Deadline',
-        errorMessage: 'Enter deadline',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          deadlineDate: true,
+        { required: true },
+      ),
+      deadlineDate: createControl(
+        {
+          type: 'date',
+          label: 'Deadline',
+          errorMessage: 'Enter deadline',
         },
-      },
+        { required: true },
+      ),
     },
     task: {
       name: '',
@@ -138,7 +125,6 @@ export default class TaskPage extends Component {
             <textarea
               id='description'
               name='description'
-              // cols='54'
               value={description}
               rows='7'
               onChange={this.handleTextArea}
@@ -171,9 +157,9 @@ export default class TaskPage extends Component {
     const { name } = this.state.task;
     return (
       <>
-        <div className={!isOpen ? `task-wrap close` : `task-wrap`}>
+        <div className={!isOpen ? `page-wrap close` : `page-wrap`}>
           <h1 className='title'>{title}</h1>
-          <form onSubmit={this.submitHandler} className='task-form'>
+          <form onSubmit={this.submitHandler} className='page-form'>
             <h1 className='subtitle'>{name}</h1>
             <div className='form-group'>{this.renderInputs()}</div>
             <div className='form-group'>
