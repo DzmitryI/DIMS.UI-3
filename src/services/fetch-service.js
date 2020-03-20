@@ -44,6 +44,7 @@ export default class FetchService {
           userId,
           values,
           fullName: `${values.name} ${values.lastName}`,
+          checked: false,
         });
       });
     }
@@ -69,6 +70,40 @@ export default class FetchService {
     return tasks;
   };
 
+  getAllUserTasks = async () => {
+    const response = await this.getSource(`/UserTask.json`);
+    const userTasks = [];
+    if (response && response.data) {
+      Object.entries(response.data).forEach((key) => {
+        const [userTaskId, values] = key;
+        const { taskId, userId, stateId } = values;
+        userTasks.push({
+          userTaskId,
+          taskId,
+          userId,
+          stateId,
+        });
+      });
+    }
+    return userTasks;
+  };
+
+  getTaskState = async () => {
+    const response = await this.getSource(`/TaskState.json`);
+    const tasksState = [];
+    if (response && response.data) {
+      Object.entries(response.data).forEach((key) => {
+        const [stateId, values] = key;
+        const { stateName } = values;
+        tasksState.push({
+          stateId,
+          stateName,
+        });
+      });
+    }
+    return tasksState;
+  };
+
   getDirection = async () => {
     const response = await this.getSource(`/Direction.json`);
     const direction = [];
@@ -92,6 +127,14 @@ export default class FetchService {
     return await this.setSource(`/Task.json`, body);
   };
 
+  setUserTask = async (body) => {
+    return await this.setSource(`/UserTask.json`, body);
+  };
+
+  setTaskState = async (body) => {
+    return await this.setSource(`/TaskState.json`, body);
+  };
+
   editMember = async (memberId, body) => {
     return await this.editSource(`/UserProfile/${memberId}.json`, body);
   };
@@ -106,5 +149,13 @@ export default class FetchService {
 
   delTask = async (taskId) => {
     return await this.deleteSource(`/Task/${taskId}.json`);
+  };
+
+  delUserTask = async (userTaskId) => {
+    return await this.deleteSource(`/UserTask/${userTaskId}.json`);
+  };
+
+  delTaskState = async (taskStateId) => {
+    return await this.deleteSource(`/TaskState/${taskStateId}.json`);
   };
 }

@@ -3,12 +3,12 @@ import FetchService from '../../services/fetch-service';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
+import Spinner from '../../components/spinner';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 
+const fetchService = new FetchService();
 export default class TaskPage extends Component {
-  fetchService = new FetchService();
-
   state = {
     isFormValid: false,
     taskInput: {
@@ -43,12 +43,68 @@ export default class TaskPage extends Component {
       deadlineDate: '',
     },
     taskId: null,
+    loading: true,
     members: [],
+    userTasks: [],
+  };
+
+  taskState = {
+    stateName: 'Active',
+  };
+
+  updateTaskMembers = async (taskId) => {
+    const members = await fetchService.getAllMember();
+    const userTasks = await fetchService.getAllUserTasks();
+    if (userTasks.length) {
+      userTasks.forEach((userTask) => {
+        if (userTask.taskId === taskId) {
+          const index = members.findIndex((member) => member.userId === userTask.userId);
+          members[index].checked = true;
+        }
+      });
+    }
+    this.setState({ userTasks });
+    return members;
+  };
+
+  checkTaskMembers = async (taskId) => {
+    const { members, userTasks } = this.state;
+    if (members.length) {
+      for (const member of members) {
+        const index = userTasks.findIndex(
+          (userTask) => userTask.userId === member.userId && userTask.taskId === taskId,
+        );
+        if (index !== -1 && !member.checked) {
+          const response1 = await fetchService.delUserTask(userTasks[index].userTaskId);
+          if (response1.statusText) {
+            console.log(`del user task`);
+          }
+          const response2 = await fetchService.delTaskState(userTasks[index].stateId);
+          if (response2.statusText) {
+            console.log(`del task state`);
+          }
+        } else if (index === -1 && member.checked) {
+          const response1 = await fetchService.setTaskState(this.taskState);
+          if (response1.statusText) {
+            console.log(`add task state`);
+          }
+          const response2 = await fetchService.setUserTask({
+            userId: member.userId,
+            taskId,
+            stateId: response1.data.name,
+          });
+          if (response2.statusText) {
+            console.log(`add user task`);
+          }
+        }
+      }
+    }
+    return members;
   };
 
   async componentDidMount() {
-    const members = await this.fetchService.getAllMember();
-    this.setState({ members });
+    const members = await fetchService.getAllMember();
+    this.setState({ members, loading: false });
   }
 
   async componentDidUpdate(prevProps) {
@@ -57,16 +113,16 @@ export default class TaskPage extends Component {
       const [value] = task;
       const { taskId, ...values } = value;
       if (task !== prevProps.task) {
-        const members = await this.fetchService.getAllMember();
         const taskInput = updateInput(this.state.taskInput, values);
-        this.setState({ taskInput, taskId, isFormValid: true, task: values, members });
+        const members = await this.updateTaskMembers(taskId);
+        // const userTasks
+        this.setState({ taskInput, taskId, isFormValid: true, task: values, members, loading: false });
       }
     }
   }
 
   handleInput = ({ target: { value } }, controlName) => {
-    const taskInput = { ...this.state.taskInput };
-    const task = { ...this.state.task };
+    const { taskInput, task } = this.state;
     taskInput[controlName].value = value;
     taskInput[controlName].touched = true;
     taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
@@ -79,37 +135,78 @@ export default class TaskPage extends Component {
   };
 
   handleTextArea = ({ target: { id, value } }) => {
-    const task = { ...this.state.task };
+    const { task } = this.state;
     task[id] = value;
     this.setState({ task });
+  };
+
+  handleCheckbox = ({ target }) => {
+    const members = [...this.state.members];
+    Object.values(members).forEach((member) => {
+      if (member.userId === target.id) member.checked = target.checked;
+    });
+    this.setState({ members });
   };
 
   submitHandler = (event) => {
     event.preventDefault();
   };
 
+  createTaskState = async () => {
+    const { members, taskId } = this.state;
+    const addMembersTask = [];
+    for (const member of members) {
+      if (member.checked) {
+        const response = await fetchService.setTaskState(this.taskState);
+        if (response.statusText) {
+          addMembersTask.push({ userId: member.userId, taskId, stateId: response.data.name });
+        }
+      }
+    }
+    return addMembersTask;
+  };
+
   createTaskHandler = async () => {
     const { taskId, task, taskInput } = this.state;
+    this.setState({ loading: false });
     if (!taskId) {
-      const response = await this.fetchService.setTask(task);
+      const response = await fetchService.setTask(task);
       if (response.statusText) {
         alert(`add new task: ${task.name}`);
+        this.setState({ taskId: response.data.name });
+      }
+      const addMembersTask = await this.createTaskState();
+      if (addMembersTask.length) {
+        for (const addMemberTask of addMembersTask) {
+          const response = await fetchService.setUserTask(addMemberTask);
+          if (response.statusText) {
+            console.log(`add user task: ${task.name}`);
+          }
+        }
       }
     } else {
-      const response = await this.fetchService.editTask(taskId, task);
+      const response = await fetchService.editTask(taskId, task);
+      this.checkTaskMembers(taskId);
       if (response.statusText) {
         alert(`edit task: ${task.name}`);
       }
     }
     const res = clearOblectValue(taskInput, task);
-    this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '' });
+    this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', members: [] });
     this.props.onCreateTaskClick();
   };
 
   buttonCloseClick = () => {
     const { task, taskInput } = this.state;
     const res = clearOblectValue(taskInput, task);
-    this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', isFormValid: false });
+    this.setState({
+      taskInput: res.objInputClear,
+      task: res.objElemClear,
+      taskId: '',
+      isFormValid: false,
+      loading: true,
+      members: [],
+    });
     this.props.onCreateTaskClick();
   };
 
@@ -153,11 +250,18 @@ export default class TaskPage extends Component {
   }
 
   renderCheckbox = () => {
-    const { members } = this.state;
+    const members = [...this.state.members];
     return members.map((member) => {
       return (
         <label key={member.userId}>
-          <input type='checkbox' className='checkbox' id={member.userId} value={member.userId} />
+          <input
+            type='checkbox'
+            className='checkbox'
+            id={member.userId}
+            value={member.userId}
+            onClick={this.handleCheckbox}
+            defaultChecked={member.checked}
+          />
           {member.fullName}
         </label>
       );
@@ -166,7 +270,10 @@ export default class TaskPage extends Component {
 
   render() {
     const { isOpen, title } = this.props;
-    const { name } = this.state.task;
+    const {
+      task: { name },
+      loading,
+    } = this.state;
     return (
       <>
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
@@ -175,10 +282,16 @@ export default class TaskPage extends Component {
             <h1 className='subtitle'>{name}</h1>
             <div className='form-group'>{this.renderInputs()}</div>
             <div className='form-group'>
-              <label htmlFor='members'>Members</label>
-              <div id='members' className='column'>
-                {this.renderCheckbox()}
-              </div>
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  <label htmlFor='members'>Members</label>
+                  <div id='members' className='column'>
+                    {this.renderCheckbox()}
+                  </div>
+                </>
+              )}
             </div>
             <div className='form-group row'>
               <Button
