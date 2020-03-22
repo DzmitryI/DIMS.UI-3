@@ -1,22 +1,25 @@
 import React from 'react';
 
-const Input = (props) => {
-  const inputType = props.type || 'text';
-  const htmlFor = inputType + Math.random();
-  const cls = ['form-group'];
-  function isInvalid({ valid, touched, shouldValidation }) {
+const Input = ({
+  type = 'text',
+  autocomplete = 'on',
+  id,
+  valid,
+  touched,
+  shouldValidation,
+  label,
+  value,
+  onChange,
+  errorMessage,
+}) => {
+  function isInvalid(valid, touched, shouldValidation) {
     return !valid && touched && shouldValidation;
   }
-
-  if (isInvalid(props)) {
-    cls.push('invalid');
-  }
-
   return (
-    <div className={cls.join(' ')}>
-      <label htmlFor={htmlFor}>{props.label}</label>
-      <input type={inputType} id={htmlFor} value={props.value} onChange={props.onChange} />
-      {isInvalid(props) ? <span>{props.errorMessage}</span> : null}
+    <div className={isInvalid(valid, touched, shouldValidation) ? `form-group invalid` : `form-group`}>
+      <label htmlFor={id}>{label}</label>
+      <input type={type} id={id} value={value} onChange={onChange} autoComplete={autocomplete} />
+      {isInvalid(valid, touched, shouldValidation) ? <span>{errorMessage}</span> : null}
     </div>
   );
 };

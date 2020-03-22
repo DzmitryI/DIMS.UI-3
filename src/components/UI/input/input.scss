@@ -7,7 +7,7 @@
 
 label {
   display: block;
-  margin: 0 1em;
+  margin: 0 1rem;
   font-size: inherit;
   font-weight: bold;
 }
@@ -16,10 +16,14 @@ label {
   color: rgb(223, 18, 18);
 }
 
+.invalid input {
+  border: 1px solid rgb(223, 18, 18);
+}
+
 input {
   display: block;
   width: 100%;
-  margin: 0 1em;
+  margin: 0 1rem;
   font-size: inherit;
   outline: none;
 }
@@ -29,5 +33,5 @@ span {
   font-size: 12px;
   font-weight: bold;
   display: block;
-  margin: 0 1em;
+  margin: 0 1rem;
 }
