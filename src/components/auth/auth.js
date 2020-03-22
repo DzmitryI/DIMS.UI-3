@@ -59,6 +59,7 @@ export default class Auth extends Component {
     event.preventDefault();
   };
 
+  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
     const authData = { ...this.state.authData };
@@ -88,7 +89,7 @@ export default class Auth extends Component {
           label={control.label}
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
-          onChange={(event) => this.handleInput(event, controlName)}
+          onChange={this.onHandlelInput(controlName)}
         />
       );
     });

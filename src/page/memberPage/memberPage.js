@@ -169,6 +169,7 @@ export default class MemberPage extends Component {
     }
   }
 
+  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
     const memberInput = { ...this.state.memberInput };
     const member = { ...this.state.member };
@@ -237,7 +238,7 @@ export default class MemberPage extends Component {
           label={control.label}
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
-          onChange={(event) => this.handleInput(event, controlName)}
+          onChange={this.onHandlelInput(controlName)}
         />
       );
     });

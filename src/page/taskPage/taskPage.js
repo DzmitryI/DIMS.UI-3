@@ -120,6 +120,7 @@ export default class TaskPage extends Component {
     }
   }
 
+  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
     const { taskInput, task } = this.state;
     taskInput[controlName].value = value;
@@ -240,7 +241,7 @@ export default class TaskPage extends Component {
             label={control.label}
             errorMessage={control.errorMessage}
             shouldValidation={!!control.validation}
-            onChange={(event) => this.handleInput(event, controlName)}
+            onChange={this.onHandlelInput(controlName)}
           />
           {textArea}
         </React.Fragment>
