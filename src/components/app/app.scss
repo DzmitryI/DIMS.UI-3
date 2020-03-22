@@ -15,6 +15,7 @@ main {
   flex-wrap: wrap;
   flex-direction: column;
   align-content: center;
+  height: 100vh;
 }
 
 h1 {
@@ -91,4 +92,8 @@ td {
 
 .row {
   justify-content: space-evenly;
+}
+
+.close {
+  display: none;
 }

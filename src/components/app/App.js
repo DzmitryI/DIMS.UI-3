@@ -12,12 +12,22 @@ import Auth from '../auth';
 export default class App extends Component {
   state = {
     isRegister: false,
+    login: false,
     isTask: false,
+    isMemberTasks: false,
     titleMember: '',
     titleTask: '',
+    fullName: '',
     curMember: [],
+    userId: null,
     curTask: [],
     directions: [],
+  };
+
+  onLoginHandler = (data) => {
+    if (data.registered) {
+      this.setState({ login: !this.state.login });
+    }
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
@@ -29,13 +39,6 @@ export default class App extends Component {
     });
   };
 
-  onTaskClickHandler = (title) => {
-    this.setState({
-      isTask: !this.state.isTask,
-      titleTask: title,
-    });
-  };
-
   onCreateTaskClickHandler = (title = '', task = []) => {
     this.setState({
       isTask: !this.state.isTask,
@@ -44,37 +47,61 @@ export default class App extends Component {
     });
   };
 
+  onTaskClickHandler = (userId, fullName) => {
+    this.setState({
+      isMemberTasks: !this.state.isMemberTasks,
+      userId,
+      fullName,
+    });
+  };
+
   mainPage = () => {
     return <h2>Welcome to DIMS</h2>;
   };
 
   render() {
-    const { isRegister, isTask, titleMember, titleTask, curMember, curTask, directions } = this.state;
+    const {
+      login,
+      isRegister,
+      isTask,
+      isMemberTasks,
+      titleMember,
+      titleTask,
+      fullName,
+      curMember,
+      userId,
+      curTask,
+      directions,
+    } = this.state;
     return (
       <Layout>
-        <Header />
-        <Auth />
-        <Switch>
-          <Route path='/' render={this.mainPage} exact />
-          <Route
-            path='/MembersGrid'
-            render={(props) => (
-              <MembersGrid
-                {...props}
-                onRegisterClick={this.onRegisterClickHandler}
-                onTaskClick={this.onTaskClickHandler}
-                isRegister={isRegister}
+        {login ? (
+          <Auth onloginHandler={this.onLoginHandler} />
+        ) : (
+          <>
+            <Header />
+            <Switch>
+              <Route path='/' render={this.mainPage} exact />
+              <Route
+                path='/MembersGrid'
+                render={(props) => (
+                  <MembersGrid
+                    {...props}
+                    onRegisterClick={this.onRegisterClickHandler}
+                    onTaskClick={this.onTaskClickHandler}
+                    isRegister={isRegister}
+                  />
+                )}
               />
-            )}
-          />
-          <Route
-            path='/TasksGrid'
-            render={(props) => (
-              <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isTask={isTask} />
-            )}
-          />
-          <Route path='/MemberTasksGrid' render={(props) => <MemberTasksGrid {...props} title={titleTask} />} />
-        </Switch>
+              <Route
+                path='/TasksGrid'
+                render={(props) => (
+                  <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+                )}
+              />
+            </Switch>
+          </>
+        )}
         <MemberPage
           onRegisterClick={this.onRegisterClickHandler}
           isOpen={isRegister}
@@ -83,6 +110,7 @@ export default class App extends Component {
           directions={directions}
         />
         <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={titleTask} task={curTask} />
+        <MemberTasksGrid isOpen={isMemberTasks} userId={userId} fullName={fullName} />
       </Layout>
     );
   }

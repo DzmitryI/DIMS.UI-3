@@ -10,6 +10,7 @@ export default class MembersGrid extends Component {
     members: [],
     directions: [],
     loading: true,
+    isOpen: true,
   };
 
   fetchService = new FetchService();
@@ -59,27 +60,30 @@ export default class MembersGrid extends Component {
   onDeleteClick = async ({ target }) => {
     const memberId = target.closest('tr').id;
     const [member] = this.state.members.filter((member) => member.userId === memberId);
-    const {
-      values: { name, lastName },
-    } = member;
+    const { fullName } = member;
     const response = await this.fetchService.delMember(memberId);
     if (response.statusText) {
-      alert(`${name} ${lastName} was deleted`);
+      alert(`${fullName} was deleted`);
     }
     const members = await this.fetchService.getAllMember();
     this.setState({ members });
   };
 
-  onShowClick = () => {};
+  onShowClick = ({ target }) => {
+    const memberId = target.closest('tr').id;
+    const [member] = this.state.members.filter((member) => member.userId === memberId);
+    const { fullName } = member;
+    this.setState({ isOpen: !this.state.isOpen });
+    this.props.onTaskClick(memberId, fullName);
+  };
 
   render() {
-    const { members, directions, loading } = this.state;
-    const { isOpen } = this.props;
+    const { members, directions, loading, isOpen } = this.state;
     if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={`grid-wrap ${isOpen ? 'close' : ''}`}>
+      <div className={`grid-wrap ${isOpen ? '' : 'close'}`}>
         <h1>Members Manage Grid</h1>
         <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
         <table border='1'>

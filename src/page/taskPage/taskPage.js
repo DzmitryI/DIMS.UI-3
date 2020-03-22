@@ -75,25 +75,25 @@ export default class TaskPage extends Component {
           (userTask) => userTask.userId === member.userId && userTask.taskId === taskId,
         );
         if (index !== -1 && !member.checked) {
-          const response1 = await fetchService.delUserTask(userTasks[index].userTaskId);
-          if (response1.statusText) {
+          const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
+          if (responseUserTask.statusText) {
             console.log(`del user task`);
           }
-          const response2 = await fetchService.delTaskState(userTasks[index].stateId);
-          if (response2.statusText) {
+          const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
+          if (responseTaskState.statusText) {
             console.log(`del task state`);
           }
         } else if (index === -1 && member.checked) {
-          const response1 = await fetchService.setTaskState(this.taskState);
-          if (response1.statusText) {
+          const responseTaskState = await fetchService.setTaskState(this.taskState);
+          if (responseTaskState.statusText) {
             console.log(`add task state`);
           }
-          const response2 = await fetchService.setUserTask({
+          const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
             taskId,
-            stateId: response1.data.name,
+            stateId: responseTaskState.data.name,
           });
-          if (response2.statusText) {
+          if (responseUserTask.statusText) {
             console.log(`add user task`);
           }
         }
@@ -115,7 +115,6 @@ export default class TaskPage extends Component {
       if (task !== prevProps.task) {
         const taskInput = updateInput(this.state.taskInput, values);
         const members = await this.updateTaskMembers(taskId);
-        // const userTasks
         this.setState({ taskInput, taskId, isFormValid: true, task: values, members, loading: false });
       }
     }

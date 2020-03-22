@@ -38,7 +38,8 @@ export default class Auth extends Component {
     const { authData } = this.state;
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL_SIGNIN}${this.API_Key}`, authData);
-      console.log(response);
+      console.log(response.data);
+      this.props.onloginHandler(response.data);
     } catch (err) {
       console.log(err);
     }

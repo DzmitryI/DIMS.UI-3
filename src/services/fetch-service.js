@@ -70,6 +70,11 @@ export default class FetchService {
     return tasks;
   };
 
+  getTask = async (id) => {
+    const response = await this.getSource(`/Task/${id}.json`);
+    return response;
+  };
+
   getAllUserTasks = async () => {
     const response = await this.getSource(`/UserTask.json`);
     const userTasks = [];
@@ -88,20 +93,9 @@ export default class FetchService {
     return userTasks;
   };
 
-  getTaskState = async () => {
-    const response = await this.getSource(`/TaskState.json`);
-    const tasksState = [];
-    if (response && response.data) {
-      Object.entries(response.data).forEach((key) => {
-        const [stateId, values] = key;
-        const { stateName } = values;
-        tasksState.push({
-          stateId,
-          stateName,
-        });
-      });
-    }
-    return tasksState;
+  getTaskState = async (id) => {
+    const response = await this.getSource(`/TaskState/${id}.json`);
+    return response;
   };
 
   getDirection = async () => {
@@ -141,6 +135,10 @@ export default class FetchService {
 
   editTask = async (taskId, body) => {
     return await this.editSource(`/Task/${taskId}.json`, body);
+  };
+
+  editTaskState = async (taskId, body) => {
+    return await this.editSource(`/TaskState/${taskId}.json`, body);
   };
 
   delMember = async (memberId) => {
