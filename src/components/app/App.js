@@ -2,24 +2,27 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Layout from '../../hoc/layout';
 import MembersGrid from '../membersGrid';
-import MemberPage from '../../page/memberPage';
 import MemberTasksGrid from '../memberTasksGrid';
 import TasksGrid from '../tasksGrid';
+import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
+import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
 import Auth from '../auth';
 
 export default class App extends Component {
   state = {
-    isRegister: false,
     login: false,
+    isRegister: false,
     isTask: false,
     isMemberTasks: false,
+    isTaskTrack: false,
     titleMember: '',
     titleTask: '',
     fullName: '',
     curMember: [],
     userId: null,
+    userTaskId: null,
     curTask: [],
     directions: [],
   };
@@ -55,6 +58,15 @@ export default class App extends Component {
     });
   };
 
+  onTrackClickHandler = (userTaskId, titleTask, title = '') => {
+    this.setState({
+      isTaskTrack: !this.state.isTaskTrack,
+      userTaskId,
+      titleTask,
+      titleTaskTrack: title,
+    });
+  };
+
   mainPage = () => {
     return <h2>Welcome to DIMS</h2>;
   };
@@ -65,11 +77,14 @@ export default class App extends Component {
       isRegister,
       isTask,
       isMemberTasks,
+      isTaskTrack,
       titleMember,
       titleTask,
+      titleTaskTrack,
       fullName,
       curMember,
       userId,
+      userTaskId,
       curTask,
       directions,
     } = this.state;
@@ -102,6 +117,12 @@ export default class App extends Component {
             </Switch>
           </>
         )}
+        <MemberTasksGrid
+          isOpen={isMemberTasks}
+          userId={userId}
+          fullName={fullName}
+          onTrackClick={this.onTrackClickHandler}
+        />
         <MemberPage
           onRegisterClick={this.onRegisterClickHandler}
           isOpen={isRegister}
@@ -110,7 +131,15 @@ export default class App extends Component {
           directions={directions}
         />
         <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={titleTask} task={curTask} />
-        <MemberTasksGrid isOpen={isMemberTasks} userId={userId} fullName={fullName} />
+        <TaskTrackPage
+          onTrackClick={this.onTrackClickHandler}
+          isOpen={isTaskTrack}
+          userTaskId={userTaskId}
+          // userId={userId}
+          titleTask={titleTask}
+          titleTaskTrack={titleTaskTrack}
+          // member={curMember}
+        />
       </Layout>
     );
   }

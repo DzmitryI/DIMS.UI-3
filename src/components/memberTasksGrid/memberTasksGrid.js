@@ -3,7 +3,7 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
-import { headerMemberTasksGrid } from '../helpersComponents';
+import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
 
 const fetchService = new FetchService();
 
@@ -41,8 +41,10 @@ export default class MemberTasksGrid extends Component {
     }
   }
 
-  onTrackClick = () => {
-    console.log('Track click');
+  onTrackClick = ({ target }) => {
+    const userTaskId = target.closest('tr').id;
+    const taskName = target.closest('td').id;
+    this.props.onTrackClick(userTaskId, taskName, h1TaskTrackPage.get('Create'));
   };
 
   onStateTaskClick = async ({ target }) => {
@@ -93,7 +95,7 @@ export default class MemberTasksGrid extends Component {
                   <td className='td'>{startDate}</td>
                   <td className='td'>{deadlineDate}</td>
                   <td className='td'>{stateName}</td>
-                  <td className='td'>
+                  <td className='td' id={name}>
                     <Button className='btn btn-progress' onClick={this.onTrackClick} name='Track' />
                   </td>
                   <td className='td' id={stateId}>

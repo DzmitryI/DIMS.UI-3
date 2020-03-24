@@ -12,5 +12,9 @@ const h1MemberPage = new Map([
   ['Edit', 'Edit Member page'],
   ['Detail', 'Detail Member page'],
 ]);
-
-export { headerTasksGrid, headerMembersGrid, headerMemberTasksGrid, h1TaskPage, h1MemberPage };
+const h1TaskTrackPage = new Map([
+  ['Create', 'Create Task Tracks page'],
+  ['Edit', 'Edit Task Tracks page'],
+  ['Detail', 'Detail Task Tracks page'],
+]);
+export { headerTasksGrid, headerMembersGrid, headerMemberTasksGrid, h1TaskPage, h1MemberPage, h1TaskTrackPage };

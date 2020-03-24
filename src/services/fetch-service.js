@@ -129,6 +129,10 @@ export default class FetchService {
     return await this.setSource(`/TaskState.json`, body);
   };
 
+  setTaskTrack = async (body) => {
+    return await this.setSource(`/TaskTrack.json`, body);
+  };
+
   editMember = async (memberId, body) => {
     return await this.editSource(`/UserProfile/${memberId}.json`, body);
   };
