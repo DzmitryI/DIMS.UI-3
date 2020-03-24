@@ -7,7 +7,8 @@ import MemberTasksGrid from '../memberTasksGrid';
 import TasksGrid from '../tasksGrid';
 import TaskPage from '../../page/taskPage';
 import Header from '../UI/header';
-import Auth from '../auth';
+// import Auth from '../auth';
+import { Auth } from '../../contexts/AuthContext';
 
 export default class App extends Component {
   state = {
@@ -82,17 +83,22 @@ export default class App extends Component {
             <Header />
             <Switch>
               <Route path='/' render={this.mainPage} exact />
-              <Route
-                path='/MembersGrid'
-                render={(props) => (
-                  <MembersGrid
-                    {...props}
-                    onRegisterClick={this.onRegisterClickHandler}
-                    onTaskClick={this.onTaskClickHandler}
-                    isRegister={isRegister}
+              <Auth.Consumer>
+                {({ role }) => (
+                  // role === Rolesl.ADMIN ? .... :
+                  <Route
+                    path='/MembersGrid'
+                    render={() => (
+                      <MembersGrid
+                        // {...props}
+                        onRegisterClick={this.onRegisterClickHandler}
+                        onTaskClick={this.onTaskClickHandler}
+                        isRegister={isRegister}
+                      />
+                    )}
                   />
                 )}
-              />
+              </Auth.Consumer>
               <Route
                 path='/TasksGrid'
                 render={(props) => (
