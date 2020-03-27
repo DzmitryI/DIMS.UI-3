@@ -4,6 +4,7 @@ import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
 import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
+import { Link } from 'react-router-dom';
 
 const fetchService = new FetchService();
 
@@ -15,16 +16,17 @@ export default class MemberTasksGrid extends Component {
 
   updateMemberTasks = async (userId) => {
     const tasks = [];
-    const userTasksId = await fetchService.getAllUserTasks();
-    if (userTasksId.length) {
-      for (const userTask of userTasksId) {
+    const userTasks = await fetchService.getAllUserTasks();
+    if (userTasks.length) {
+      for (const userTask of userTasks) {
         if (userTask.userId === userId) {
-          const responseTask = await fetchService.getTask(userTask.taskId);
-          const responseTaskState = await fetchService.getTaskState(userTask.stateId);
-          if (responseTask.data && responseTaskState.data) {
+          const responseTasks = await fetchService.getTask(userTask.taskId);
+          const responseTasksState = await fetchService.getTaskState(userTask.stateId);
+          if (responseTasks && responseTasksState.data) {
             const { userTaskId, taskId, userId, stateId } = userTask;
-            const { name, deadlineDate, startDate } = responseTask.data;
-            const { stateName } = responseTaskState.data;
+            const [responseTask] = responseTasks;
+            const { name, deadlineDate, startDate } = responseTask;
+            const { stateName } = responseTasksState;
             tasks.push({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
           }
         }
@@ -32,6 +34,12 @@ export default class MemberTasksGrid extends Component {
     }
     return tasks;
   };
+
+  async componentDidMount() {
+    const { userId } = this.props;
+    const userTasks = await this.updateMemberTasks(userId);
+    this.setState({ userTasks, loading: false });
+  }
 
   async componentDidUpdate(prevProps) {
     const { userId } = this.props;
@@ -44,7 +52,7 @@ export default class MemberTasksGrid extends Component {
   onTrackClick = ({ target }) => {
     const userTaskId = target.closest('tr').id;
     const taskName = target.closest('td').id;
-    this.props.onTrackClick(userTaskId, taskName, h1TaskTrackPage.get('Create'));
+    this.props.onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
   };
 
   onStateTaskClick = async ({ target }) => {
@@ -68,16 +76,17 @@ export default class MemberTasksGrid extends Component {
   };
 
   render() {
-    const { isOpen, fullName } = this.props;
+    const { title } = this.props;
     const { userTasks, loading } = this.state;
-    if (loading && isOpen) {
+    if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={`grid-wrap ${isOpen ? '' : 'close'}`}>
+      <div className={`grid-wrap`}>
+        <Link to='/MembersGrid'>back to grid</Link>
         <h1>Member's Tasks Manage Grid</h1>
         <table border='1'>
-          <caption>{`Hi, dear ${fullName}! This is your current tasks:`}</caption>
+          <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
           <thead>
             <HeaderTable arr={headerMemberTasksGrid} />
           </thead>

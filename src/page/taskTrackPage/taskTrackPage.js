@@ -107,14 +107,14 @@ export default class TaskTrackPage extends Component {
   }
 
   render() {
-    const { isOpen, titleTask, titleTaskTrack } = this.props;
+    const { isOpen, title, subtitle } = this.props;
     const { taskTrack } = this.state;
     return (
       <>
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
-          <h1 className='title'>{titleTaskTrack}</h1>
+          <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
-            <h1 className='subtitle'>{`Task Track - ${titleTask}`}</h1>
+            <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
             {this.renderInputs()}
             <div className='form-group'>
               <label htmlFor='trackNote'>Note</label>

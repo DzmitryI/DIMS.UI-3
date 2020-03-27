@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import Layout from '../../hoc/layout';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
+import MemberProgressGrid from '../memberProgressGrid';
 import TasksGrid from '../tasksGrid';
 import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
@@ -17,13 +18,12 @@ export default class App extends Component {
     isTask: false,
     isMemberTasks: false,
     isTaskTrack: false,
-    titleMember: '',
-    titleTask: '',
-    fullName: '',
+    title: '',
+    subtitle: '',
     curMember: [],
+    curTask: [],
     userId: null,
     userTaskId: null,
-    curTask: [],
     directions: [],
   };
 
@@ -36,7 +36,7 @@ export default class App extends Component {
   onRegisterClickHandler = (directions, title = '', member = []) => {
     this.setState({
       isRegister: !this.state.isRegister,
-      titleMember: title,
+      title,
       curMember: member,
       directions,
     });
@@ -45,25 +45,32 @@ export default class App extends Component {
   onCreateTaskClickHandler = (title = '', task = []) => {
     this.setState({
       isTask: !this.state.isTask,
-      titleTask: title,
+      title,
       curTask: task,
     });
   };
 
-  onTaskClickHandler = (userId, fullName) => {
+  onTaskClickHandler = (userId, title) => {
     this.setState({
       isMemberTasks: !this.state.isMemberTasks,
       userId,
-      fullName,
+      title,
     });
   };
 
-  onTrackClickHandler = (userTaskId, titleTask, title = '') => {
+  onTrackClickHandler = (userTaskId, title = '', subtitle) => {
     this.setState({
       isTaskTrack: !this.state.isTaskTrack,
       userTaskId,
-      titleTask,
-      titleTaskTrack: title,
+      title,
+      subtitle,
+    });
+  };
+
+  onProgressClickHandler = (userId, title) => {
+    this.setState({
+      userId,
+      title,
     });
   };
 
@@ -76,16 +83,13 @@ export default class App extends Component {
       login,
       isRegister,
       isTask,
-      isMemberTasks,
       isTaskTrack,
-      titleMember,
-      titleTask,
-      titleTaskTrack,
-      fullName,
+      title,
+      subtitle,
       curMember,
+      curTask,
       userId,
       userTaskId,
-      curTask,
       directions,
     } = this.state;
     return (
@@ -104,6 +108,7 @@ export default class App extends Component {
                     {...props}
                     onRegisterClick={this.onRegisterClickHandler}
                     onTaskClick={this.onTaskClickHandler}
+                    onProgressClick={this.onProgressClickHandler}
                     isRegister={isRegister}
                   />
                 )}
@@ -114,31 +119,41 @@ export default class App extends Component {
                   <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
                 )}
               />
+              <Route
+                path='/MemberProgressGrid'
+                render={(props) => (
+                  <MemberProgressGrid
+                    {...props}
+                    onProgressClick={this.onProgressClickHandler}
+                    onTaskClick={this.onCreateTaskClickHandler}
+                    userId={userId}
+                    title={title}
+                  />
+                )}
+              />
+              <Route
+                path='/MemberTasksGrid'
+                render={(props) => (
+                  <MemberTasksGrid {...props} userId={userId} title={title} onTrackClick={this.onTrackClickHandler} />
+                )}
+              />
             </Switch>
           </>
         )}
-        <MemberTasksGrid
-          isOpen={isMemberTasks}
-          userId={userId}
-          fullName={fullName}
-          onTrackClick={this.onTrackClickHandler}
-        />
         <MemberPage
           onRegisterClick={this.onRegisterClickHandler}
           isOpen={isRegister}
-          title={titleMember}
+          title={title}
           member={curMember}
           directions={directions}
         />
-        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={titleTask} task={curTask} />
+        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
         <TaskTrackPage
           onTrackClick={this.onTrackClickHandler}
           isOpen={isTaskTrack}
           userTaskId={userTaskId}
-          // userId={userId}
-          titleTask={titleTask}
-          titleTaskTrack={titleTaskTrack}
-          // member={curMember}
+          title={title}
+          subtitle={subtitle}
         />
       </Layout>
     );

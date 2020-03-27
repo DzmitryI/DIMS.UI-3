@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 import Button from '../UI/button';
+import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 
@@ -10,7 +11,6 @@ export default class MembersGrid extends Component {
     members: [],
     directions: [],
     loading: true,
-    isOpen: true,
   };
 
   fetchService = new FetchService();
@@ -72,18 +72,29 @@ export default class MembersGrid extends Component {
   onShowClick = ({ target }) => {
     const memberId = target.closest('tr').id;
     const [member] = this.state.members.filter((member) => member.userId === memberId);
-    const { fullName } = member;
-    this.setState({ isOpen: !this.state.isOpen });
-    this.props.onTaskClick(memberId, fullName);
+    const {
+      values: { name },
+    } = member;
+    this.props.onTaskClick(memberId, name);
+  };
+
+  onProgressClick = ({ target }) => {
+    const memberId = target.closest('tr').id;
+    const [member] = this.state.members.filter((member) => member.userId === memberId);
+    const {
+      values: { name },
+    } = member;
+    console.log(name);
+    this.props.onProgressClick(memberId, name);
   };
 
   render() {
-    const { members, directions, loading, isOpen } = this.state;
+    const { members, directions, loading } = this.state;
     if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={`grid-wrap ${isOpen ? '' : 'close'}`}>
+      <div className={`grid-wrap`}>
         <h1>Members Manage Grid</h1>
         <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
         <table border='1'>
@@ -94,22 +105,33 @@ export default class MembersGrid extends Component {
             {members.map((member, index) => {
               const {
                 userId,
-                values: { name, lastName, directionId, education, startDate, birthDate },
+                fullName,
+                values: { directionId, education, startDate, birthDate },
               } = member;
               const curDirect = directions.find((direction) => direction.value === directionId);
               return (
                 <tr key={userId} id={userId}>
                   <td className='td'>{index + 1}</td>
                   <td className='td'>
-                    <span onClick={this.onChangeClick}>{`${name} ${lastName}`}</span>
+                    <span onClick={this.onChangeClick}>{`${fullName}`}</span>
                   </td>
                   <td className='td'>{`${curDirect.name}`}</td>
                   <td className='td'>{`${education}`}</td>
                   <td className='td'>{`${startDate}`}</td>
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>
                   <td className='td buttons-wrap'>
-                    <Button className='btn btn-progress' name='Progress' />
-                    <Button className='btn btn-tasks' onClick={this.onShowClick} name='Tasks' />
+                    <ButtonLink
+                      className='btn btn-progress'
+                      onClick={this.onProgressClick}
+                      name='Progress'
+                      to={'/MemberProgressGrid'}
+                    />
+                    <ButtonLink
+                      className='btn btn-tasks'
+                      onClick={this.onShowClick}
+                      name='Tasks'
+                      to={'/MemberTasksGrid'}
+                    />
                     <Button className='btn btn-edit' onClick={this.onChangeClick} name='Edit' />
                     <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
                   </td>

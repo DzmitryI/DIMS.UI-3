@@ -72,7 +72,11 @@ export default class FetchService {
 
   getTask = async (id) => {
     const response = await this.getSource(`/Task/${id}.json`);
-    return response;
+    const tasks = [];
+    if (response && response.data) {
+      tasks.push(response.data);
+    }
+    return tasks;
   };
 
   getAllUserTasks = async () => {
@@ -96,6 +100,24 @@ export default class FetchService {
   getTaskState = async (id) => {
     const response = await this.getSource(`/TaskState/${id}.json`);
     return response;
+  };
+
+  getAllUserTaskTrack = async () => {
+    const response = await this.getSource(`/TaskTrack.json`);
+    const taskTrack = [];
+    if (response && response.data) {
+      Object.entries(response.data).forEach((key) => {
+        const [taskTrackId, values] = key;
+        const { userTaskId, trackDate, trackNote } = values;
+        taskTrack.push({
+          taskTrackId,
+          userTaskId,
+          trackDate,
+          trackNote,
+        });
+      });
+    }
+    return taskTrack;
   };
 
   getDirection = async () => {
