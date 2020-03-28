@@ -18,6 +18,9 @@ function clearOblectValue(objInput, objElem) {
   if (objElemClear['description']) {
     objElemClear['description'] = '';
   }
+  if (objElemClear['trackNote']) {
+    objElemClear['trackNote'] = '';
+  }
   const res = {
     objInputClear,
     objElemClear,

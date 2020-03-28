@@ -38,7 +38,13 @@ export default class Auth extends Component {
     const { authData } = this.state;
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL_SIGNIN}${this.API_Key}`, authData);
-      console.log(response.data);
+      const { data } = response;
+      const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000);
+      localStorage.setItem('token', data.idToken);
+      localStorage.setItem('userId', data.localId);
+      localStorage.setItem('expirationDate', expirationDate);
+      this.props.authSuccess(data.idToken);
+      this.props.autoLogout(data.expiresIn);
       this.props.onloginHandler(response.data);
     } catch (err) {
       console.log(err);
@@ -105,6 +111,7 @@ export default class Auth extends Component {
             <Button
               className='btn btn-add'
               type='success'
+              id='Login'
               name='Log in'
               disabled={!this.state.isFormValid}
               onClick={this.loginHanler}

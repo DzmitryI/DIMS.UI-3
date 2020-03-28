@@ -11,6 +11,7 @@ const Input = ({
   value,
   onChange,
   errorMessage,
+  disabled = false,
 }) => {
   function isInvalid(valid, touched, shouldValidation) {
     return !valid && touched && shouldValidation;
@@ -18,7 +19,7 @@ const Input = ({
   return (
     <div className={isInvalid(valid, touched, shouldValidation) ? `form-group invalid` : `form-group`}>
       <label htmlFor={id}>{label}</label>
-      <input type={type} id={id} value={value} onChange={onChange} autoComplete={autocomplete} />
+      <input type={type} id={id} value={value} onChange={onChange} disabled={disabled} autoComplete={autocomplete} />
       {isInvalid(valid, touched, shouldValidation) ? <span>{errorMessage}</span> : null}
     </div>
   );

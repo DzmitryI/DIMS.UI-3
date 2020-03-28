@@ -4,8 +4,10 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
+import Spinner from '../../components/spinner';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
+import { h1MemberPage } from '../../components/helpersComponents';
 
 export default class MemberPage extends Component {
   state = {
@@ -130,14 +132,20 @@ export default class MemberPage extends Component {
       sex: 'sex1',
     },
     userId: null,
+    disabled: false,
+    loading: true,
     directions: [],
   };
 
   fetchService = new FetchService();
 
   componentDidUpdate(prevProps) {
-    const { member, directions } = this.props;
+    const { member, directions, title } = this.props;
     const { direction, sex } = this.state.memberSelect;
+    let disabled = false;
+    if (title !== prevProps.title && title === h1MemberPage.get('Create')) {
+      this.setState({ loading: false });
+    }
     if (member.length) {
       const [{ userId, values }] = member;
       if (direction.options.length === 0) {
@@ -164,7 +172,19 @@ export default class MemberPage extends Component {
             });
           }
         });
-        this.setState({ memberInput, memberSelect, userId, isFormValid: true, member: values, directions });
+        if (title === h1MemberPage.get('Detail')) {
+          disabled = true;
+        }
+        this.setState({
+          memberInput,
+          memberSelect,
+          userId,
+          isFormValid: true,
+          member: values,
+          directions,
+          disabled,
+          loading: false,
+        });
       }
     }
   }
@@ -220,13 +240,21 @@ export default class MemberPage extends Component {
   buttonCloseClick = () => {
     const { directions, memberInput, member } = this.state;
     const res = clearOblectValue(memberInput, member);
-    this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '', isFormValid: false });
+    this.setState({
+      memberInput: res.objInputClear,
+      member: res.objElemClear,
+      userId: '',
+      isFormValid: false,
+      disabled: false,
+      loading: true,
+    });
     this.props.onRegisterClick(directions);
   };
 
   renderInputs() {
-    return Object.keys(this.state.memberInput).map((controlName, index) => {
-      const control = this.state.memberInput[controlName];
+    const { disabled, memberInput } = this.state;
+    return Object.keys(memberInput).map((controlName, index) => {
+      const control = memberInput[controlName];
       return (
         <Input
           key={controlName + index}
@@ -236,6 +264,7 @@ export default class MemberPage extends Component {
           valid={control.valid}
           touched={control.touched}
           label={control.label}
+          disabled={disabled}
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
@@ -245,14 +274,13 @@ export default class MemberPage extends Component {
   }
 
   renderSelect() {
-    const { direction } = this.state.memberSelect;
-    return Object.keys(this.state.memberSelect).map((controlName) => {
-      const control = this.state.memberSelect[controlName];
+    const { memberSelect, member, disabled } = this.state;
+    return Object.keys(memberSelect).map((controlName) => {
+      const control = memberSelect[controlName];
       let defaultValue = false;
       let options = [];
       const { directions } = this.props;
-      const member = { ...this.state.member };
-      if (controlName === direction.name) {
+      if (controlName === memberSelect.direction.name) {
         defaultValue = member.directionId;
         options = directions;
       } else {
@@ -267,6 +295,7 @@ export default class MemberPage extends Component {
           label={control.label}
           name={controlName}
           id={controlName}
+          disabled={disabled}
           onChange={(event) => this.handleSelect(event, controlName)}
         />
       );
@@ -274,26 +303,32 @@ export default class MemberPage extends Component {
   }
 
   render() {
-    const { name, lastName } = this.state.member;
+    const { member, disabled, loading } = this.state;
     const { isOpen, title } = this.props;
     return (
       <>
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
-            <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-            {this.renderInputs()}
-            {this.renderSelect()}
-            <div className='form-group row'>
-              <Button
-                className='btn btn-add'
-                disabled={!this.state.isFormValid}
-                type='submit'
-                onClick={this.createMemberHandler}
-                name='Save'
-              />
-              <Button className='btn btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
-            </div>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h1 className='subtitle'>{`${member.name} ${member.lastName}`}</h1>
+                {this.renderInputs()}
+                {this.renderSelect()}
+                <div className='form-group row'>
+                  <Button
+                    className='btn btn-add'
+                    disabled={disabled || !this.state.isFormValid}
+                    type='submit'
+                    onClick={this.createMemberHandler}
+                    name='Save'
+                  />
+                  <Button className='btn btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
+                </div>
+              </>
+            )}
           </form>
         </div>
         {isOpen && <Backdrop />}

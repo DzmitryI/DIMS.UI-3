@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from '../../hoc/layout';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
 import MemberProgressGrid from '../memberProgressGrid';
 import TasksGrid from '../tasksGrid';
+import TaskTracksGrid from '../taskTracksGrid';
 import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
@@ -13,7 +14,8 @@ import Auth from '../auth';
 
 export default class App extends Component {
   state = {
-    login: false,
+    isAuthenticated: false,
+    token: null,
     isRegister: false,
     isTask: false,
     isMemberTasks: false,
@@ -22,23 +24,58 @@ export default class App extends Component {
     subtitle: '',
     curMember: [],
     curTask: [],
+    track: {},
     userId: null,
+    taskId: null,
     userTaskId: null,
     directions: [],
   };
 
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.logout();
+    } else {
+      const expirationDate = new Date(localStorage.getItem('expirationDate'));
+      if (expirationDate <= new Date()) {
+        this.logout();
+      } else {
+        this.authSuccess(token);
+        this.autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000);
+      }
+    }
+  }
+
   onLoginHandler = (data) => {
     if (data.registered) {
-      this.setState({ login: !this.state.login });
+      console.log(data);
+      this.setState({ isAuthenticated: !!this.state.token });
     }
+  };
+
+  authSuccess = (token) => {
+    this.setState({ isAuthenticated: !!token, token });
+  };
+
+  autoLogout = (time) => {
+    setTimeout(() => {
+      this.logout();
+    }, time * 1000);
+  };
+
+  logout = () => {
+    this.setState({ isAuthenticated: false, token: null });
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('expirationDate');
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
     this.setState({
       isRegister: !this.state.isRegister,
+      directions,
       title,
       curMember: member,
-      directions,
     });
   };
 
@@ -58,12 +95,13 @@ export default class App extends Component {
     });
   };
 
-  onTrackClickHandler = (userTaskId, title = '', subtitle) => {
+  onTrackClickHandler = (userTaskId = '', title = '', subtitle = '', track = {}) => {
     this.setState({
       isTaskTrack: !this.state.isTaskTrack,
       userTaskId,
       title,
       subtitle,
+      track,
     });
   };
 
@@ -74,13 +112,21 @@ export default class App extends Component {
     });
   };
 
+  onOpenTaskTracksHandler = (userId = '', taskId = '') => {
+    if (userId) {
+      this.setState({ userId });
+    } else if (taskId) {
+      this.setState({ taskId });
+    }
+  };
+
   mainPage = () => {
     return <h2>Welcome to DIMS</h2>;
   };
 
   render() {
     const {
-      login,
+      isAuthenticated,
       isRegister,
       isTask,
       isTaskTrack,
@@ -89,57 +135,101 @@ export default class App extends Component {
       curMember,
       curTask,
       userId,
+      taskId,
       userTaskId,
+      track,
       directions,
     } = this.state;
+
+    let routes = (
+      <Switch>
+        <Route
+          path='/Auth'
+          render={(props) => (
+            <Auth
+              {...props}
+              onloginHandler={this.onLoginHandler}
+              logout={this.logout}
+              authSuccess={this.authSuccess}
+              autoLogout={this.autoLogout}
+              exact
+            />
+          )}
+        />
+        <Redirect to='/Auth' />
+      </Switch>
+    );
+
+    if (isAuthenticated) {
+      routes = (
+        <>
+          <Header logout={this.logout} />
+          <Switch>
+            <Route
+              path='/MembersGrid'
+              render={(props) => (
+                <MembersGrid
+                  {...props}
+                  onRegisterClick={this.onRegisterClickHandler}
+                  onTaskClick={this.onTaskClickHandler}
+                  onProgressClick={this.onProgressClickHandler}
+                  isRegister={isRegister}
+                />
+              )}
+              exact
+            />
+            <Route
+              path='/TasksGrid'
+              render={(props) => (
+                <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+              )}
+            />
+            <Route
+              path='/MemberProgressGrid'
+              render={(props) => (
+                <MemberProgressGrid
+                  {...props}
+                  onProgressClick={this.onProgressClickHandler}
+                  onTaskClick={this.onCreateTaskClickHandler}
+                  userId={userId}
+                  title={title}
+                />
+              )}
+            />
+            <Route
+              path='/TaskTracksGrid'
+              render={(props) => (
+                <TaskTracksGrid
+                  {...props}
+                  onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
+                  onTrackClick={this.onTrackClickHandler}
+                  taskId={taskId}
+                  isOpen={isTaskTrack}
+                />
+              )}
+            />
+            <Route
+              path='/MemberTasksGrid'
+              render={(props) => (
+                <MemberTasksGrid
+                  {...props}
+                  userId={userId}
+                  title={title}
+                  onTrackClick={this.onTrackClickHandler}
+                  onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
+                />
+              )}
+            />
+            <Route path='/' render={this.mainPage} exact />
+            <Redirect to='/' />
+          </Switch>
+        </>
+      );
+    }
+
     return (
       <Layout>
-        {login ? (
-          <Auth onloginHandler={this.onLoginHandler} />
-        ) : (
-          <>
-            <Header />
-            <Switch>
-              <Route path='/' render={this.mainPage} exact />
-              <Route
-                path='/MembersGrid'
-                render={(props) => (
-                  <MembersGrid
-                    {...props}
-                    onRegisterClick={this.onRegisterClickHandler}
-                    onTaskClick={this.onTaskClickHandler}
-                    onProgressClick={this.onProgressClickHandler}
-                    isRegister={isRegister}
-                  />
-                )}
-              />
-              <Route
-                path='/TasksGrid'
-                render={(props) => (
-                  <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
-                )}
-              />
-              <Route
-                path='/MemberProgressGrid'
-                render={(props) => (
-                  <MemberProgressGrid
-                    {...props}
-                    onProgressClick={this.onProgressClickHandler}
-                    onTaskClick={this.onCreateTaskClickHandler}
-                    userId={userId}
-                    title={title}
-                  />
-                )}
-              />
-              <Route
-                path='/MemberTasksGrid'
-                render={(props) => (
-                  <MemberTasksGrid {...props} userId={userId} title={title} onTrackClick={this.onTrackClickHandler} />
-                )}
-              />
-            </Switch>
-          </>
-        )}
+        {routes}
         <MemberPage
           onRegisterClick={this.onRegisterClickHandler}
           isOpen={isRegister}
@@ -151,8 +241,10 @@ export default class App extends Component {
         <TaskTrackPage
           onTrackClick={this.onTrackClickHandler}
           isOpen={isTaskTrack}
-          userTaskId={userTaskId}
+          track={track}
           title={title}
+          taskId={taskId}
+          userTaskId={userTaskId}
           subtitle={subtitle}
         />
       </Layout>

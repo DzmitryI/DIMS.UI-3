@@ -6,6 +6,8 @@ import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 
+const fetchService = new FetchService();
+
 export default class MembersGrid extends Component {
   state = {
     members: [],
@@ -13,11 +15,9 @@ export default class MembersGrid extends Component {
     loading: true,
   };
 
-  fetchService = new FetchService();
-
   async componentDidMount() {
-    const members = await this.fetchService.getAllMember();
-    const directions = await this.fetchService.getDirection();
+    const members = await fetchService.getAllMember();
+    const directions = await fetchService.getDirection();
     this.setState({
       members,
       directions,
@@ -27,7 +27,7 @@ export default class MembersGrid extends Component {
 
   async componentDidUpdate(prevProps) {
     if (this.props.isRegister !== prevProps.isRegister) {
-      const members = await this.fetchService.getAllMember();
+      const members = await fetchService.getAllMember();
       this.setState({
         members,
       });
@@ -50,7 +50,7 @@ export default class MembersGrid extends Component {
     const { directions, members } = this.state;
     const memberId = target.closest('tr').id;
     const member = members.filter((member) => member.userId === memberId);
-    if (target.className === 'btn btn-edit') {
+    if (target.id === 'edit') {
       this.props.onRegisterClick(directions, h1MemberPage.get('Edit'), member);
     } else {
       this.props.onRegisterClick(directions, h1MemberPage.get('Detail'), member);
@@ -61,11 +61,40 @@ export default class MembersGrid extends Component {
     const memberId = target.closest('tr').id;
     const [member] = this.state.members.filter((member) => member.userId === memberId);
     const { fullName } = member;
-    const response = await this.fetchService.delMember(memberId);
+    const resAllUserTasks = await fetchService.getAllUserTasks();
+    if (resAllUserTasks.length) {
+      const curUserTasks = resAllUserTasks.filter((resAllUserTask) => resAllUserTask.userId === memberId);
+      console.log(curUserTasks);
+
+      if (curUserTasks.length) {
+        for (const curUserTask of curUserTasks) {
+          const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
+          if (responseUserTask.statusText) {
+            console.log(`del user task`);
+          }
+          const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
+          if (responseTaskState.statusText) {
+            console.log(`del task state`);
+          }
+          const usersTaskTrack = await fetchService.getAllUserTaskTrack();
+          if (usersTaskTrack.length) {
+            for (const userTaskTrack of usersTaskTrack) {
+              if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
+                const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
+                if (responseTaskTrackId.statusText) {
+                  alert(`${responseTaskTrackId} was deleted`);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    const response = await fetchService.delMember(memberId);
     if (response.statusText) {
       alert(`${fullName} was deleted`);
     }
-    const members = await this.fetchService.getAllMember();
+    const members = await fetchService.getAllMember();
     this.setState({ members });
   };
 
@@ -132,7 +161,7 @@ export default class MembersGrid extends Component {
                       name='Tasks'
                       to={'/MemberTasksGrid'}
                     />
-                    <Button className='btn btn-edit' onClick={this.onChangeClick} name='Edit' />
+                    <Button className='btn btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
                     <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
                   </td>
                 </tr>

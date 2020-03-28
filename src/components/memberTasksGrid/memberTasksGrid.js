@@ -26,7 +26,7 @@ export default class MemberTasksGrid extends Component {
             const { userTaskId, taskId, userId, stateId } = userTask;
             const [responseTask] = responseTasks;
             const { name, deadlineDate, startDate } = responseTask;
-            const { stateName } = responseTasksState;
+            const { stateName } = responseTasksState.data;
             tasks.push({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
           }
         }
@@ -53,6 +53,11 @@ export default class MemberTasksGrid extends Component {
     const userTaskId = target.closest('tr').id;
     const taskName = target.closest('td').id;
     this.props.onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
+  };
+
+  onOpenTaskTracksClick = async ({ target }) => {
+    const taskId = target.closest('td').id;
+    this.props.onOpenTaskTracksClick('', taskId);
   };
 
   onStateTaskClick = async ({ target }) => {
@@ -96,9 +101,9 @@ export default class MemberTasksGrid extends Component {
               return (
                 <tr key={userTaskId} id={userTaskId}>
                   <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onChangeClick} id={taskId}>
-                      {name}
+                  <td className='td' id={taskId}>
+                    <span onClick={this.onOpenTaskTracksClick}>
+                      <Link to='/TaskTracksGrid'>{name}</Link>
                     </span>
                   </td>
                   <td className='td'>{startDate}</td>

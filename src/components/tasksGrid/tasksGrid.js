@@ -36,7 +36,7 @@ export default class TasksGrid extends Component {
   onChangeClick = ({ target }) => {
     const taskId = target.closest('tr').id;
     const task = this.state.tasks.filter((task) => task.taskId === taskId);
-    if (target.className === 'btn btn-edit') {
+    if (target.id === 'edit') {
       this.props.onCreateTaskClick(h1TaskPage.get('Edit'), task);
     } else {
       this.props.onCreateTaskClick(h1TaskPage.get('Detail'), task);
@@ -81,7 +81,7 @@ export default class TasksGrid extends Component {
                   <td className='td'>{startDate}</td>
                   <td className='td'>{deadlineDate}</td>
                   <td className='td'>
-                    <Button className='btn btn-edit' name='Edit' onClick={this.onChangeClick} />
+                    <Button className='btn btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
                     <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
                   </td>
                 </tr>

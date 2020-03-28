@@ -4,4 +4,7 @@ select {
   margin: 0 1rem;
   font-size: inherit;
   outline: none;
+  &:disabled {
+    cursor: not-allowed;
+  }
 }

@@ -4,7 +4,8 @@ import Button from '../../components/UI/button';
 import Input from '../../components/UI/input';
 import Backdrop from '../../components/UI/backdrop';
 import { createControl, validateControl } from '../../services/helpers.js';
-import { clearOblectValue } from '../helpersPage';
+import { clearOblectValue, updateInput } from '../helpersPage';
+import { h1TaskTrackPage } from '../../components/helpersComponents';
 
 const fetchService = new FetchService();
 
@@ -21,19 +22,28 @@ export default class TaskTrackPage extends Component {
         { required: true },
       ),
     },
-    taskTrack: {
-      userTaskId: '',
-      trackDate: '',
-      trackNote: '',
-    },
+    taskTrack: {},
+    disabled: false,
+    taskTrackId: null,
+    taskId: '',
   };
 
   componentDidUpdate(prevProps) {
-    if (this.props.userTaskId !== prevProps.userTaskId) {
-      const { taskTrack } = this.state;
-      taskTrack.userTaskId = this.props.userTaskId;
+    const { track, title, taskId } = this.props;
+    let disabled = false;
+    if (track !== prevProps.track) {
+      const taskTrackInput = updateInput(this.state.taskTrackInput, track);
+      const { taskTrackId, ...taskTrack } = track;
+      if (title === h1TaskTrackPage.get('Detail')) {
+        disabled = true;
+      }
       this.setState({
+        disabled,
         taskTrack,
+        taskTrackId,
+        isFormValid: true,
+        taskTrackInput,
+        taskId,
       });
     }
   }
@@ -63,32 +73,40 @@ export default class TaskTrackPage extends Component {
   };
 
   buttonCloseClick = () => {
-    const { taskTrack, taskTrackInput, userId } = this.state;
+    const { taskTrack, taskTrackInput, taskId } = this.state;
     const res = clearOblectValue(taskTrackInput, taskTrack);
     this.setState({
       taskTrackInput: res.objInputClear,
       taskTrack: res.objElemClear,
       isFormValid: false,
-      loading: true,
+      disabled: false,
     });
-    this.props.onTrackClick(userId);
+    this.props.onTrackClick(taskId);
   };
 
   createTaskTrackHandler = async () => {
-    const { taskTrack, taskTrackInput } = this.state;
-    const response = await fetchService.setTaskTrack(taskTrack);
-    if (response.statusText) {
-      alert(`add new task track`);
-      this.setState({ taskId: response.data.name });
+    const { taskTrackId, taskTrack, taskTrackInput, taskId } = this.state;
+    taskTrack.userTaskId = this.props.userTaskId;
+    if (!taskTrackId) {
+      const response = await fetchService.setTaskTrack(taskTrack);
+      if (response.statusText) {
+        alert(`add new task track: ${taskTrackId}`);
+      }
+    } else {
+      const response = await fetchService.editTaskTrack(taskTrackId, taskTrack);
+      if (response.statusText) {
+        alert(`edit task track: ${taskTrackId}`);
+      }
     }
     const res = clearOblectValue(taskTrackInput, taskTrack);
     this.setState({ taskTrackInput: res.objInputClear, taskTrack: res.objElemClear });
-    this.props.onTrackClick();
+    this.props.onTrackClick(taskId);
   };
 
   renderInputs() {
-    return Object.keys(this.state.taskTrackInput).map((controlName, index) => {
-      const control = this.state.taskTrackInput[controlName];
+    const { taskTrackInput, disabled } = this.state;
+    return Object.keys(taskTrackInput).map((controlName, index) => {
+      const control = taskTrackInput[controlName];
       return (
         <Input
           key={controlName + index}
@@ -98,6 +116,7 @@ export default class TaskTrackPage extends Component {
           valid={control.valid}
           touched={control.touched}
           label={control.label}
+          disabled={disabled}
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
@@ -108,7 +127,7 @@ export default class TaskTrackPage extends Component {
 
   render() {
     const { isOpen, title, subtitle } = this.props;
-    const { taskTrack } = this.state;
+    const { taskTrack, disabled, isFormValid } = this.state;
     return (
       <>
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
@@ -121,6 +140,7 @@ export default class TaskTrackPage extends Component {
               <textarea
                 id='trackNote'
                 name='note'
+                disabled={disabled}
                 value={taskTrack.trackNote}
                 rows='7'
                 onChange={this.handleTextArea}
@@ -131,7 +151,7 @@ export default class TaskTrackPage extends Component {
                 className='btn btn-add'
                 type='submit'
                 name='Save'
-                disabled={!this.state.isFormValid}
+                disabled={disabled || !isFormValid}
                 onClick={this.createTaskTrackHandler}
               />
               <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />

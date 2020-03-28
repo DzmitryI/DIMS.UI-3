@@ -6,6 +6,7 @@ import Button from '../../components/UI/button';
 import Spinner from '../../components/spinner';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
+import { h1TaskPage } from '../../components/helpersComponents';
 
 const fetchService = new FetchService();
 export default class TaskPage extends Component {
@@ -44,6 +45,7 @@ export default class TaskPage extends Component {
     },
     taskId: null,
     loading: true,
+    disabled: false,
     members: [],
     userTasks: [],
   };
@@ -59,13 +61,41 @@ export default class TaskPage extends Component {
       userTasks.forEach((userTask) => {
         if (userTask.taskId === taskId) {
           const index = members.findIndex((member) => member.userId === userTask.userId);
-          members[index].checked = true;
+          if (index !== -1) {
+            members[index].checked = true;
+          }
         }
       });
     }
     this.setState({ userTasks });
     return members;
   };
+
+  async componentDidMount() {
+    const members = await fetchService.getAllMember();
+    this.setState({ members, loading: false });
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { task, title } = this.props;
+    let disabled = false;
+    if (title !== prevProps.title && title === h1TaskPage.get('Create')) {
+      const members = await fetchService.getAllMember();
+      this.setState({ members, loading: false });
+    }
+    if (task.length) {
+      const [value] = task;
+      const { taskId, ...values } = value;
+      if (task !== prevProps.task) {
+        const taskInput = updateInput(this.state.taskInput, values);
+        const members = await this.updateTaskMembers(taskId);
+        if (title === h1TaskPage.get('Detail')) {
+          disabled = true;
+        }
+        this.setState({ taskInput, taskId, isFormValid: true, task: values, members, disabled, loading: false });
+      }
+    }
+  }
 
   checkTaskMembers = async (taskId) => {
     const { members, userTasks } = this.state;
@@ -101,24 +131,6 @@ export default class TaskPage extends Component {
     }
     return members;
   };
-
-  async componentDidMount() {
-    const members = await fetchService.getAllMember();
-    this.setState({ members, loading: false });
-  }
-
-  async componentDidUpdate(prevProps) {
-    const { task } = this.props;
-    if (task.length) {
-      const [value] = task;
-      const { taskId, ...values } = value;
-      if (task !== prevProps.task) {
-        const taskInput = updateInput(this.state.taskInput, values);
-        const members = await this.updateTaskMembers(taskId);
-        this.setState({ taskInput, taskId, isFormValid: true, task: values, members, loading: false });
-      }
-    }
-  }
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
@@ -205,13 +217,17 @@ export default class TaskPage extends Component {
       taskId: '',
       isFormValid: false,
       loading: true,
+      disabled: false,
       members: [],
     });
     this.props.onCreateTaskClick();
   };
 
   renderInputs() {
-    const { description } = this.state.task;
+    const {
+      task: { description },
+      disabled,
+    } = this.state;
     return Object.keys(this.state.taskInput).map((controlName, index) => {
       const control = this.state.taskInput[controlName];
       let textArea = null;
@@ -224,6 +240,7 @@ export default class TaskPage extends Component {
               name='description'
               value={description}
               rows='7'
+              disabled={disabled}
               onChange={this.handleTextArea}
             ></textarea>
           </div>
@@ -239,6 +256,7 @@ export default class TaskPage extends Component {
             valid={control.valid}
             touched={control.touched}
             label={control.label}
+            disabled={disabled}
             errorMessage={control.errorMessage}
             shouldValidation={!!control.validation}
             onChange={this.onHandlelInput(controlName)}
@@ -251,6 +269,7 @@ export default class TaskPage extends Component {
 
   renderCheckbox = () => {
     const members = [...this.state.members];
+    const { disabled } = this.state;
     return members.map((member) => {
       return (
         <label key={member.userId}>
@@ -261,6 +280,7 @@ export default class TaskPage extends Component {
             value={member.userId}
             onClick={this.handleCheckbox}
             defaultChecked={member.checked}
+            disabled={disabled}
           />
           {member.fullName}
         </label>
@@ -273,36 +293,37 @@ export default class TaskPage extends Component {
     const {
       task: { name },
       loading,
+      disabled,
     } = this.state;
     return (
       <>
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
-            <h1 className='subtitle'>{name}</h1>
-            <div className='form-group'>{this.renderInputs()}</div>
-            <div className='form-group'>
-              {loading ? (
-                <Spinner />
-              ) : (
-                <>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h1 className='subtitle'>{name}</h1>
+                <div className='form-group'>{this.renderInputs()}</div>
+                <div className='form-group'>
                   <label htmlFor='members'>Members</label>
                   <div id='members' className='column'>
                     {this.renderCheckbox()}
                   </div>
-                </>
-              )}
-            </div>
-            <div className='form-group row'>
-              <Button
-                className='btn btn-add'
-                type='submit'
-                name='Save'
-                disabled={!this.state.isFormValid}
-                onClick={this.createTaskHandler}
-              />
-              <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
-            </div>
+                </div>
+                <div className='form-group row'>
+                  <Button
+                    className='btn btn-add'
+                    type='submit'
+                    name='Save'
+                    disabled={disabled || !this.state.isFormValid}
+                    onClick={this.createTaskHandler}
+                  />
+                  <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+                </div>
+              </>
+            )}
           </form>
         </div>
         {isOpen && <Backdrop />}

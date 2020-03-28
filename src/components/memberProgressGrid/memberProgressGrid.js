@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
-import { headerMemberProgressGrid, h1TaskPage } from '../helpersComponents';
+import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress } from '../helpersComponents';
 import { Link } from 'react-router-dom';
-
-const fetchService = new FetchService();
 
 export default class MembersGrid extends Component {
   state = {
@@ -14,37 +11,9 @@ export default class MembersGrid extends Component {
     title: '',
   };
 
-  fetchService = new FetchService();
-
-  updateMemberProgress = async (userId) => {
-    const memberProgresses = [];
-    const userTasks = await fetchService.getAllUserTasks();
-    if (userTasks.length) {
-      const curUserTasks = userTasks.filter((userTask) => userTask.userId === userId);
-      if (curUserTasks.length) {
-        const usersTaskTrack = await this.fetchService.getAllUserTaskTrack();
-        if (usersTaskTrack.length) {
-          for (const curUserTask of curUserTasks) {
-            for (const userTaskTrack of usersTaskTrack) {
-              if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
-                const response = await fetchService.getTask(curUserTask.taskId);
-                let task = [];
-                if (response) {
-                  task = response;
-                }
-                memberProgresses.push({ userTaskTrack, task });
-              }
-            }
-          }
-        }
-      }
-    }
-    return memberProgresses;
-  };
-
   async componentDidMount() {
     const { userId, title } = this.props;
-    const memberProgresses = await this.updateMemberProgress(userId);
+    const memberProgresses = await updateMemberProgress(userId);
     this.setState({ memberProgresses, loading: false, title });
   }
 
@@ -74,7 +43,9 @@ export default class MembersGrid extends Component {
     }
     return (
       <div className={`grid-wrap`}>
-        <Link to='/MembersGrid'>back to grid</Link>
+        <span>
+          <Link to='/MembersGrid'>back to grid</Link>
+        </span>
         <h1>Member Progress Grid</h1>
         <table border='1'>
           <caption>{title ? `${title}'s progress:` : null}</caption>

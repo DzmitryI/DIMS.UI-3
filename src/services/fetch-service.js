@@ -97,6 +97,13 @@ export default class FetchService {
     return userTasks;
   };
 
+  getUserTask = async (id) => {
+    const response = await this.getSource(`/UserTask/${id}.json`);
+    if (response && response.data) {
+      return response.data;
+    }
+  };
+
   getTaskState = async (id) => {
     const response = await this.getSource(`/TaskState/${id}.json`);
     return response;
@@ -163,6 +170,10 @@ export default class FetchService {
     return await this.editSource(`/Task/${taskId}.json`, body);
   };
 
+  editTaskTrack = async (taskTrackId, body) => {
+    return await this.editSource(`/TaskTrack/${taskTrackId}.json`, body);
+  };
+
   editTaskState = async (taskId, body) => {
     return await this.editSource(`/TaskState/${taskId}.json`, body);
   };
@@ -177,6 +188,10 @@ export default class FetchService {
 
   delUserTask = async (userTaskId) => {
     return await this.deleteSource(`/UserTask/${userTaskId}.json`);
+  };
+
+  delTaskTrack = async (taskTrackId) => {
+    return await this.deleteSource(`/TaskTrack/${taskTrackId}.json`);
   };
 
   delTaskState = async (taskStateId) => {
