@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import ButtonLink from '../buttonLink';
+import { tableRoles } from '../../helpersComponents';
 
 export default class Header extends Component {
-  links = [
-    { to: '/MembersGrid', label: 'Members Grid' },
-    { to: '/TasksGrid', label: 'Tasks Grid' },
-    // { to: '/MemberTasksGrid', label: 'Member Tasks Grid' },
-  ];
   logoutClick = () => {
     this.props.logout();
   };
-  renderLinks = () => {
-    return this.links.map((link, index) => {
+
+  renderLinks = (links) => {
+    return links.map((link, index) => {
       return (
         <li key={link.to + index}>
           <NavLink to={link.to}>{link.label}</NavLink>
@@ -20,17 +17,26 @@ export default class Header extends Component {
       );
     });
   };
+
   render() {
+    const { isAuthenticated, email } = this.props;
+    const links = [];
+
+    if (isAuthenticated && (email === tableRoles.get('admin') || email === tableRoles.get('mentor'))) {
+      links.push({ to: '/MembersGrid', label: 'Members Grid' });
+      links.push({ to: '/TasksGrid', label: 'Tasks Grid' });
+    } else if (isAuthenticated) {
+      links.push({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
+    }
+
     return (
       <div className='header'>
         <h3>
           <NavLink to='/'>DIMS</NavLink>
         </h3>
-        <ul className='nav'>{this.renderLinks()}</ul>
+        <ul className='nav'>{this.renderLinks(links)}</ul>
         <ButtonLink className='btn btn-tasks' onClick={this.logoutClick} name='Logout' to={'/Auth'} />
       </div>
     );
   }
 }
-
-// export default Header;

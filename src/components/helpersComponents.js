@@ -21,6 +21,11 @@ const h1TaskTrackPage = new Map([
   ['Detail', 'Detail Task Tracks page'],
 ]);
 
+const tableRoles = new Map([
+  ['admin', 'admin@mail.ru'],
+  ['mentor', 'mentor@mail.ru'],
+]);
+
 async function updateMemberProgress(userId = '', taskId = '') {
   const fetchService = new FetchService();
   const memberProgresses = [];
@@ -62,5 +67,6 @@ export {
   h1TaskPage,
   h1MemberPage,
   h1TaskTrackPage,
+  tableRoles,
   updateMemberProgress,
 };

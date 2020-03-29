@@ -43,7 +43,8 @@ export default class Auth extends Component {
       localStorage.setItem('token', data.idToken);
       localStorage.setItem('userId', data.localId);
       localStorage.setItem('expirationDate', expirationDate);
-      this.props.authSuccess(data.idToken);
+      localStorage.setItem('email', data.email);
+      this.props.authSuccess(data.idToken, data.email);
       this.props.autoLogout(data.expiresIn);
       this.props.onloginHandler(response.data);
     } catch (err) {

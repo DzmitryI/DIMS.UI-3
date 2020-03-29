@@ -11,11 +11,15 @@ import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
 import Auth from '../auth';
+import FetchService from '../../services/fetch-service';
+
+const fetchService = new FetchService();
 
 export default class App extends Component {
   state = {
     isAuthenticated: false,
     token: null,
+    email: '',
     isRegister: false,
     isTask: false,
     isMemberTasks: false,
@@ -31,8 +35,9 @@ export default class App extends Component {
     directions: [],
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email');
     if (!token) {
       this.logout();
     } else {
@@ -40,9 +45,12 @@ export default class App extends Component {
       if (expirationDate <= new Date()) {
         this.logout();
       } else {
-        this.authSuccess(token);
+        this.authSuccess(token, email);
         this.autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000);
       }
+      const members = await fetchService.getAllMember();
+      const [member] = members.filter((member) => member.values.email === email);
+      this.setState({ userId: member.userId, title: member.values.name });
     }
   }
 
@@ -53,8 +61,8 @@ export default class App extends Component {
     }
   };
 
-  authSuccess = (token) => {
-    this.setState({ isAuthenticated: !!token, token });
+  authSuccess = (token, email) => {
+    this.setState({ isAuthenticated: !!token, token, email });
   };
 
   autoLogout = (time) => {
@@ -68,6 +76,7 @@ export default class App extends Component {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('expirationDate');
+    localStorage.removeItem('email');
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
@@ -127,6 +136,7 @@ export default class App extends Component {
   render() {
     const {
       isAuthenticated,
+      email,
       isRegister,
       isTask,
       isTaskTrack,
@@ -163,7 +173,7 @@ export default class App extends Component {
     if (isAuthenticated) {
       routes = (
         <>
-          <Header logout={this.logout} />
+          <Header logout={this.logout} email={email} isAuthenticated={isAuthenticated} />
           <Switch>
             <Route
               path='/MembersGrid'
@@ -179,12 +189,6 @@ export default class App extends Component {
               exact
             />
             <Route
-              path='/TasksGrid'
-              render={(props) => (
-                <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
-              )}
-            />
-            <Route
               path='/MemberProgressGrid'
               render={(props) => (
                 <MemberProgressGrid
@@ -197,18 +201,6 @@ export default class App extends Component {
               )}
             />
             <Route
-              path='/TaskTracksGrid'
-              render={(props) => (
-                <TaskTracksGrid
-                  {...props}
-                  onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
-                  onTrackClick={this.onTrackClickHandler}
-                  taskId={taskId}
-                  isOpen={isTaskTrack}
-                />
-              )}
-            />
-            <Route
               path='/MemberTasksGrid'
               render={(props) => (
                 <MemberTasksGrid
@@ -217,6 +209,24 @@ export default class App extends Component {
                   title={title}
                   onTrackClick={this.onTrackClickHandler}
                   onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
+                />
+              )}
+            />
+            <Route
+              path='/TasksGrid'
+              render={(props) => (
+                <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+              )}
+            />
+            <Route
+              path='/TaskTracksGrid'
+              render={(props) => (
+                <TaskTracksGrid
+                  {...props}
+                  onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
+                  onTrackClick={this.onTrackClickHandler}
+                  taskId={taskId}
+                  isOpen={isTaskTrack}
                 />
               )}
             />
