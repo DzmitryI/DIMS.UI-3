@@ -16,7 +16,7 @@
   border: 1px solid black;
   border-radius: 5px;
   margin: 0 auto;
-  background-color: rgba(240, 248, 255, 1);
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .close {
@@ -37,10 +37,16 @@ textarea {
   margin: 0 1rem;
   font-size: inherit;
   outline: none;
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 .checkbox {
   width: 15px;
   display: inline-block;
   margin: 5px;
+  &:disabled {
+    cursor: not-allowed;
+  }
 }

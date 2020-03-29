@@ -3,17 +3,19 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
+
+const fetchService = new FetchService();
 
 export default class TasksGrid extends Component {
   state = {
     tasks: [],
     loading: true,
   };
-  fetchService = new FetchService();
 
   async componentDidMount() {
-    const tasks = await this.fetchService.getAllTask();
+    const tasks = await fetchService.getAllTask();
     this.setState({
       tasks,
       loading: false,
@@ -21,10 +23,11 @@ export default class TasksGrid extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    if (this.props.isTask !== prevProps.isTask) {
-      const tasks = await this.fetchService.getAllTask();
+    if (this.props.isOpen !== prevProps.isOpen) {
+      const tasks = await fetchService.getAllTask();
       this.setState({
         tasks,
+        loading: false,
       });
     }
   }
@@ -36,22 +39,25 @@ export default class TasksGrid extends Component {
   onChangeClick = ({ target }) => {
     const taskId = target.closest('tr').id;
     const task = this.state.tasks.filter((task) => task.taskId === taskId);
-    if (target.className === 'btn btn-edit') {
+    if (target.id === 'edit') {
       this.props.onCreateTaskClick(h1TaskPage.get('Edit'), task);
     } else {
       this.props.onCreateTaskClick(h1TaskPage.get('Detail'), task);
     }
+    this.setState({
+      loading: true,
+    });
   };
 
   onDeleteClick = async ({ target }) => {
     const taskId = target.closest('tr').id;
     const [task] = this.state.tasks.filter((task) => task.taskId === taskId);
     const { name } = task;
-    const response = await this.fetchService.delTask(taskId);
+    const response = await fetchService.delTask(taskId);
     if (response.statusText) {
-      alert(`task: ${name} was deleted`);
+      DisplayNotification({ title: `task: ${name} was deleted` });
     }
-    const tasks = await this.fetchService.getAllTask();
+    const tasks = await fetchService.getAllTask();
     this.setState({ tasks });
   };
 
@@ -81,7 +87,7 @@ export default class TasksGrid extends Component {
                   <td className='td'>{startDate}</td>
                   <td className='td'>{deadlineDate}</td>
                   <td className='td'>
-                    <Button className='btn btn-edit' name='Edit' onClick={this.onChangeClick} />
+                    <Button className='btn btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
                     <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
                   </td>
                 </tr>

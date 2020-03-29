@@ -1,4 +1,5 @@
 import axios from 'axios';
+import DisplayNotification from '../components/displayNotification';
 export default class FetchService {
   api_base = process.env.REACT_APP_API_BASE;
 
@@ -6,7 +7,7 @@ export default class FetchService {
     try {
       return await axios.get(`${this.api_base}${url}`);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -14,7 +15,7 @@ export default class FetchService {
     try {
       return await axios.post(`${this.api_base}${url}`, body);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -22,7 +23,7 @@ export default class FetchService {
     try {
       return await axios.put(`${this.api_base}${url}`, body);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -30,7 +31,7 @@ export default class FetchService {
     try {
       return await axios.delete(`${this.api_base}${url}`);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -72,7 +73,11 @@ export default class FetchService {
 
   getTask = async (id) => {
     const response = await this.getSource(`/Task/${id}.json`);
-    return response;
+    const tasks = [];
+    if (response && response.data) {
+      tasks.push(response.data);
+    }
+    return tasks;
   };
 
   getAllUserTasks = async () => {
@@ -93,9 +98,34 @@ export default class FetchService {
     return userTasks;
   };
 
+  getUserTask = async (id) => {
+    const response = await this.getSource(`/UserTask/${id}.json`);
+    if (response && response.data) {
+      return response.data;
+    }
+  };
+
   getTaskState = async (id) => {
     const response = await this.getSource(`/TaskState/${id}.json`);
     return response;
+  };
+
+  getAllUserTaskTrack = async () => {
+    const response = await this.getSource(`/TaskTrack.json`);
+    const taskTrack = [];
+    if (response && response.data) {
+      Object.entries(response.data).forEach((key) => {
+        const [taskTrackId, values] = key;
+        const { userTaskId, trackDate, trackNote } = values;
+        taskTrack.push({
+          taskTrackId,
+          userTaskId,
+          trackDate,
+          trackNote,
+        });
+      });
+    }
+    return taskTrack;
   };
 
   getDirection = async () => {
@@ -129,12 +159,20 @@ export default class FetchService {
     return await this.setSource(`/TaskState.json`, body);
   };
 
+  setTaskTrack = async (body) => {
+    return await this.setSource(`/TaskTrack.json`, body);
+  };
+
   editMember = async (memberId, body) => {
     return await this.editSource(`/UserProfile/${memberId}.json`, body);
   };
 
   editTask = async (taskId, body) => {
     return await this.editSource(`/Task/${taskId}.json`, body);
+  };
+
+  editTaskTrack = async (taskTrackId, body) => {
+    return await this.editSource(`/TaskTrack/${taskTrackId}.json`, body);
   };
 
   editTaskState = async (taskId, body) => {
@@ -151,6 +189,10 @@ export default class FetchService {
 
   delUserTask = async (userTaskId) => {
     return await this.deleteSource(`/UserTask/${userTaskId}.json`);
+  };
+
+  delTaskTrack = async (taskTrackId) => {
+    return await this.deleteSource(`/TaskTrack/${taskTrackId}.json`);
   };
 
   delTaskState = async (taskStateId) => {

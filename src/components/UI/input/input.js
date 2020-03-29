@@ -1,5 +1,7 @@
 import React from 'react';
-
+function isInvalid(valid, touched, shouldValidation) {
+  return !valid && touched && shouldValidation;
+}
 const Input = ({
   type = 'text',
   autocomplete = 'on',
@@ -11,15 +13,14 @@ const Input = ({
   value,
   onChange,
   errorMessage,
+  disabled = false,
 }) => {
-  function isInvalid(valid, touched, shouldValidation) {
-    return !valid && touched && shouldValidation;
-  }
+  const result = isInvalid(valid, touched, shouldValidation);
   return (
-    <div className={isInvalid(valid, touched, shouldValidation) ? `form-group invalid` : `form-group`}>
+    <div className={result ? `form-group invalid` : `form-group`}>
       <label htmlFor={id}>{label}</label>
-      <input type={type} id={id} value={value} onChange={onChange} autoComplete={autocomplete} />
-      {isInvalid(valid, touched, shouldValidation) ? <span>{errorMessage}</span> : null}
+      <input type={type} id={id} value={value} onChange={onChange} disabled={disabled} autoComplete={autocomplete} />
+      {result ? <span>{errorMessage}</span> : null}
     </div>
   );
 };

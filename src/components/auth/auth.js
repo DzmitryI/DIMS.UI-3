@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import { createControl, validateControl } from '../../services/helpers.js';
 import axios from 'axios';
+import DisplayNotification from '../../components/displayNotification';
+import { createControl, validateControl } from '../../services/helpers.js';
+import { clearOblectValue } from '../../page/helpersPage';
 
 export default class Auth extends Component {
   state = {
@@ -38,20 +40,33 @@ export default class Auth extends Component {
     const { authData } = this.state;
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL_SIGNIN}${this.API_Key}`, authData);
-      console.log(response.data);
+      const { data } = response;
+      const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000);
+      localStorage.setItem('token', data.idToken);
+      localStorage.setItem('userId', data.localId);
+      localStorage.setItem('expirationDate', expirationDate);
+      localStorage.setItem('email', data.email);
+      this.props.authSuccess(data.idToken, data.email);
+      this.props.autoLogout(data.expiresIn);
       this.props.onloginHandler(response.data);
+      DisplayNotification({ title: 'login successful' });
     } catch (err) {
-      console.log(err);
+      DisplayNotification({ title: err.message });
     }
   };
 
   registerHandler = async () => {
-    const { authData } = this.state;
+    const { authData, authInput } = this.state;
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL_SIGNUP}${this.API_Key}`, authData);
-      console.log(response);
+      const res = clearOblectValue(authInput, authData);
+      this.setState({
+        authInput: res.objInputClear,
+        authData: res.objElemClear,
+      });
+      DisplayNotification({ title: `Email ${response.data.email} was registred` });
     } catch (err) {
-      console.log(err);
+      DisplayNotification({ title: err.message });
     }
   };
 
@@ -105,6 +120,7 @@ export default class Auth extends Component {
             <Button
               className='btn btn-add'
               type='success'
+              id='Login'
               name='Log in'
               disabled={!this.state.isFormValid}
               onClick={this.loginHanler}

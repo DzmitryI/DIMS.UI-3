@@ -51,7 +51,7 @@ caption {
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid gray;
+  border: 1px solid rgba(128, 128, 128, 1);
 }
 
 th {
@@ -80,6 +80,13 @@ td {
   margin: 0 auto;
   padding: 30px 0;
   z-index: 100;
+  & a {
+    text-align: right;
+  }
+  & a:hover {
+    text-decoration: none;
+    color: rgb(57, 126, 237);
+  }
 }
 
 .buttons-wrap {

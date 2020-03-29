@@ -3,7 +3,9 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
-import { headerMemberTasksGrid } from '../helpersComponents';
+import DisplayNotification from '../../components/displayNotification';
+import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
+import { Link } from 'react-router-dom';
 
 const fetchService = new FetchService();
 
@@ -15,16 +17,17 @@ export default class MemberTasksGrid extends Component {
 
   updateMemberTasks = async (userId) => {
     const tasks = [];
-    const userTasksId = await fetchService.getAllUserTasks();
-    if (userTasksId.length) {
-      for (const userTask of userTasksId) {
+    const userTasks = await fetchService.getAllUserTasks();
+    if (userTasks.length) {
+      for (const userTask of userTasks) {
         if (userTask.userId === userId) {
-          const responseTask = await fetchService.getTask(userTask.taskId);
-          const responseTaskState = await fetchService.getTaskState(userTask.stateId);
-          if (responseTask.data && responseTaskState.data) {
+          const responseTasks = await fetchService.getTask(userTask.taskId);
+          const responseTasksState = await fetchService.getTaskState(userTask.stateId);
+          if (responseTasks && responseTasksState.data) {
             const { userTaskId, taskId, userId, stateId } = userTask;
-            const { name, deadlineDate, startDate } = responseTask.data;
-            const { stateName } = responseTaskState.data;
+            const [responseTask] = responseTasks;
+            const { name, deadlineDate, startDate } = responseTask;
+            const { stateName } = responseTasksState.data;
             tasks.push({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
           }
         }
@@ -32,6 +35,12 @@ export default class MemberTasksGrid extends Component {
     }
     return tasks;
   };
+
+  async componentDidMount() {
+    const { userId } = this.props;
+    const userTasks = await this.updateMemberTasks(userId);
+    this.setState({ userTasks, loading: false });
+  }
 
   async componentDidUpdate(prevProps) {
     const { userId } = this.props;
@@ -41,8 +50,15 @@ export default class MemberTasksGrid extends Component {
     }
   }
 
-  onTrackClick = () => {
-    console.log('Track click');
+  onTrackClick = ({ target }) => {
+    const userTaskId = target.closest('tr').id;
+    const taskName = target.closest('td').id;
+    this.props.onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
+  };
+
+  onOpenTaskTracksClick = async ({ target }) => {
+    const taskId = target.closest('td').id;
+    this.props.onOpenTaskTracksClick('', taskId);
   };
 
   onStateTaskClick = async ({ target }) => {
@@ -57,25 +73,26 @@ export default class MemberTasksGrid extends Component {
     }
     const response = await fetchService.editTaskState(stateId, taskState);
     if (response.statusText) {
-      console.log(`edit task state`);
       const { userTasks } = this.state;
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       this.setState(userTasks);
+      DisplayNotification({ title: `Task state was edited` });
     }
   };
 
   render() {
-    const { isOpen, fullName } = this.props;
+    const { title } = this.props;
     const { userTasks, loading } = this.state;
-    if (loading && isOpen) {
+    if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={`grid-wrap ${isOpen ? '' : 'close'}`}>
+      <div className={`grid-wrap`}>
+        <Link to='/MembersGrid'>back to grid</Link>
         <h1>Member's Tasks Manage Grid</h1>
         <table border='1'>
-          <caption>{`Hi, dear ${fullName}! This is your current tasks:`}</caption>
+          <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
           <thead>
             <HeaderTable arr={headerMemberTasksGrid} />
           </thead>
@@ -85,15 +102,15 @@ export default class MemberTasksGrid extends Component {
               return (
                 <tr key={userTaskId} id={userTaskId}>
                   <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onChangeClick} id={taskId}>
-                      {name}
+                  <td className='td' id={taskId}>
+                    <span onClick={this.onOpenTaskTracksClick}>
+                      <Link to='/TaskTracksGrid'>{name}</Link>
                     </span>
                   </td>
                   <td className='td'>{startDate}</td>
                   <td className='td'>{deadlineDate}</td>
                   <td className='td'>{stateName}</td>
-                  <td className='td'>
+                  <td className='td' id={name}>
                     <Button className='btn btn-progress' onClick={this.onTrackClick} name='Track' />
                   </td>
                   <td className='td' id={stateId}>

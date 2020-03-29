@@ -4,8 +4,10 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
 import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
+import { h1TaskPage } from '../../components/helpersComponents';
 
 const fetchService = new FetchService();
 export default class TaskPage extends Component {
@@ -44,6 +46,7 @@ export default class TaskPage extends Component {
     },
     taskId: null,
     loading: true,
+    disabled: false,
     members: [],
     userTasks: [],
   };
@@ -59,13 +62,41 @@ export default class TaskPage extends Component {
       userTasks.forEach((userTask) => {
         if (userTask.taskId === taskId) {
           const index = members.findIndex((member) => member.userId === userTask.userId);
-          members[index].checked = true;
+          if (index !== -1) {
+            members[index].checked = true;
+          }
         }
       });
     }
     this.setState({ userTasks });
     return members;
   };
+
+  async componentDidMount() {
+    const members = await fetchService.getAllMember();
+    this.setState({ members, loading: false });
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { task, title } = this.props;
+    let disabled = false;
+    if (title !== prevProps.title && title === h1TaskPage.get('Create')) {
+      const members = await fetchService.getAllMember();
+      this.setState({ members, loading: false });
+    }
+    if (task.length) {
+      const [value] = task;
+      const { taskId, ...values } = value;
+      if (task !== prevProps.task) {
+        const taskInput = updateInput(this.state.taskInput, values);
+        const members = await this.updateTaskMembers(taskId);
+        if (title === h1TaskPage.get('Detail')) {
+          disabled = true;
+        }
+        this.setState({ taskInput, taskId, isFormValid: true, task: values, members, disabled, loading: false });
+      }
+    }
+  }
 
   checkTaskMembers = async (taskId) => {
     const { members, userTasks } = this.state;
@@ -77,16 +108,16 @@ export default class TaskPage extends Component {
         if (index !== -1 && !member.checked) {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
-            console.log(`del user task`);
+            DisplayNotification({ title: `User's task was deleted.` });
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
-            console.log(`del task state`);
+            DisplayNotification({ title: `User's task state was deleted.` });
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
-            console.log(`add task state`);
+            DisplayNotification({ title: `User's task state was added.` });
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -94,31 +125,13 @@ export default class TaskPage extends Component {
             stateId: responseTaskState.data.name,
           });
           if (responseUserTask.statusText) {
-            console.log(`add user task`);
+            DisplayNotification({ title: `User's task was added.` });
           }
         }
       }
     }
     return members;
   };
-
-  async componentDidMount() {
-    const members = await fetchService.getAllMember();
-    this.setState({ members, loading: false });
-  }
-
-  async componentDidUpdate(prevProps) {
-    const { task } = this.props;
-    if (task.length) {
-      const [value] = task;
-      const { taskId, ...values } = value;
-      if (task !== prevProps.task) {
-        const taskInput = updateInput(this.state.taskInput, values);
-        const members = await this.updateTaskMembers(taskId);
-        this.setState({ taskInput, taskId, isFormValid: true, task: values, members, loading: false });
-      }
-    }
-  }
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
@@ -141,7 +154,7 @@ export default class TaskPage extends Component {
   };
 
   handleCheckbox = ({ target }) => {
-    const members = [...this.state.members];
+    const { members } = this.state;
     Object.values(members).forEach((member) => {
       if (member.userId === target.id) member.checked = target.checked;
     });
@@ -157,9 +170,9 @@ export default class TaskPage extends Component {
     const addMembersTask = [];
     for (const member of members) {
       if (member.checked) {
-        const response = await fetchService.setTaskState(this.taskState);
-        if (response.statusText) {
-          addMembersTask.push({ userId: member.userId, taskId, stateId: response.data.name });
+        const responseTaskState = await fetchService.setTaskState(this.taskState);
+        if (responseTaskState.statusText) {
+          addMembersTask.push({ userId: member.userId, taskId, stateId: responseTaskState.data.name });
         }
       }
     }
@@ -170,25 +183,25 @@ export default class TaskPage extends Component {
     const { taskId, task, taskInput } = this.state;
     this.setState({ loading: false });
     if (!taskId) {
-      const response = await fetchService.setTask(task);
-      if (response.statusText) {
-        alert(`add new task: ${task.name}`);
-        this.setState({ taskId: response.data.name });
+      const responseTask = await fetchService.setTask(task);
+      if (responseTask.statusText) {
+        DisplayNotification({ title: `${task.name} was added.` });
+        this.setState({ taskId: responseTask.data.name });
       }
       const addMembersTask = await this.createTaskState();
       if (addMembersTask.length) {
         for (const addMemberTask of addMembersTask) {
-          const response = await fetchService.setUserTask(addMemberTask);
-          if (response.statusText) {
-            console.log(`add user task: ${task.name}`);
+          const responseUserTask = await fetchService.setUserTask(addMemberTask);
+          if (responseUserTask.statusText) {
+            DisplayNotification({ title: `${task.name} was added for user.` });
           }
         }
       }
     } else {
-      const response = await fetchService.editTask(taskId, task);
+      const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
-      if (response.statusText) {
-        alert(`edit task: ${task.name}`);
+      if (responseTask.statusText) {
+        DisplayNotification({ title: `${task.name} was edited.` });
       }
     }
     const res = clearOblectValue(taskInput, task);
@@ -205,13 +218,17 @@ export default class TaskPage extends Component {
       taskId: '',
       isFormValid: false,
       loading: true,
+      disabled: false,
       members: [],
     });
     this.props.onCreateTaskClick();
   };
 
   renderInputs() {
-    const { description } = this.state.task;
+    const {
+      task: { description },
+      disabled,
+    } = this.state;
     return Object.keys(this.state.taskInput).map((controlName, index) => {
       const control = this.state.taskInput[controlName];
       let textArea = null;
@@ -224,6 +241,7 @@ export default class TaskPage extends Component {
               name='description'
               value={description}
               rows='7'
+              disabled={disabled}
               onChange={this.handleTextArea}
             ></textarea>
           </div>
@@ -239,6 +257,7 @@ export default class TaskPage extends Component {
             valid={control.valid}
             touched={control.touched}
             label={control.label}
+            disabled={disabled}
             errorMessage={control.errorMessage}
             shouldValidation={!!control.validation}
             onChange={this.onHandlelInput(controlName)}
@@ -250,7 +269,7 @@ export default class TaskPage extends Component {
   }
 
   renderCheckbox = () => {
-    const members = [...this.state.members];
+    const { members, disabled } = this.state;
     return members.map((member) => {
       return (
         <label key={member.userId}>
@@ -261,6 +280,7 @@ export default class TaskPage extends Component {
             value={member.userId}
             onClick={this.handleCheckbox}
             defaultChecked={member.checked}
+            disabled={disabled}
           />
           {member.fullName}
         </label>
@@ -273,36 +293,38 @@ export default class TaskPage extends Component {
     const {
       task: { name },
       loading,
+      disabled,
+      isFormValid,
     } = this.state;
     return (
       <>
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
-            <h1 className='subtitle'>{name}</h1>
-            <div className='form-group'>{this.renderInputs()}</div>
-            <div className='form-group'>
-              {loading ? (
-                <Spinner />
-              ) : (
-                <>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h1 className='subtitle'>{name}</h1>
+                <div className='form-group'>{this.renderInputs()}</div>
+                <div className='form-group'>
                   <label htmlFor='members'>Members</label>
                   <div id='members' className='column'>
                     {this.renderCheckbox()}
                   </div>
-                </>
-              )}
-            </div>
-            <div className='form-group row'>
-              <Button
-                className='btn btn-add'
-                type='submit'
-                name='Save'
-                disabled={!this.state.isFormValid}
-                onClick={this.createTaskHandler}
-              />
-              <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
-            </div>
+                </div>
+                <div className='form-group row'>
+                  <Button
+                    className='btn btn-add'
+                    type='submit'
+                    name='Save'
+                    disabled={disabled || !isFormValid}
+                    onClick={this.createTaskHandler}
+                  />
+                  <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+                </div>
+              </>
+            )}
           </form>
         </div>
         {isOpen && <Backdrop />}

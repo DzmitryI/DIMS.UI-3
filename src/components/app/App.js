@@ -1,59 +1,135 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Layout from '../../hoc/layout';
 import MembersGrid from '../membersGrid';
-import MemberPage from '../../page/memberPage';
 import MemberTasksGrid from '../memberTasksGrid';
+import MemberProgressGrid from '../memberProgressGrid';
 import TasksGrid from '../tasksGrid';
+import TaskTracksGrid from '../taskTracksGrid';
+import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
+import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
-// import Auth from '../auth';
-import { Auth } from '../../contexts/AuthContext';
+
+import Auth from '../auth';
+import FetchService from '../../services/fetch-service';
+
+const fetchService = new FetchService();
+
 
 export default class App extends Component {
   state = {
+    isAuthenticated: false,
+    token: null,
+    email: '',
     isRegister: false,
-    login: false,
     isTask: false,
     isMemberTasks: false,
-    titleMember: '',
-    titleTask: '',
-    fullName: '',
+    isTaskTrack: false,
+    title: '',
+    subtitle: '',
     curMember: [],
-    userId: null,
     curTask: [],
+    track: {},
+    userId: null,
+    taskId: null,
+    userTaskId: null,
     directions: [],
   };
 
+  async componentDidMount() {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email');
+    if (!token) {
+      this.logout();
+    } else {
+      const expirationDate = new Date(localStorage.getItem('expirationDate'));
+      if (expirationDate <= new Date()) {
+        this.logout();
+      } else {
+        this.authSuccess(token, email);
+        this.autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000);
+      }
+      const members = await fetchService.getAllMember();
+      const [member] = members.filter((member) => member.values.email === email);
+      if (member) {
+        this.setState({ userId: member.userId, title: member.values.name });
+      }
+    }
+  }
+
   onLoginHandler = (data) => {
     if (data.registered) {
-      this.setState({ login: !this.state.login });
+      this.setState({ isAuthenticated: !!this.state.token });
     }
+  };
+
+  authSuccess = (token, email) => {
+    this.setState({ isAuthenticated: !!token, token, email });
+  };
+
+  autoLogout = (time) => {
+    setTimeout(() => {
+      this.logout();
+    }, time * 1000);
+  };
+
+  logout = () => {
+    this.setState({ isAuthenticated: false, token: null });
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('email');
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
     this.setState({
       isRegister: !this.state.isRegister,
-      titleMember: title,
-      curMember: member,
       directions,
+      title,
+      curMember: member,
     });
   };
 
   onCreateTaskClickHandler = (title = '', task = []) => {
     this.setState({
       isTask: !this.state.isTask,
-      titleTask: title,
+      title,
       curTask: task,
     });
   };
 
-  onTaskClickHandler = (userId, fullName) => {
+  onTaskClickHandler = (userId, title) => {
     this.setState({
       isMemberTasks: !this.state.isMemberTasks,
       userId,
-      fullName,
+      title,
     });
+  };
+
+  onTrackClickHandler = (userTaskId = '', title = '', subtitle = '', track = {}) => {
+    this.setState({
+      isTaskTrack: !this.state.isTaskTrack,
+      userTaskId,
+      title,
+      subtitle,
+      track,
+    });
+  };
+
+  onProgressClickHandler = (userId, title) => {
+    this.setState({
+      userId,
+      title,
+    });
+  };
+
+  onOpenTaskTracksHandler = (userId = '', taskId = '') => {
+    if (userId) {
+      this.setState({ userId });
+    } else if (taskId) {
+      this.setState({ taskId });
+    }
   };
 
   mainPage = () => {
@@ -62,61 +138,128 @@ export default class App extends Component {
 
   render() {
     const {
-      login,
+      isAuthenticated,
+      email,
       isRegister,
       isTask,
-      isMemberTasks,
-      titleMember,
-      titleTask,
-      fullName,
+      isTaskTrack,
+      title,
+      subtitle,
       curMember,
-      userId,
       curTask,
+      userId,
+      taskId,
+      userTaskId,
+      track,
       directions,
     } = this.state;
+
+    let routes = (
+      <Switch>
+        <Route
+          path='/Auth'
+          render={(props) => (
+            <Auth
+              {...props}
+              onloginHandler={this.onLoginHandler}
+              logout={this.logout}
+              authSuccess={this.authSuccess}
+              autoLogout={this.autoLogout}
+              exact
+            />
+          )}
+        />
+        <Redirect to='/Auth' />
+      </Switch>
+    );
+
+    if (isAuthenticated) {
+      routes = (
+        <>
+          <Header logout={this.logout} email={email} isAuthenticated={isAuthenticated} />
+          <Switch>
+            <Route
+              path='/MembersGrid'
+              render={(props) => (
+                <MembersGrid
+                  {...props}
+                  onRegisterClick={this.onRegisterClickHandler}
+                  onTaskClick={this.onTaskClickHandler}
+                  onProgressClick={this.onProgressClickHandler}
+                  isRegister={isRegister}
+                />
+              )}
+              exact
+            />
+            <Route
+              path='/MemberProgressGrid'
+              render={(props) => (
+                <MemberProgressGrid
+                  {...props}
+                  onProgressClick={this.onProgressClickHandler}
+                  onTaskClick={this.onCreateTaskClickHandler}
+                  userId={userId}
+                  title={title}
+                />
+              )}
+            />
+            <Route
+              path='/MemberTasksGrid'
+              render={(props) => (
+                <MemberTasksGrid
+                  {...props}
+                  userId={userId}
+                  title={title}
+                  onTrackClick={this.onTrackClickHandler}
+                  onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
+                />
+              )}
+            />
+            <Route
+              path='/TasksGrid'
+              render={(props) => (
+                <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+              )}
+            />
+            <Route
+              path='/TaskTracksGrid'
+              render={(props) => (
+                <TaskTracksGrid
+                  {...props}
+                  onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
+                  onTrackClick={this.onTrackClickHandler}
+                  taskId={taskId}
+                  isOpen={isTaskTrack}
+                />
+              )}
+            />
+            <Route path='/' render={this.mainPage} exact />
+            <Redirect to='/' />
+          </Switch>
+        </>
+      );
+    }
+
     return (
       <Layout>
-        {login ? (
-          <Auth onloginHandler={this.onLoginHandler} />
-        ) : (
-          <>
-            <Header />
-            <Switch>
-              <Route path='/' render={this.mainPage} exact />
-              <Auth.Consumer>
-                {({ role }) => (
-                  // role === Rolesl.ADMIN ? .... :
-                  <Route
-                    path='/MembersGrid'
-                    render={() => (
-                      <MembersGrid
-                        // {...props}
-                        onRegisterClick={this.onRegisterClickHandler}
-                        onTaskClick={this.onTaskClickHandler}
-                        isRegister={isRegister}
-                      />
-                    )}
-                  />
-                )}
-              </Auth.Consumer>
-              <Route
-                path='/TasksGrid'
-                render={(props) => (
-                  <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
-                )}
-              />
-            </Switch>
-          </>
-        )}
+        {routes}
         <MemberPage
           onRegisterClick={this.onRegisterClickHandler}
           isOpen={isRegister}
-          title={titleMember}
+          title={title}
           member={curMember}
           directions={directions}
         />
-        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={titleTask} task={curTask} />
-        <MemberTasksGrid isOpen={isMemberTasks} userId={userId} fullName={fullName} />
+        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
+        <TaskTrackPage
+          onTrackClick={this.onTrackClickHandler}
+          isOpen={isTaskTrack}
+          track={track}
+          title={title}
+          taskId={taskId}
+          userTaskId={userTaskId}
+          subtitle={subtitle}
+        />
       </Layout>
     );
   }
