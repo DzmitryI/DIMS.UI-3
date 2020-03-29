@@ -10,10 +10,12 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
+
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
 
 const fetchService = new FetchService();
+
 
 export default class App extends Component {
   state = {
