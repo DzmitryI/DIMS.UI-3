@@ -9,9 +9,9 @@ export default class Header extends Component {
   };
 
   renderLinks = (links) => {
-    return links.map((link, index) => {
+    return links.map((link) => {
       return (
-        <li key={link.to + index}>
+        <li key={link.to}>
           <NavLink to={link.to}>{link.label}</NavLink>
         </li>
       );

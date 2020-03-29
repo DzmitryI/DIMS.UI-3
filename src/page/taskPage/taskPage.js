@@ -154,7 +154,7 @@ export default class TaskPage extends Component {
   };
 
   handleCheckbox = ({ target }) => {
-    const members = [...this.state.members];
+    const { members } = this.state;
     Object.values(members).forEach((member) => {
       if (member.userId === target.id) member.checked = target.checked;
     });
@@ -170,9 +170,9 @@ export default class TaskPage extends Component {
     const addMembersTask = [];
     for (const member of members) {
       if (member.checked) {
-        const response = await fetchService.setTaskState(this.taskState);
-        if (response.statusText) {
-          addMembersTask.push({ userId: member.userId, taskId, stateId: response.data.name });
+        const responseTaskState = await fetchService.setTaskState(this.taskState);
+        if (responseTaskState.statusText) {
+          addMembersTask.push({ userId: member.userId, taskId, stateId: responseTaskState.data.name });
         }
       }
     }
@@ -183,24 +183,24 @@ export default class TaskPage extends Component {
     const { taskId, task, taskInput } = this.state;
     this.setState({ loading: false });
     if (!taskId) {
-      const response = await fetchService.setTask(task);
-      if (response.statusText) {
+      const responseTask = await fetchService.setTask(task);
+      if (responseTask.statusText) {
         DisplayNotification({ title: `${task.name} was added.` });
-        this.setState({ taskId: response.data.name });
+        this.setState({ taskId: responseTask.data.name });
       }
       const addMembersTask = await this.createTaskState();
       if (addMembersTask.length) {
         for (const addMemberTask of addMembersTask) {
-          const response = await fetchService.setUserTask(addMemberTask);
-          if (response.statusText) {
+          const responseUserTask = await fetchService.setUserTask(addMemberTask);
+          if (responseUserTask.statusText) {
             DisplayNotification({ title: `${task.name} was added for user.` });
           }
         }
       }
     } else {
-      const response = await fetchService.editTask(taskId, task);
+      const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
-      if (response.statusText) {
+      if (responseTask.statusText) {
         DisplayNotification({ title: `${task.name} was edited.` });
       }
     }
@@ -269,8 +269,7 @@ export default class TaskPage extends Component {
   }
 
   renderCheckbox = () => {
-    const members = [...this.state.members];
-    const { disabled } = this.state;
+    const { members, disabled } = this.state;
     return members.map((member) => {
       return (
         <label key={member.userId}>
@@ -295,6 +294,7 @@ export default class TaskPage extends Component {
       task: { name },
       loading,
       disabled,
+      isFormValid,
     } = this.state;
     return (
       <>
@@ -318,7 +318,7 @@ export default class TaskPage extends Component {
                     className='btn btn-add'
                     type='submit'
                     name='Save'
-                    disabled={disabled || !this.state.isFormValid}
+                    disabled={disabled || !isFormValid}
                     onClick={this.createTaskHandler}
                   />
                   <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />

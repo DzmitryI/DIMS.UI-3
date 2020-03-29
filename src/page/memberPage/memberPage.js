@@ -10,6 +10,8 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 
+const fetchService = new FetchService();
+
 export default class MemberPage extends Component {
   state = {
     isFormValid: false,
@@ -138,11 +140,11 @@ export default class MemberPage extends Component {
     directions: [],
   };
 
-  fetchService = new FetchService();
-
   componentDidUpdate(prevProps) {
     const { member, directions, title } = this.props;
-    const { direction, sex } = this.state.memberSelect;
+    const {
+      memberSelect: { direction, sex },
+    } = this.state;
     let disabled = false;
     if (title !== prevProps.title && title === h1MemberPage.get('Create')) {
       this.setState({ loading: false });
@@ -150,13 +152,13 @@ export default class MemberPage extends Component {
     if (member.length) {
       const [{ userId, values }] = member;
       if (direction.options.length === 0) {
-        const memberSelect = { ...this.state.memberSelect };
+        const { memberSelect } = this.state;
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });
       }
       if (member !== prevProps.member) {
         const memberInput = updateInput(this.state.memberInput, values);
-        const memberSelect = { ...this.state.memberSelect };
+        const { memberSelect } = this.state;
         Object.keys(memberSelect).forEach((key) => {
           if (key === direction.name) {
             memberSelect[key].options = directions;
@@ -192,8 +194,7 @@ export default class MemberPage extends Component {
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
-    const memberInput = { ...this.state.memberInput };
-    const member = { ...this.state.member };
+    const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
     memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
@@ -206,8 +207,10 @@ export default class MemberPage extends Component {
   };
 
   handleSelect = ({ target }) => {
-    const member = { ...this.state.member };
-    const { direction } = this.state.memberSelect;
+    const {
+      member,
+      memberSelect: { direction },
+    } = this.state;
     if (target.id === direction.name) {
       member['directionId'] = target.options[target.selectedIndex].value;
     } else {
@@ -223,12 +226,12 @@ export default class MemberPage extends Component {
   createMemberHandler = async () => {
     const { userId, member, memberInput, directions } = this.state;
     if (!userId) {
-      const response = await this.fetchService.setMember(member);
+      const response = await fetchService.setMember(member);
       if (response.statusText) {
         DisplayNotification({ title: `New member: ${member.name} ${member.lastName} was added` });
       }
     } else {
-      const response = await this.fetchService.editMember(userId, member);
+      const response = await fetchService.editMember(userId, member);
       if (response.statusText) {
         DisplayNotification({ title: `Member: ${member.name} ${member.lastName} was edited` });
       }
@@ -304,7 +307,12 @@ export default class MemberPage extends Component {
   }
 
   render() {
-    const { member, disabled, loading } = this.state;
+    const {
+      member: { name, lastName },
+      disabled,
+      loading,
+      isFormValid,
+    } = this.state;
     const { isOpen, title } = this.props;
     return (
       <>
@@ -315,13 +323,13 @@ export default class MemberPage extends Component {
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{`${member.name} ${member.lastName}`}</h1>
+                <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
                 {this.renderInputs()}
                 {this.renderSelect()}
                 <div className='form-group row'>
                   <Button
                     className='btn btn-add'
-                    disabled={disabled || !this.state.isFormValid}
+                    disabled={disabled || !isFormValid}
                     type='submit'
                     onClick={this.createMemberHandler}
                     name='Save'

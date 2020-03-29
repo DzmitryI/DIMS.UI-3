@@ -1,8 +1,8 @@
 function validateControl(value, validation) {
+  let isValid = true;
   if (!validation) {
     return true;
   }
-  let isValid = true;
   if (validation.required) {
     isValid = value.trim() !== '';
   }

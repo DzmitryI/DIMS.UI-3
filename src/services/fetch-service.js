@@ -1,4 +1,5 @@
 import axios from 'axios';
+import DisplayNotification from '../components/displayNotification';
 export default class FetchService {
   api_base = process.env.REACT_APP_API_BASE;
 
@@ -6,7 +7,7 @@ export default class FetchService {
     try {
       return await axios.get(`${this.api_base}${url}`);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -14,7 +15,7 @@ export default class FetchService {
     try {
       return await axios.post(`${this.api_base}${url}`, body);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -22,7 +23,7 @@ export default class FetchService {
     try {
       return await axios.put(`${this.api_base}${url}`, body);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
@@ -30,7 +31,7 @@ export default class FetchService {
     try {
       return await axios.delete(`${this.api_base}${url}`);
     } catch (error) {
-      console.log(error);
+      DisplayNotification({ title: error.message });
     }
   };
 
