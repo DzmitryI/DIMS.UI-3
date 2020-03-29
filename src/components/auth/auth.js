@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import { createControl, validateControl } from '../../services/helpers.js';
 import axios from 'axios';
+import DisplayNotification from '../../components/displayNotification';
+import { createControl, validateControl } from '../../services/helpers.js';
+import { clearOblectValue } from '../../page/helpersPage';
 
 export default class Auth extends Component {
   state = {
@@ -47,18 +49,24 @@ export default class Auth extends Component {
       this.props.authSuccess(data.idToken, data.email);
       this.props.autoLogout(data.expiresIn);
       this.props.onloginHandler(response.data);
+      DisplayNotification({ title: 'login successful' });
     } catch (err) {
-      console.log(err);
+      DisplayNotification({ title: err.message });
     }
   };
 
   registerHandler = async () => {
-    const { authData } = this.state;
+    const { authData, authInput } = this.state;
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL_SIGNUP}${this.API_Key}`, authData);
-      console.log(response);
+      const res = clearOblectValue(authInput, authData);
+      this.setState({
+        authInput: res.objInputClear,
+        authData: res.objElemClear,
+      });
+      DisplayNotification({ title: `Email ${response.data.email} was registred` });
     } catch (err) {
-      console.log(err);
+      DisplayNotification({ title: err.message });
     }
   };
 

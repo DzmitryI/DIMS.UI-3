@@ -3,6 +3,7 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
 import { Link } from 'react-router-dom';
 
@@ -72,11 +73,11 @@ export default class MemberTasksGrid extends Component {
     }
     const response = await fetchService.editTaskState(stateId, taskState);
     if (response.statusText) {
-      console.log(`edit task state`);
       const { userTasks } = this.state;
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       this.setState(userTasks);
+      DisplayNotification({ title: `Task state was edited` });
     }
   };
 

@@ -3,6 +3,7 @@ import FetchService from '../../services/fetch-service';
 import HeaderTable from '../UI/headerTable';
 import Button from '../UI/button';
 import Spinner from '../spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress } from '../helpersComponents';
 import { Link } from 'react-router-dom';
 
@@ -46,7 +47,7 @@ export default class TaskTracsGrid extends Component {
     const taskTrackId = target.closest('tr').id;
     const responseTaskTrackId = await fetchService.delTaskTrack(taskTrackId);
     if (responseTaskTrackId.statusText) {
-      alert(`${responseTaskTrackId} was deleted`);
+      DisplayNotification({ title: `Task track was deleted` });
     }
     const tracks = await updateMemberProgress('', this.state.taskId);
     this.setState({ tracks, loading: false });

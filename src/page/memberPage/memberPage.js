@@ -225,12 +225,12 @@ export default class MemberPage extends Component {
     if (!userId) {
       const response = await this.fetchService.setMember(member);
       if (response.statusText) {
-        DisplayNotification({ title: `add new member: ${member.name} ${member.lastName}` });
+        DisplayNotification({ title: `New member: ${member.name} ${member.lastName} was added` });
       }
     } else {
       const response = await this.fetchService.editMember(userId, member);
       if (response.statusText) {
-        DisplayNotification({ title: `edit member: ${member.name} ${member.lastName}` });
+        DisplayNotification({ title: `Member: ${member.name} ${member.lastName} was edited` });
       }
     }
     const res = clearOblectValue(memberInput, member);

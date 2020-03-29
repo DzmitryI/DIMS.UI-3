@@ -4,7 +4,7 @@ import Spinner from '../spinner';
 import Button from '../UI/button';
 import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
-// import DisplayNotification from '../displayNotification';
+import DisplayNotification from '../displayNotification';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 
 const fetchService = new FetchService();
@@ -65,17 +65,15 @@ export default class MembersGrid extends Component {
     const resAllUserTasks = await fetchService.getAllUserTasks();
     if (resAllUserTasks.length) {
       const curUserTasks = resAllUserTasks.filter((resAllUserTask) => resAllUserTask.userId === memberId);
-      console.log(curUserTasks);
-
       if (curUserTasks.length) {
         for (const curUserTask of curUserTasks) {
           const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
           if (responseUserTask.statusText) {
-            console.log(`del user task`);
+            DisplayNotification({ title: `User's task was deleted` });
           }
           const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
           if (responseTaskState.statusText) {
-            console.log(`del task state`);
+            DisplayNotification({ title: `User's task state was deleted` });
           }
           const usersTaskTrack = await fetchService.getAllUserTaskTrack();
           if (usersTaskTrack.length) {
@@ -83,7 +81,7 @@ export default class MembersGrid extends Component {
               if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
                 const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
                 if (responseTaskTrackId.statusText) {
-                  alert(`${responseTaskTrackId} was deleted`);
+                  DisplayNotification({ title: `Task track was deleted` });
                 }
               }
             }
@@ -93,7 +91,7 @@ export default class MembersGrid extends Component {
     }
     const response = await fetchService.delMember(memberId);
     if (response.statusText) {
-      alert(`${fullName} was deleted`);
+      DisplayNotification({ title: `${fullName} was deleted` });
     }
     const members = await fetchService.getAllMember();
     this.setState({ members });
@@ -114,7 +112,6 @@ export default class MembersGrid extends Component {
     const {
       values: { name },
     } = member;
-    console.log(name);
     this.props.onProgressClick(memberId, name);
   };
 

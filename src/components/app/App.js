@@ -58,7 +58,6 @@ export default class App extends Component {
 
   onLoginHandler = (data) => {
     if (data.registered) {
-      console.log(data);
       this.setState({ isAuthenticated: !!this.state.token });
     }
   };

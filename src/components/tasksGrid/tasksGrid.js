@@ -3,6 +3,7 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
 
 export default class TasksGrid extends Component {
@@ -49,7 +50,7 @@ export default class TasksGrid extends Component {
     const { name } = task;
     const response = await this.fetchService.delTask(taskId);
     if (response.statusText) {
-      alert(`task: ${name} was deleted`);
+      DisplayNotification({ title: `task: ${name} was deleted` });
     }
     const tasks = await this.fetchService.getAllTask();
     this.setState({ tasks });
