@@ -4,6 +4,7 @@ import Spinner from '../spinner';
 import Button from '../UI/button';
 import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
+// import DisplayNotification from '../displayNotification';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 
 const fetchService = new FetchService();

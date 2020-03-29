@@ -50,7 +50,9 @@ export default class App extends Component {
       }
       const members = await fetchService.getAllMember();
       const [member] = members.filter((member) => member.values.email === email);
-      this.setState({ userId: member.userId, title: member.values.name });
+      if (member) {
+        this.setState({ userId: member.userId, title: member.values.name });
+      }
     }
   }
 

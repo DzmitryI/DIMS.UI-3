@@ -4,6 +4,7 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
 import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
@@ -107,16 +108,16 @@ export default class TaskPage extends Component {
         if (index !== -1 && !member.checked) {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
-            console.log(`del user task`);
+            DisplayNotification({ title: `User's task was deleted.` });
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
-            console.log(`del task state`);
+            DisplayNotification({ title: `User's task state was deleted.` });
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
-            console.log(`add task state`);
+            DisplayNotification({ title: `User's task state was added.` });
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -124,7 +125,7 @@ export default class TaskPage extends Component {
             stateId: responseTaskState.data.name,
           });
           if (responseUserTask.statusText) {
-            console.log(`add user task`);
+            DisplayNotification({ title: `User's task was added.` });
           }
         }
       }
@@ -184,7 +185,7 @@ export default class TaskPage extends Component {
     if (!taskId) {
       const response = await fetchService.setTask(task);
       if (response.statusText) {
-        alert(`add new task: ${task.name}`);
+        DisplayNotification({ title: `${task.name} was added.` });
         this.setState({ taskId: response.data.name });
       }
       const addMembersTask = await this.createTaskState();
@@ -192,7 +193,7 @@ export default class TaskPage extends Component {
         for (const addMemberTask of addMembersTask) {
           const response = await fetchService.setUserTask(addMemberTask);
           if (response.statusText) {
-            console.log(`add user task: ${task.name}`);
+            DisplayNotification({ title: `${task.name} was added for user.` });
           }
         }
       }
@@ -200,7 +201,7 @@ export default class TaskPage extends Component {
       const response = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (response.statusText) {
-        alert(`edit task: ${task.name}`);
+        DisplayNotification({ title: `${task.name} was edited.` });
       }
     }
     const res = clearOblectValue(taskInput, task);

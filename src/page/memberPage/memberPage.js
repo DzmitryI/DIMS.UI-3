@@ -5,6 +5,7 @@ import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
@@ -224,12 +225,12 @@ export default class MemberPage extends Component {
     if (!userId) {
       const response = await this.fetchService.setMember(member);
       if (response.statusText) {
-        alert(`add new member: ${member.name} ${member.lastName}`);
+        DisplayNotification({ title: `add new member: ${member.name} ${member.lastName}` });
       }
     } else {
       const response = await this.fetchService.editMember(userId, member);
       if (response.statusText) {
-        alert(`edit member: ${member.name} ${member.lastName}`);
+        DisplayNotification({ title: `edit member: ${member.name} ${member.lastName}` });
       }
     }
     const res = clearOblectValue(memberInput, member);

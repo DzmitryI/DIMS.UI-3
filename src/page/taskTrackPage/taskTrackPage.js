@@ -3,6 +3,7 @@ import FetchService from '../../services/fetch-service';
 import Button from '../../components/UI/button';
 import Input from '../../components/UI/input';
 import Backdrop from '../../components/UI/backdrop';
+import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
@@ -90,12 +91,12 @@ export default class TaskTrackPage extends Component {
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
       if (response.statusText) {
-        alert(`add new task track: ${taskTrackId}`);
+        DisplayNotification({ title: `Add new task track.` });
       }
     } else {
       const response = await fetchService.editTaskTrack(taskTrackId, taskTrack);
       if (response.statusText) {
-        alert(`edit task track: ${taskTrackId}`);
+        DisplayNotification({ title: `Edit new task track.` });
       }
     }
     const res = clearOblectValue(taskTrackInput, taskTrack);
