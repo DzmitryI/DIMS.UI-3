@@ -3,7 +3,7 @@ import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress } from '../helpersComponents';
 import { Link } from 'react-router-dom';
-import { ThemeContext } from '../themContext/themContext';
+import { ThemeContext } from '../context';
 
 class MemberProgressGrid extends Component {
   state = {

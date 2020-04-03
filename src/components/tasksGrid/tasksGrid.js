@@ -5,7 +5,7 @@ import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
 import DisplayNotification from '../../components/displayNotification';
 import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
-import { ThemeContext } from '../themContext/themContext';
+import { ThemeContext } from '../context';
 
 const fetchService = new FetchService();
 

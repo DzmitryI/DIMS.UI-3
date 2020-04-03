@@ -12,7 +12,7 @@ import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
-import { ThemeContext } from '../../components/themContext/themContext';
+import { ThemeContext, RoleContext } from '../../components/context';
 
 const fetchService = new FetchService();
 
@@ -193,10 +193,8 @@ export default class App extends Component {
         <>
           <Header
             logout={this.logout}
-            email={email}
             isAuthenticated={isAuthenticated}
             onColorSwitchClickHandler={this.onColorSwitchClickHandler}
-            theme={theme}
           />
           <Switch>
             <Route
@@ -231,7 +229,6 @@ export default class App extends Component {
                   {...props}
                   userId={userId}
                   title={title}
-                  email={email}
                   onTrackClick={this.onTrackClickHandler}
                   onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
                 />
@@ -252,7 +249,6 @@ export default class App extends Component {
                   onTrackClick={this.onTrackClickHandler}
                   taskId={taskId}
                   isOpen={isTaskTrack}
-                  email={email}
                 />
               )}
             />
@@ -266,26 +262,33 @@ export default class App extends Component {
     return (
       <Layout>
         <main className={`${theme}`}>
-          <ThemeContext.Provider value={this.state.theme}>
-            {routes}
-            <MemberPage
-              onRegisterClick={this.onRegisterClickHandler}
-              isOpen={isRegister}
-              title={title}
-              member={curMember}
-              directions={directions}
-            />
-            <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
-            <TaskTrackPage
-              onTrackClick={this.onTrackClickHandler}
-              isOpen={isTaskTrack}
-              track={track}
-              title={title}
-              taskId={taskId}
-              userTaskId={userTaskId}
-              subtitle={subtitle}
-            />
-          </ThemeContext.Provider>
+          <RoleContext.Provider value={email}>
+            <ThemeContext.Provider value={theme}>
+              {routes}
+              <MemberPage
+                onRegisterClick={this.onRegisterClickHandler}
+                isOpen={isRegister}
+                title={title}
+                member={curMember}
+                directions={directions}
+              />
+              <TaskPage
+                onCreateTaskClick={this.onCreateTaskClickHandler}
+                isOpen={isTask}
+                title={title}
+                task={curTask}
+              />
+              <TaskTrackPage
+                onTrackClick={this.onTrackClickHandler}
+                isOpen={isTaskTrack}
+                track={track}
+                title={title}
+                taskId={taskId}
+                userTaskId={userTaskId}
+                subtitle={subtitle}
+              />
+            </ThemeContext.Provider>
+          </RoleContext.Provider>
         </main>
       </Layout>
     );

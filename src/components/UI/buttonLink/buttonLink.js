@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ThemeContext } from '../../themContext/themContext';
+import { ThemeContext } from '../../context';
 
 const ButtonLink = ({ type = 'button', id, name, className, onClick, disabled = false, to, theme }) => {
   id = id || name;

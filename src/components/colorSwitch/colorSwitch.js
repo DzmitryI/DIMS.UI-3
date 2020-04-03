@@ -13,10 +13,10 @@ const colorSwitch = (props) => {
   return (
     <div className={`switch-btn ${theme === 'dark' ? 'switch-btn__on' : ''}`} onClick={clickSwitch}>
       <div className='switch-btn--moon'>
-        <img src={imgMoon} width='28px' height='28px' />
+        <img src={imgMoon} width='28px' height='28px' alt='img moon' />
       </div>
       <div className='switch-btn--sun'>
-        <img src={imgSun} width='28px' height='28px' />
+        <img src={imgSun} width='28px' height='28px' alt='img sun' />
       </div>
     </div>
   );

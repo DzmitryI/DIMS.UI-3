@@ -3,8 +3,9 @@ import ButtonLink from '../buttonLink';
 import ColorSwitch from '../../../components/colorSwitch';
 import { tableRoles } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
+import { ThemeContext, RoleContext } from '../../context';
 
-const header = (props) => {
+const Header = (props) => {
   const logoutClick = () => {
     props.logout();
   };
@@ -41,4 +42,10 @@ const header = (props) => {
   );
 };
 
-export default header;
+export default (props) => (
+  <ThemeContext.Consumer>
+    {(them) => (
+      <RoleContext.Consumer>{(email) => <Header {...props} email={email} them={them} />}</RoleContext.Consumer>
+    )}
+  </ThemeContext.Consumer>
+);

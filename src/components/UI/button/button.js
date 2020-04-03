@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeContext } from '../../themContext/themContext';
+import { ThemeContext } from '../../context';
 
 const Button = ({ type = 'button', id, name, className, onClick, disabled = false, theme }) => {
   id = id || name;

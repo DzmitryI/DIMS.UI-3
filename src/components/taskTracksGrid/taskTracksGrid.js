@@ -7,7 +7,7 @@ import DisplayNotification from '../../components/displayNotification';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress } from '../helpersComponents';
 import { Link } from 'react-router-dom';
 import { tableRoles } from '../helpersComponents';
-import { ThemeContext } from '../themContext/themContext';
+import { ThemeContext, RoleContext } from '../context';
 
 const fetchService = new FetchService();
 
@@ -112,5 +112,9 @@ class TaskTracsGrid extends Component {
 }
 
 export default (props) => (
-  <ThemeContext.Consumer>{(theme) => <TaskTracsGrid {...props} theme={theme} />}</ThemeContext.Consumer>
+  <ThemeContext.Consumer>
+    {(theme) => (
+      <RoleContext.Consumer>{(email) => <TaskTracsGrid {...props} theme={theme} email={email} />}</RoleContext.Consumer>
+    )}
+  </ThemeContext.Consumer>
 );
