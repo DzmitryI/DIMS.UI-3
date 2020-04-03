@@ -1,8 +1,9 @@
 import React from 'react';
+import { ThemeContext } from '../themContext/themContext';
 
-const spinner = () => {
+const Spinner = (props) => {
   return (
-    <div className='loadingio-spinner-ripple'>
+    <div className={`loadingio-spinner-ripple ${props.theme}`}>
       <div className='ldio'>
         <div></div>
         <div></div>
@@ -11,4 +12,6 @@ const spinner = () => {
   );
 };
 
-export default spinner;
+export default (props) => (
+  <ThemeContext.Consumer>{(theme) => <Spinner {...props} theme={theme} />}</ThemeContext.Consumer>
+);

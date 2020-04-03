@@ -12,6 +12,7 @@ import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
+import { ThemeContext } from '../../components/themContext/themContext';
 
 const fetchService = new FetchService();
 
@@ -32,12 +33,15 @@ export default class App extends Component {
     userId: null,
     taskId: null,
     userTaskId: null,
+    theme: '',
     directions: [],
   };
 
   async componentDidMount() {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
+    const theme = localStorage.getItem('theme');
+    this.setState({ theme });
     if (!token) {
       this.logout();
     } else {
@@ -49,9 +53,9 @@ export default class App extends Component {
         this.autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000);
       }
       const members = await fetchService.getAllMember();
-      const [member] = members.filter((member) => member.values.email === email);
+      const member = members.find((member) => member.values.email === email);
       if (member) {
-        this.setState({ userId: member.userId, title: member.values.name });
+        this.setState({ userId: member.userId, title: member.values.name, theme });
       }
     }
   }
@@ -73,11 +77,23 @@ export default class App extends Component {
   };
 
   logout = () => {
-    this.setState({ isAuthenticated: false, token: null });
+    this.setState({ isAuthenticated: false, token: null, theme: '' });
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('expirationDate');
     localStorage.removeItem('email');
+    localStorage.removeItem('theme');
+  };
+
+  onColorSwitchClickHandler = (color) => {
+    let theme = '';
+    if (color) {
+      theme = 'dark';
+    } else {
+      theme = 'light';
+    }
+    this.setState({ theme });
+    localStorage.setItem('theme', theme);
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
@@ -150,6 +166,7 @@ export default class App extends Component {
       userTaskId,
       track,
       directions,
+      theme,
     } = this.state;
 
     let routes = (
@@ -174,7 +191,13 @@ export default class App extends Component {
     if (isAuthenticated) {
       routes = (
         <>
-          <Header logout={this.logout} email={email} isAuthenticated={isAuthenticated} />
+          <Header
+            logout={this.logout}
+            email={email}
+            isAuthenticated={isAuthenticated}
+            onColorSwitchClickHandler={this.onColorSwitchClickHandler}
+            theme={theme}
+          />
           <Switch>
             <Route
               path='/MembersGrid'
@@ -208,6 +231,7 @@ export default class App extends Component {
                   {...props}
                   userId={userId}
                   title={title}
+                  email={email}
                   onTrackClick={this.onTrackClickHandler}
                   onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
                 />
@@ -228,6 +252,7 @@ export default class App extends Component {
                   onTrackClick={this.onTrackClickHandler}
                   taskId={taskId}
                   isOpen={isTaskTrack}
+                  email={email}
                 />
               )}
             />
@@ -240,24 +265,28 @@ export default class App extends Component {
 
     return (
       <Layout>
-        {routes}
-        <MemberPage
-          onRegisterClick={this.onRegisterClickHandler}
-          isOpen={isRegister}
-          title={title}
-          member={curMember}
-          directions={directions}
-        />
-        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
-        <TaskTrackPage
-          onTrackClick={this.onTrackClickHandler}
-          isOpen={isTaskTrack}
-          track={track}
-          title={title}
-          taskId={taskId}
-          userTaskId={userTaskId}
-          subtitle={subtitle}
-        />
+        <main className={`${theme}`}>
+          <ThemeContext.Provider value={this.state.theme}>
+            {routes}
+            <MemberPage
+              onRegisterClick={this.onRegisterClickHandler}
+              isOpen={isRegister}
+              title={title}
+              member={curMember}
+              directions={directions}
+            />
+            <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
+            <TaskTrackPage
+              onTrackClick={this.onTrackClickHandler}
+              isOpen={isTaskTrack}
+              track={track}
+              title={title}
+              taskId={taskId}
+              userTaskId={userTaskId}
+              subtitle={subtitle}
+            />
+          </ThemeContext.Provider>
+        </main>
       </Layout>
     );
   }

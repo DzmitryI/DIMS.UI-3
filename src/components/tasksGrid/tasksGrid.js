@@ -5,10 +5,11 @@ import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
 import DisplayNotification from '../../components/displayNotification';
 import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
+import { ThemeContext } from '../themContext/themContext';
 
 const fetchService = new FetchService();
 
-export default class TasksGrid extends Component {
+class TasksGrid extends Component {
   state = {
     tasks: [],
     loading: true,
@@ -51,8 +52,7 @@ export default class TasksGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const taskId = target.closest('tr').id;
-    const [task] = this.state.tasks.filter((task) => task.taskId === taskId);
-    const { name } = task;
+    const { name } = this.state.tasks.find((task) => task.taskId === taskId);
     const response = await fetchService.delTask(taskId);
     if (response.statusText) {
       DisplayNotification({ title: `task: ${name} was deleted` });
@@ -71,7 +71,7 @@ export default class TasksGrid extends Component {
       <div className={'grid-wrap'}>
         <h1>Tasks Manage Grid</h1>
         <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
-        <table border='1'>
+        <table border='1' className={`${this.props.theme}--table`}>
           <thead>
             <HeaderTable arr={headerTasksGrid} />
           </thead>
@@ -99,3 +99,7 @@ export default class TasksGrid extends Component {
     );
   }
 }
+
+export default (props) => (
+  <ThemeContext.Consumer>{(theme) => <TasksGrid {...props} theme={theme} />}</ThemeContext.Consumer>
+);

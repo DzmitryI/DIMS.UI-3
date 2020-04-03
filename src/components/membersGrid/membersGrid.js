@@ -6,10 +6,11 @@ import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
+import { ThemeContext } from '../themContext/themContext';
 
 const fetchService = new FetchService();
 
-export default class MembersGrid extends Component {
+class MembersGrid extends Component {
   state = {
     members: [],
     directions: [],
@@ -60,7 +61,7 @@ export default class MembersGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const memberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((member) => member.userId === memberId);
+    const member = this.state.members.find((member) => member.userId === memberId);
     const { fullName } = member;
     const resAllUserTasks = await fetchService.getAllUserTasks();
     if (resAllUserTasks.length) {
@@ -99,19 +100,17 @@ export default class MembersGrid extends Component {
 
   onShowClick = ({ target }) => {
     const memberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((member) => member.userId === memberId);
     const {
       values: { name },
-    } = member;
+    } = this.state.members.find((member) => member.userId === memberId);
     this.props.onTaskClick(memberId, name);
   };
 
   onProgressClick = ({ target }) => {
     const memberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((member) => member.userId === memberId);
     const {
       values: { name },
-    } = member;
+    } = this.state.members.find((member) => member.userId === memberId);
     this.props.onProgressClick(memberId, name);
   };
 
@@ -124,7 +123,7 @@ export default class MembersGrid extends Component {
       <div className={`grid-wrap`}>
         <h1>Members Manage Grid</h1>
         <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
-        <table border='1'>
+        <table border='1' className={`${this.props.theme}--table`}>
           <thead>
             <HeaderTable arr={headerMembersGrid} />
           </thead>
@@ -171,3 +170,7 @@ export default class MembersGrid extends Component {
     );
   }
 }
+
+export default (props) => (
+  <ThemeContext.Consumer>{(theme) => <MembersGrid {...props} theme={theme} />}</ThemeContext.Consumer>
+);

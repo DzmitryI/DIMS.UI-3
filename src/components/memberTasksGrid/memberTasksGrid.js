@@ -6,10 +6,12 @@ import Spinner from '../spinner';
 import DisplayNotification from '../../components/displayNotification';
 import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
 import { Link } from 'react-router-dom';
+import { tableRoles } from '../helpersComponents';
+import { ThemeContext } from '../themContext/themContext';
 
 const fetchService = new FetchService();
 
-export default class MemberTasksGrid extends Component {
+class MemberTasksGrid extends Component {
   state = {
     userTasks: [],
     loading: true,
@@ -23,7 +25,7 @@ export default class MemberTasksGrid extends Component {
         if (userTask.userId === userId) {
           const responseTasks = await fetchService.getTask(userTask.taskId);
           const responseTasksState = await fetchService.getTaskState(userTask.stateId);
-          if (responseTasks && responseTasksState.data) {
+          if (responseTasks.length && responseTasksState.data) {
             const { userTaskId, taskId, userId, stateId } = userTask;
             const [responseTask] = responseTasks;
             const { name, deadlineDate, startDate } = responseTask;
@@ -82,16 +84,18 @@ export default class MemberTasksGrid extends Component {
   };
 
   render() {
-    const { title } = this.props;
+    const { title, email, theme } = this.props;
     const { userTasks, loading } = this.state;
+    const admin = tableRoles.get('admin');
+    const mentor = tableRoles.get('mentor');
     if (loading) {
       return <Spinner />;
     }
     return (
       <div className={`grid-wrap`}>
-        <Link to='/MembersGrid'>back to grid</Link>
+        {email === admin || email === mentor ? <Link to='/MembersGrid'>back to grid</Link> : null}
         <h1>Member's Tasks Manage Grid</h1>
-        <table border='1'>
+        <table border='1' className={`${theme}--table`}>
           <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
           <thead>
             <HeaderTable arr={headerMemberTasksGrid} />
@@ -111,11 +115,28 @@ export default class MemberTasksGrid extends Component {
                   <td className='td'>{deadlineDate}</td>
                   <td className='td'>{stateName}</td>
                   <td className='td' id={name}>
-                    <Button className='btn btn-progress' onClick={this.onTrackClick} name='Track' />
+                    <Button
+                      className='btn btn-progress'
+                      onClick={this.onTrackClick}
+                      name='Track'
+                      disabled={email === admin || email === mentor}
+                    />
                   </td>
                   <td className='td' id={stateId}>
-                    <Button className='btn btn-success' onClick={this.onStateTaskClick} id='success' name='Success' />
-                    <Button className='btn btn-fail' onClick={this.onStateTaskClick} id='fail' name='Fail' />
+                    <Button
+                      className='btn btn-success'
+                      onClick={this.onStateTaskClick}
+                      id='success'
+                      name='Success'
+                      disabled={!(email === admin || email === mentor)}
+                    />
+                    <Button
+                      className='btn btn-fail'
+                      onClick={this.onStateTaskClick}
+                      id='fail'
+                      name='Fail'
+                      disabled={!(email === admin || email === mentor)}
+                    />
                   </td>
                 </tr>
               );
@@ -126,3 +147,7 @@ export default class MemberTasksGrid extends Component {
     );
   }
 }
+
+export default (props) => (
+  <ThemeContext.Consumer>{(theme) => <MemberTasksGrid {...props} theme={theme} />}</ThemeContext.Consumer>
+);
