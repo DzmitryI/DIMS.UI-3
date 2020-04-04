@@ -3,13 +3,15 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
-import DisplayNotification from '../../components/displayNotification';
+import DisplayNotification from '../displayNotification';
 import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
 import { Link } from 'react-router-dom';
 import { tableRoles } from '../helpersComponents';
 import { ThemeContext, RoleContext } from '../context';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
 class MemberTasksGrid extends Component {
   state = {
@@ -79,7 +81,7 @@ class MemberTasksGrid extends Component {
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       this.setState(userTasks);
-      DisplayNotification({ title: `Task state was edited` });
+      notification.notify('success', `Task state was edited`);
     }
   };
 
@@ -143,6 +145,7 @@ class MemberTasksGrid extends Component {
             })}
           </tbody>
         </table>
+        <ToastContainer />
       </div>
     );
   }

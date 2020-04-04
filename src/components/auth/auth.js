@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
+import DisplayNotification from '../displayNotification';
 import axios from 'axios';
-import DisplayNotification from '../../components/displayNotification';
-import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue } from '../../page/helpersPage';
+import { createControl, validateControl } from '../../services/helpers.js';
+import { ToastContainer } from 'react-toastify';
+// import { createNotify } from '../../services/helpers';
+// import 'react-toastify/dist/ReactToastify.css';
+
+const notification = new DisplayNotification();
 
 export default class Auth extends Component {
   state = {
@@ -46,12 +51,12 @@ export default class Auth extends Component {
       localStorage.setItem('userId', data.localId);
       localStorage.setItem('expirationDate', expirationDate);
       localStorage.setItem('email', data.email);
+      notification.notify('success', `Email is correct`);
       this.props.authSuccess(data.idToken, data.email);
       this.props.autoLogout(data.expiresIn);
       this.props.onloginHandler(response.data);
-      DisplayNotification({ title: 'login successful' });
-    } catch (err) {
-      DisplayNotification({ title: err.message });
+    } catch (error) {
+      notification.notify('error', error.message);
     }
   };
 
@@ -64,9 +69,9 @@ export default class Auth extends Component {
         authInput: res.objInputClear,
         authData: res.objElemClear,
       });
-      DisplayNotification({ title: `Email ${response.data.email} was registred` });
-    } catch (err) {
-      DisplayNotification({ title: err.message });
+      notification.notify('success', `Email ${response.data.email} was registred`);
+    } catch (error) {
+      notification.notify('error', error.message);
     }
   };
 
@@ -134,6 +139,7 @@ export default class Auth extends Component {
             />
           </div>
         </form>
+        <ToastContainer />
       </div>
     );
   }

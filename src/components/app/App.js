@@ -237,7 +237,12 @@ export default class App extends Component {
             <Route
               path='/TasksGrid'
               render={(props) => (
-                <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+                <TasksGrid
+                  {...props}
+                  onCreateTaskClick={this.onCreateTaskClickHandler}
+                  onChangeNotify={this.onChangeNotify}
+                  isOpen={isTask}
+                />
               )}
             />
             <Route

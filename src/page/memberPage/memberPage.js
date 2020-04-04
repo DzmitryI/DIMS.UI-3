@@ -9,8 +9,10 @@ import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
 export default class MemberPage extends Component {
   state = {
@@ -228,12 +230,12 @@ export default class MemberPage extends Component {
     if (!userId) {
       const response = await fetchService.setMember(member);
       if (response.statusText) {
-        DisplayNotification({ title: `New member: ${member.name} ${member.lastName} was added` });
+        notification.notify('success', `New member: ${member.name} ${member.lastName} was added`);
       }
     } else {
       const response = await fetchService.editMember(userId, member);
       if (response.statusText) {
-        DisplayNotification({ title: `Member: ${member.name} ${member.lastName} was edited` });
+        notification.notify('success', `Member: ${member.name} ${member.lastName} was edited`);
       }
     }
     const res = clearOblectValue(memberInput, member);
@@ -316,6 +318,7 @@ export default class MemberPage extends Component {
     const { isOpen, title } = this.props;
     return (
       <>
+        <ToastContainer />
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>

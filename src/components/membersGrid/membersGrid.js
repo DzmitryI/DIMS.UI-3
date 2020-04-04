@@ -7,8 +7,10 @@ import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 import { ThemeContext } from '../context';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
 class MembersGrid extends Component {
   state = {
@@ -70,11 +72,11 @@ class MembersGrid extends Component {
         for (const curUserTask of curUserTasks) {
           const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
           if (responseUserTask.statusText) {
-            DisplayNotification({ title: `User's task was deleted` });
+            notification.notify('success', `User's task was deleted`);
           }
           const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
           if (responseTaskState.statusText) {
-            DisplayNotification({ title: `User's task state was deleted` });
+            notification.notify('success', `User's task state was deleted`);
           }
           const usersTaskTrack = await fetchService.getAllUserTaskTrack();
           if (usersTaskTrack.length) {
@@ -82,7 +84,7 @@ class MembersGrid extends Component {
               if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
                 const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
                 if (responseTaskTrackId.statusText) {
-                  DisplayNotification({ title: `Task track was deleted` });
+                  notification.notify('success', `Task track was deleted`);
                 }
               }
             }
@@ -92,7 +94,7 @@ class MembersGrid extends Component {
     }
     const response = await fetchService.delMember(memberId);
     if (response.statusText) {
-      DisplayNotification({ title: `${fullName} was deleted` });
+      notification.notify('success', `${fullName} was deleted`);
     }
     const members = await fetchService.getAllMember();
     this.setState({ members });
@@ -166,6 +168,7 @@ class MembersGrid extends Component {
             })}
           </tbody>
         </table>
+        <ToastContainer />
       </div>
     );
   }

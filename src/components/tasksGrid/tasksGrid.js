@@ -3,11 +3,13 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
-import DisplayNotification from '../../components/displayNotification';
+import DisplayNotification from '../displayNotification';
 import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
 import { ThemeContext } from '../context';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
 class TasksGrid extends Component {
   state = {
@@ -55,7 +57,7 @@ class TasksGrid extends Component {
     const { name } = this.state.tasks.find((task) => task.taskId === taskId);
     const response = await fetchService.delTask(taskId);
     if (response.statusText) {
-      DisplayNotification({ title: `task: ${name} was deleted` });
+      notification.notify('success', `${name} was deleted!`);
     }
     const tasks = await fetchService.getAllTask();
     this.setState({ tasks });
@@ -95,6 +97,7 @@ class TasksGrid extends Component {
             })}
           </tbody>
         </table>
+        <ToastContainer />
       </div>
     );
   }

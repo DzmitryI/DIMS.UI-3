@@ -7,8 +7,10 @@ import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
 export default class TaskTrackPage extends Component {
   state = {
@@ -91,12 +93,12 @@ export default class TaskTrackPage extends Component {
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
       if (response.statusText) {
-        DisplayNotification({ title: `Add new task track.` });
+        notification.notify('success', `Add new task track.`);
       }
     } else {
       const response = await fetchService.editTaskTrack(taskTrackId, taskTrack);
       if (response.statusText) {
-        DisplayNotification({ title: `Edit new task track.` });
+        notification.notify('success', `Task track was edited.`);
       }
     }
     const res = clearOblectValue(taskTrackInput, taskTrack);
@@ -131,6 +133,7 @@ export default class TaskTrackPage extends Component {
     const { taskTrack, disabled, isFormValid } = this.state;
     return (
       <>
+        <ToastContainer />
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>

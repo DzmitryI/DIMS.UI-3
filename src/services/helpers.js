@@ -28,4 +28,15 @@ function createControl(config, validation) {
   };
 }
 
-export { validateControl, createControl };
+function createNotify() {
+  return {
+    position: 'top-center',
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+  };
+}
+
+export { validateControl, createControl, createNotify };
