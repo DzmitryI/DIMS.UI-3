@@ -10,13 +10,11 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
-
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
 import { ThemeContext, RoleContext } from '../../components/context';
 
 const fetchService = new FetchService();
-
 
 export default class App extends Component {
   state = {
@@ -68,8 +66,8 @@ export default class App extends Component {
     }
   };
 
-  authSuccess = (token, email) => {
-    this.setState({ isAuthenticated: !!token, token, email });
+  authSuccess = (token, email, userId) => {
+    this.setState({ isAuthenticated: !!token, token, email, userId });
   };
 
   autoLogout = (time) => {
@@ -80,11 +78,12 @@ export default class App extends Component {
 
   logout = () => {
     this.setState({ isAuthenticated: false, token: null, theme: '' });
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('expirationDate');
-    localStorage.removeItem('email');
-    localStorage.removeItem('theme');
+    for (let key in localStorage) {
+      if (!localStorage.hasOwnProperty(key)) {
+        continue;
+      }
+      localStorage.removeItem(key);
+    }
   };
 
   onColorSwitchClickHandler = (color) => {

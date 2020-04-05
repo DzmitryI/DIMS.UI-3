@@ -17,6 +17,10 @@
     background-color: #ccc;
     color: #000;
   }
+  & a {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+  }
 }
 
 .dark--btn:hover {

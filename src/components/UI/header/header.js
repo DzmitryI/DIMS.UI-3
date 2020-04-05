@@ -1,7 +1,7 @@
 import React from 'react';
-import ButtonLink from '../buttonLink';
+import Button from '../button';
 import ColorSwitch from '../../../components/colorSwitch';
-import { tableRoles } from '../../helpersComponents';
+import { TABLE_ROLES } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
 import { ThemeContext, RoleContext } from '../../context';
 
@@ -23,7 +23,7 @@ const Header = (props) => {
   const { isAuthenticated, email, theme } = props;
   const links = [];
 
-  if (isAuthenticated && (email === tableRoles.get('admin') || email === tableRoles.get('mentor'))) {
+  if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
     links.push({ to: '/MembersGrid', label: 'Members Grid' });
     links.push({ to: '/TasksGrid', label: 'Tasks Grid' });
   } else if (isAuthenticated) {
@@ -36,7 +36,7 @@ const Header = (props) => {
         <NavLink to='/'>DIMS</NavLink>
       </h3>
       <ul className='nav'>{renderLinks(links)}</ul>
-      <ButtonLink className='btn btn-tasks' onClick={logoutClick} name='Logout' to={'/Auth'} />
+      <Button className='btn btn-tasks' onClick={logoutClick} name='Logout' to={'/Auth'} />
       <ColorSwitch theme={props.theme} onColorSwitchClickHandler={props.onColorSwitchClickHandler} />
     </div>
   );

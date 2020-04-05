@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
 import DisplayNotification from '../displayNotification';
+import FetchService from '../../services/fetch-service';
 import axios from 'axios';
 import { clearOblectValue } from '../../page/helpersPage';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { ToastContainer } from 'react-toastify';
-// import { createNotify } from '../../services/helpers';
-// import 'react-toastify/dist/ReactToastify.css';
 
+const fetchService = new FetchService();
 const notification = new DisplayNotification();
 
 export default class Auth extends Component {
@@ -47,12 +47,13 @@ export default class Auth extends Component {
       const response = await axios.post(`${process.env.REACT_APP_URL_SIGNIN}${this.API_Key}`, authData);
       const { data } = response;
       const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000);
+      const members = await fetchService.getAllMember();
+      const member = members.find((member) => member.values.email === data.email);
       localStorage.setItem('token', data.idToken);
-      localStorage.setItem('userId', data.localId);
       localStorage.setItem('expirationDate', expirationDate);
       localStorage.setItem('email', data.email);
       notification.notify('success', `Email is correct`);
-      this.props.authSuccess(data.idToken, data.email);
+      this.props.authSuccess(data.idToken, data.email, member ? member.userId : '');
       this.props.autoLogout(data.expiresIn);
       this.props.onloginHandler(response.data);
     } catch (error) {

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 import Button from '../UI/button';
-import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
@@ -148,18 +147,13 @@ class MembersGrid extends Component {
                   <td className='td'>{`${startDate}`}</td>
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>
                   <td className='td buttons-wrap'>
-                    <ButtonLink
+                    <Button
                       className='btn btn-progress'
                       onClick={this.onProgressClick}
                       name='Progress'
                       to={'/MemberProgressGrid'}
                     />
-                    <ButtonLink
-                      className='btn btn-tasks'
-                      onClick={this.onShowClick}
-                      name='Tasks'
-                      to={'/MemberTasksGrid'}
-                    />
+                    <Button className='btn btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
                     <Button className='btn btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
                     <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
                   </td>

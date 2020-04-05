@@ -21,10 +21,10 @@ const h1TaskTrackPage = new Map([
   ['Detail', 'Detail Task Tracks page'],
 ]);
 
-const tableRoles = new Map([
-  ['admin', 'admin@mail.ru'],
-  ['mentor', 'mentor@mail.ru'],
-]);
+const TABLE_ROLES = {
+  ADMIN: 'admin@mail.ru',
+  MENTOR: 'mentor@mail.ru',
+};
 
 async function updateMemberProgress(userId = '', taskId = '') {
   const fetchService = new FetchService();
@@ -33,9 +33,9 @@ async function updateMemberProgress(userId = '', taskId = '') {
   const curUserTasks = [];
   if (userTasks.length) {
     if (userId) {
-      curUserTasks.push(...userTasks.filter((userTask) => userTask.userId === userId));
+      curUserTasks.push(userTasks.find((userTask) => userTask.userId === userId));
     } else if (taskId) {
-      curUserTasks.push(...userTasks.filter((userTask) => userTask.taskId === taskId));
+      curUserTasks.push(userTasks.find((userTask) => userTask.taskId === taskId));
     }
     if (curUserTasks.length) {
       const usersTaskTrack = await fetchService.getAllUserTaskTrack();
@@ -44,11 +44,7 @@ async function updateMemberProgress(userId = '', taskId = '') {
           for (const userTaskTrack of usersTaskTrack) {
             if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
               const response = await fetchService.getTask(curUserTask.taskId);
-              let task = [];
-              if (response) {
-                task = response;
-              }
-              memberProgresses.push({ userTaskTrack, task });
+              memberProgresses.push({ userTaskTrack, task: response || [] });
             }
           }
         }
@@ -67,6 +63,6 @@ export {
   h1TaskPage,
   h1MemberPage,
   h1TaskTrackPage,
-  tableRoles,
+  TABLE_ROLES,
   updateMemberProgress,
 };

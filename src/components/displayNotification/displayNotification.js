@@ -15,17 +15,7 @@ export default class DisplayNotification extends Component {
   render() {
     return (
       <div>
-        <ToastContainer
-          position='top-center'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={true}
-          rtl={false}
-          pauseOnVisibilityChange={false}
-          draggable={true}
-          pauseOnHover={false}
-        />
+        <ToastContainer newestOnTop={false} rtl={false} pauseOnVisibilityChange={false} />
       </div>
     );
   }

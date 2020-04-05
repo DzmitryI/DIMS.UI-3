@@ -6,7 +6,7 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress } from '../helpersComponents';
 import { Link } from 'react-router-dom';
-import { tableRoles } from '../helpersComponents';
+import { TABLE_ROLES } from '../helpersComponents';
 import { ThemeContext, RoleContext } from '../context';
 import { ToastContainer } from 'react-toastify';
 
@@ -59,8 +59,8 @@ class TaskTracsGrid extends Component {
   render() {
     const { tracks, loading } = this.state;
     const { email, theme } = this.props;
-    const admin = tableRoles.get('admin');
-    const mentor = tableRoles.get('mentor');
+    const admin = TABLE_ROLES.ADMIN;
+    const mentor = TABLE_ROLES.MENTOR;
     if (loading) {
       return <Spinner />;
     }
