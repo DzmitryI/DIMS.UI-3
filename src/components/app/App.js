@@ -13,13 +13,13 @@ import Header from '../UI/header';
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
 import { ThemeContext, RoleContext } from '../../components/context';
+import { connect } from 'react-redux';
+import { autoLogin } from '../../store/actions/auth';
 
 const fetchService = new FetchService();
 
-export default class App extends Component {
+class App extends Component {
   state = {
-    isAuthenticated: false,
-    token: null,
     email: '',
     isRegister: false,
     isTask: false,
@@ -38,20 +38,12 @@ export default class App extends Component {
   };
 
   async componentDidMount() {
+    this.props.autoLogin();
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
     const theme = localStorage.getItem('theme');
     this.setState({ theme });
-    if (!token) {
-      this.logout();
-    } else {
-      const expirationDate = new Date(localStorage.getItem('expirationDate'));
-      if (expirationDate <= new Date()) {
-        this.logout();
-      } else {
-        this.authSuccess(token, email);
-        this.autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000);
-      }
+    if (token) {
       const members = await fetchService.getAllMember();
       const member = members.find((member) => member.values.email === email);
       if (member) {
@@ -60,31 +52,15 @@ export default class App extends Component {
     }
   }
 
-  onLoginHandler = (data) => {
-    if (data.registered) {
-      this.setState({ isAuthenticated: !!this.state.token });
+  async componentDidUpdate(prevProps) {
+    const { token } = this.props;
+    if (token !== prevProps.token) {
+      const email = localStorage.getItem('email');
+      const members = await fetchService.getAllMember();
+      const member = members.find((member) => member.values.email === email);
+      this.setState({ email, userId: member ? member.userId : '' });
     }
-  };
-
-  authSuccess = (token, email, userId) => {
-    this.setState({ isAuthenticated: !!token, token, email, userId });
-  };
-
-  autoLogout = (time) => {
-    setTimeout(() => {
-      this.logout();
-    }, time * 1000);
-  };
-
-  logout = () => {
-    this.setState({ isAuthenticated: false, token: null, theme: '' });
-    for (let key in localStorage) {
-      if (!localStorage.hasOwnProperty(key)) {
-        continue;
-      }
-      localStorage.removeItem(key);
-    }
-  };
+  }
 
   onColorSwitchClickHandler = (color) => {
     let theme = '';
@@ -153,7 +129,6 @@ export default class App extends Component {
 
   render() {
     const {
-      isAuthenticated,
       email,
       isRegister,
       isTask,
@@ -169,22 +144,11 @@ export default class App extends Component {
       directions,
       theme,
     } = this.state;
+    const { isAuthenticated } = this.props;
 
     let routes = (
       <Switch>
-        <Route
-          path='/Auth'
-          render={(props) => (
-            <Auth
-              {...props}
-              onloginHandler={this.onLoginHandler}
-              logout={this.logout}
-              authSuccess={this.authSuccess}
-              autoLogout={this.autoLogout}
-              exact
-            />
-          )}
-        />
+        <Route path='/Auth' render={() => <Auth exact />} />
         <Redirect to='/Auth' />
       </Switch>
     );
@@ -192,11 +156,7 @@ export default class App extends Component {
     if (isAuthenticated) {
       routes = (
         <>
-          <Header
-            logout={this.logout}
-            isAuthenticated={isAuthenticated}
-            onColorSwitchClickHandler={this.onColorSwitchClickHandler}
-          />
+          <Header isAuthenticated={isAuthenticated} onColorSwitchClickHandler={this.onColorSwitchClickHandler} />
           <Switch>
             <Route
               path='/MembersGrid'
@@ -300,3 +260,17 @@ export default class App extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: !!state.auth.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    autoLogin: () => dispatch(autoLogin()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

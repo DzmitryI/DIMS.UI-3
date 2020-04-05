@@ -4,12 +4,10 @@ import ColorSwitch from '../../../components/colorSwitch';
 import { TABLE_ROLES } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
 import { ThemeContext, RoleContext } from '../../context';
+import { connect } from 'react-redux';
+import { logout } from '../../../store/actions/auth';
 
 const Header = (props) => {
-  const logoutClick = () => {
-    props.logout();
-  };
-
   const renderLinks = (links) => {
     return links.map((link) => {
       return (
@@ -19,8 +17,8 @@ const Header = (props) => {
       );
     });
   };
-
-  const { isAuthenticated, email, theme } = props;
+  const email = localStorage.getItem('email');
+  const { isAuthenticated, theme } = props;
   const links = [];
 
   if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
@@ -36,16 +34,24 @@ const Header = (props) => {
         <NavLink to='/'>DIMS</NavLink>
       </h3>
       <ul className='nav'>{renderLinks(links)}</ul>
-      <Button className='btn btn-tasks' onClick={logoutClick} name='Logout' to={'/Auth'} />
+      <Button className='btn btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
       <ColorSwitch theme={props.theme} onColorSwitchClickHandler={props.onColorSwitchClickHandler} />
     </div>
   );
 };
 
-export default (props) => (
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logout()),
+  };
+};
+export default connect(
+  null,
+  mapDispatchToProps,
+)((props) => (
   <ThemeContext.Consumer>
     {(them) => (
       <RoleContext.Consumer>{(email) => <Header {...props} email={email} them={them} />}</RoleContext.Consumer>
     )}
   </ThemeContext.Consumer>
-);
+));

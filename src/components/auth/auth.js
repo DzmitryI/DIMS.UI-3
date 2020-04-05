@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import DisplayNotification from '../displayNotification';
-import FetchService from '../../services/fetch-service';
-import axios from 'axios';
-import { clearOblectValue } from '../../page/helpersPage';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { ToastContainer } from 'react-toastify';
+import { connect } from 'react-redux';
+import { auth } from '../../store/actions/auth';
 
-const fetchService = new FetchService();
-const notification = new DisplayNotification();
-
-export default class Auth extends Component {
+class Auth extends Component {
   state = {
     isFormValid: false,
     authInput: {
@@ -32,48 +27,16 @@ export default class Auth extends Component {
         { required: true, minLenght: 6 },
       ),
     },
-    authData: {
-      email: '',
-      password: '',
-      returnSecureToken: true,
-    },
   };
 
   API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
 
-  loginHanler = async () => {
-    const { authData } = this.state;
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_URL_SIGNIN}${this.API_Key}`, authData);
-      const { data } = response;
-      const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000);
-      const members = await fetchService.getAllMember();
-      const member = members.find((member) => member.values.email === data.email);
-      localStorage.setItem('token', data.idToken);
-      localStorage.setItem('expirationDate', expirationDate);
-      localStorage.setItem('email', data.email);
-      notification.notify('success', `Email is correct`);
-      this.props.authSuccess(data.idToken, data.email, member ? member.userId : '');
-      this.props.autoLogout(data.expiresIn);
-      this.props.onloginHandler(response.data);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+  loginHanler = () => {
+    this.props.auth(this.state.authInput.email.value, this.state.authInput.password.value, true);
   };
 
-  registerHandler = async () => {
-    const { authData, authInput } = this.state;
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_URL_SIGNUP}${this.API_Key}`, authData);
-      const res = clearOblectValue(authInput, authData);
-      this.setState({
-        authInput: res.objInputClear,
-        authData: res.objElemClear,
-      });
-      notification.notify('success', `Email ${response.data.email} was registred`);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+  registerHandler = () => {
+    this.props.auth(this.state.authInput.email.value, this.state.authInput.password.value, false);
   };
 
   submitHandler = (event) => {
@@ -83,16 +46,14 @@ export default class Auth extends Component {
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
   handleInput = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
-    const authData = { ...this.state.authData };
     authInput[controlName].value = value;
     authInput[controlName].touched = true;
     authInput[controlName].valid = validateControl(value, authInput[controlName].validation);
-    authData[controlName] = value;
     let isFormValid = true;
     Object.keys(authInput).forEach((name) => {
       isFormValid = authInput[name].valid && isFormValid;
     });
-    this.setState({ authInput, authData, isFormValid });
+    this.setState({ authInput, isFormValid });
   };
 
   renderInputs() {
@@ -145,3 +106,10 @@ export default class Auth extends Component {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
+  };
+};
+export default connect(null, mapDispatchToProps)(Auth);
