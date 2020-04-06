@@ -1,3 +1,7 @@
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+$red: rgb(230, 30, 30);
+
 @keyframes ldio {
   0% {
     top: 65px;
@@ -25,11 +29,11 @@
 }
 
 .ldio div:nth-child(1) {
-  border-color: #e61e1e;
+  border-color: $red;
 }
 
 .ldio div:nth-child(2) {
-  border-color: #397eed;
+  border-color: $blue;
   animation-delay: -0.5s;
 }
 
@@ -37,9 +41,8 @@
   margin: 150px auto;
   width: 137px;
   height: 137px;
-  // display: inline-block;
   overflow: hidden;
-  background: #ffffff;
+  background: $light;
 }
 
 .ldio {

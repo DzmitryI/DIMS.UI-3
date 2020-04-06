@@ -3,13 +3,17 @@ import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
-import DisplayNotification from '../../components/displayNotification';
+import DisplayNotification from '../displayNotification';
 import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
 import { Link } from 'react-router-dom';
+import { TABLE_ROLES } from '../helpersComponents';
+import { ThemeContext, RoleContext } from '../context';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
-export default class MemberTasksGrid extends Component {
+class MemberTasksGrid extends Component {
   state = {
     userTasks: [],
     loading: true,
@@ -23,7 +27,7 @@ export default class MemberTasksGrid extends Component {
         if (userTask.userId === userId) {
           const responseTasks = await fetchService.getTask(userTask.taskId);
           const responseTasksState = await fetchService.getTaskState(userTask.stateId);
-          if (responseTasks && responseTasksState.data) {
+          if (responseTasks.length && responseTasksState.data) {
             const { userTaskId, taskId, userId, stateId } = userTask;
             const [responseTask] = responseTasks;
             const { name, deadlineDate, startDate } = responseTask;
@@ -77,21 +81,23 @@ export default class MemberTasksGrid extends Component {
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       this.setState(userTasks);
-      DisplayNotification({ title: `Task state was edited` });
+      notification.notify('success', `Task state was edited`);
     }
   };
 
   render() {
-    const { title } = this.props;
+    const { title, email, theme } = this.props;
     const { userTasks, loading } = this.state;
+    const admin = TABLE_ROLES.ADMIN;
+    const mentor = TABLE_ROLES.MENTOR;
     if (loading) {
       return <Spinner />;
     }
     return (
       <div className={`grid-wrap`}>
-        <Link to='/MembersGrid'>back to grid</Link>
+        {email === admin || email === mentor ? <Link to='/MembersGrid'>back to grid</Link> : null}
         <h1>Member's Tasks Manage Grid</h1>
-        <table border='1'>
+        <table border='1' className={`${theme}--table`}>
           <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
           <thead>
             <HeaderTable arr={headerMemberTasksGrid} />
@@ -111,18 +117,46 @@ export default class MemberTasksGrid extends Component {
                   <td className='td'>{deadlineDate}</td>
                   <td className='td'>{stateName}</td>
                   <td className='td' id={name}>
-                    <Button className='btn btn-progress' onClick={this.onTrackClick} name='Track' />
+                    <Button
+                      className='btn btn-progress'
+                      onClick={this.onTrackClick}
+                      name='Track'
+                      disabled={email === admin || email === mentor}
+                    />
                   </td>
                   <td className='td' id={stateId}>
-                    <Button className='btn btn-success' onClick={this.onStateTaskClick} id='success' name='Success' />
-                    <Button className='btn btn-fail' onClick={this.onStateTaskClick} id='fail' name='Fail' />
+                    <Button
+                      className='btn btn-success'
+                      onClick={this.onStateTaskClick}
+                      id='success'
+                      name='Success'
+                      disabled={!(email === admin || email === mentor)}
+                    />
+                    <Button
+                      className='btn btn-fail'
+                      onClick={this.onStateTaskClick}
+                      id='fail'
+                      name='Fail'
+                      disabled={!(email === admin || email === mentor)}
+                    />
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        <ToastContainer />
       </div>
     );
   }
 }
+
+export default (props) => (
+  <ThemeContext.Consumer>
+    {(theme) => (
+      <RoleContext.Consumer>
+        {(email) => <MemberTasksGrid {...props} theme={theme} email={email} />}
+      </RoleContext.Consumer>
+    )}
+  </ThemeContext.Consumer>
+);

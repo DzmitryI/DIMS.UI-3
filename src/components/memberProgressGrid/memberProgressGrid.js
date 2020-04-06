@@ -3,8 +3,9 @@ import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress } from '../helpersComponents';
 import { Link } from 'react-router-dom';
+import { ThemeContext } from '../context';
 
-export default class MembersGrid extends Component {
+class MemberProgressGrid extends Component {
   state = {
     memberProgresses: [],
     loading: true,
@@ -29,9 +30,7 @@ export default class MembersGrid extends Component {
 
   onShowClick = ({ target }) => {
     const { memberProgresses } = this.state;
-    const [result] = memberProgresses.filter(
-      (memberProgress) => memberProgress.userTaskTrack.taskTrackId === target.id,
-    );
+    const result = memberProgresses.find((memberProgress) => memberProgress.userTaskTrack.taskTrackId === target.id);
     const { task } = result;
     this.props.onTaskClick(h1TaskPage.get('Detail'), task);
   };
@@ -47,7 +46,7 @@ export default class MembersGrid extends Component {
           <Link to='/MembersGrid'>back to grid</Link>
         </span>
         <h1>Member Progress Grid</h1>
-        <table border='1'>
+        <table border='1' className={`${this.props.theme}--table`}>
           <caption>{title ? `${title}'s progress:` : null}</caption>
           <thead>
             <HeaderTable arr={headerMemberProgressGrid} />
@@ -78,3 +77,7 @@ export default class MembersGrid extends Component {
     );
   }
 }
+
+export default (props) => (
+  <ThemeContext.Consumer>{(theme) => <MemberProgressGrid {...props} theme={theme} />}</ThemeContext.Consumer>
+);

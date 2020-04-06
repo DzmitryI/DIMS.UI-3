@@ -1,15 +1,45 @@
+$dark: rgb(0, 0, 0);
+$dark-light: rgba(0, 0, 0, 0.3);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+
 .header {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   margin-top: 0.5rem;
   padding-left: 10px;
   width: 90%;
   text-align: center;
-  & h3 a {
-    color: black;
-  }
   & h3 a:hover {
     color: #00bc8c;
+  }
+  & .btn {
+    width: 20px;
+  }
+}
+
+.dark {
+  & h3 a {
+    color: $light;
+  }
+  & .nav li {
+    border-color: $light;
+  }
+  & li a {
+    color: $light;
+  }
+}
+
+.light {
+  & h3 a {
+    color: $dark;
+  }
+  & .nav li {
+    border-color: $dark;
+  }
+  & li a {
+    color: $dark;
   }
 }
 
@@ -18,22 +48,22 @@
   align-items: center;
   width: 50%;
   margin: 0;
-  padding: 0 40px;
+  padding: 0;
   & li {
     list-style: none;
     margin: 0;
     padding: 0.5rem 1rem;
     border-radius: 5px;
-    border-color: rgba(0, 0, 0, 0.6);
   }
   & li:hover {
-    background-color: rgba(57, 126, 237, 1);
-    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.25);
+    background-color: $blue;
+    box-shadow: 0 4px 15px 0 $dark-light;
   }
-  & li a:hover {
+  & li:hover > a {
     text-decoration: none;
-    color: rgb(255, 255, 255);
+    color: $light;
   }
+
   & li a.active {
     font-weight: bold;
     text-decoration: none;

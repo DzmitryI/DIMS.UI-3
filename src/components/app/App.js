@@ -10,18 +10,16 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
-
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
+import { ThemeContext, RoleContext } from '../../components/context';
+import { connect } from 'react-redux';
+import { autoLogin } from '../../store/actions/auth';
 
 const fetchService = new FetchService();
 
-
-export default class App extends Component {
+class App extends Component {
   state = {
-    isAuthenticated: false,
-    token: null,
-    email: '',
     isRegister: false,
     isTask: false,
     isMemberTasks: false,
@@ -34,52 +32,29 @@ export default class App extends Component {
     userId: null,
     taskId: null,
     userTaskId: null,
+    theme: '',
     directions: [],
   };
 
   async componentDidMount() {
-    const token = localStorage.getItem('token');
-    const email = localStorage.getItem('email');
-    if (!token) {
-      this.logout();
-    } else {
-      const expirationDate = new Date(localStorage.getItem('expirationDate'));
-      if (expirationDate <= new Date()) {
-        this.logout();
-      } else {
-        this.authSuccess(token, email);
-        this.autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000);
-      }
+    this.props.autoLogin();
+    const theme = localStorage.getItem('theme');
+    this.setState({ theme });
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { email } = this.props;
+    if (email !== prevProps.email) {
       const members = await fetchService.getAllMember();
-      const [member] = members.filter((member) => member.values.email === email);
-      if (member) {
-        this.setState({ userId: member.userId, title: member.values.name });
-      }
+      const member = members.find((member) => member.values.email === email);
+      this.setState({ userId: member ? member.userId : '' });
     }
   }
 
-  onLoginHandler = (data) => {
-    if (data.registered) {
-      this.setState({ isAuthenticated: !!this.state.token });
-    }
-  };
-
-  authSuccess = (token, email) => {
-    this.setState({ isAuthenticated: !!token, token, email });
-  };
-
-  autoLogout = (time) => {
-    setTimeout(() => {
-      this.logout();
-    }, time * 1000);
-  };
-
-  logout = () => {
-    this.setState({ isAuthenticated: false, token: null });
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('expirationDate');
-    localStorage.removeItem('email');
+  onColorSwitchClickHandler = (color) => {
+    let theme = color ? 'dark' : 'light';
+    this.setState({ theme });
+    localStorage.setItem('theme', theme);
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
@@ -138,8 +113,6 @@ export default class App extends Component {
 
   render() {
     const {
-      isAuthenticated,
-      email,
       isRegister,
       isTask,
       isTaskTrack,
@@ -152,23 +125,13 @@ export default class App extends Component {
       userTaskId,
       track,
       directions,
+      theme,
     } = this.state;
+    const { isAuthenticated, email } = this.props;
 
     let routes = (
       <Switch>
-        <Route
-          path='/Auth'
-          render={(props) => (
-            <Auth
-              {...props}
-              onloginHandler={this.onLoginHandler}
-              logout={this.logout}
-              authSuccess={this.authSuccess}
-              autoLogout={this.autoLogout}
-              exact
-            />
-          )}
-        />
+        <Route path='/Auth' render={() => <Auth exact />} />
         <Redirect to='/Auth' />
       </Switch>
     );
@@ -176,7 +139,7 @@ export default class App extends Component {
     if (isAuthenticated) {
       routes = (
         <>
-          <Header logout={this.logout} email={email} isAuthenticated={isAuthenticated} />
+          <Header isAuthenticated={isAuthenticated} onColorSwitchClickHandler={this.onColorSwitchClickHandler} />
           <Switch>
             <Route
               path='/MembersGrid'
@@ -218,7 +181,12 @@ export default class App extends Component {
             <Route
               path='/TasksGrid'
               render={(props) => (
-                <TasksGrid {...props} onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} />
+                <TasksGrid
+                  {...props}
+                  onCreateTaskClick={this.onCreateTaskClickHandler}
+                  onChangeNotify={this.onChangeNotify}
+                  isOpen={isTask}
+                />
               )}
             />
             <Route
@@ -242,25 +210,51 @@ export default class App extends Component {
 
     return (
       <Layout>
-        {routes}
-        <MemberPage
-          onRegisterClick={this.onRegisterClickHandler}
-          isOpen={isRegister}
-          title={title}
-          member={curMember}
-          directions={directions}
-        />
-        <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
-        <TaskTrackPage
-          onTrackClick={this.onTrackClickHandler}
-          isOpen={isTaskTrack}
-          track={track}
-          title={title}
-          taskId={taskId}
-          userTaskId={userTaskId}
-          subtitle={subtitle}
-        />
+        <main className={`${theme}`}>
+          <RoleContext.Provider value={email}>
+            <ThemeContext.Provider value={theme}>
+              {routes}
+              <MemberPage
+                onRegisterClick={this.onRegisterClickHandler}
+                isOpen={isRegister}
+                title={title}
+                member={curMember}
+                directions={directions}
+              />
+              <TaskPage
+                onCreateTaskClick={this.onCreateTaskClickHandler}
+                isOpen={isTask}
+                title={title}
+                task={curTask}
+              />
+              <TaskTrackPage
+                onTrackClick={this.onTrackClickHandler}
+                isOpen={isTaskTrack}
+                track={track}
+                title={title}
+                taskId={taskId}
+                userTaskId={userTaskId}
+                subtitle={subtitle}
+              />
+            </ThemeContext.Provider>
+          </RoleContext.Provider>
+        </main>
       </Layout>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: !!state.auth.token,
+    email: state.auth.email,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    autoLogin: () => dispatch(autoLogin()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,6 +1,9 @@
+$dark-light: rgba(0, 0, 0, 0.2);
+
 .auth {
   width: 90%;
   max-width: 500px;
   border: 1px solid black;
   margin: 150px auto;
+  box-shadow: 0 9px 10px 0 $dark-light;
 }

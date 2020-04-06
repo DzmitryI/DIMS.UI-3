@@ -2,14 +2,16 @@ import React, { Component } from 'react';
 import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 import Button from '../UI/button';
-import ButtonLink from '../UI/buttonLink';
 import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
-import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, deleteAllElements } from '../helpersComponents';
+import { ThemeContext } from '../context';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 
-export default class MembersGrid extends Component {
+class MembersGrid extends Component {
   state = {
     members: [],
     directions: [],
@@ -60,38 +62,12 @@ export default class MembersGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const memberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((member) => member.userId === memberId);
+    const member = this.state.members.find((member) => member.userId === memberId);
     const { fullName } = member;
-    const resAllUserTasks = await fetchService.getAllUserTasks();
-    if (resAllUserTasks.length) {
-      const curUserTasks = resAllUserTasks.filter((resAllUserTask) => resAllUserTask.userId === memberId);
-      if (curUserTasks.length) {
-        for (const curUserTask of curUserTasks) {
-          const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
-          if (responseUserTask.statusText) {
-            DisplayNotification({ title: `User's task was deleted` });
-          }
-          const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
-          if (responseTaskState.statusText) {
-            DisplayNotification({ title: `User's task state was deleted` });
-          }
-          const usersTaskTrack = await fetchService.getAllUserTaskTrack();
-          if (usersTaskTrack.length) {
-            for (const userTaskTrack of usersTaskTrack) {
-              if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
-                const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
-                if (responseTaskTrackId.statusText) {
-                  DisplayNotification({ title: `Task track was deleted` });
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    deleteAllElements('userId', memberId);
     const response = await fetchService.delMember(memberId);
     if (response.statusText) {
-      DisplayNotification({ title: `${fullName} was deleted` });
+      notification.notify('success', `${fullName} was deleted`);
     }
     const members = await fetchService.getAllMember();
     this.setState({ members });
@@ -99,19 +75,17 @@ export default class MembersGrid extends Component {
 
   onShowClick = ({ target }) => {
     const memberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((member) => member.userId === memberId);
     const {
       values: { name },
-    } = member;
+    } = this.state.members.find((member) => member.userId === memberId);
     this.props.onTaskClick(memberId, name);
   };
 
   onProgressClick = ({ target }) => {
     const memberId = target.closest('tr').id;
-    const [member] = this.state.members.filter((member) => member.userId === memberId);
     const {
       values: { name },
-    } = member;
+    } = this.state.members.find((member) => member.userId === memberId);
     this.props.onProgressClick(memberId, name);
   };
 
@@ -124,7 +98,7 @@ export default class MembersGrid extends Component {
       <div className={`grid-wrap`}>
         <h1>Members Manage Grid</h1>
         <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
-        <table border='1'>
+        <table border='1' className={`${this.props.theme}--table`}>
           <thead>
             <HeaderTable arr={headerMembersGrid} />
           </thead>
@@ -147,18 +121,13 @@ export default class MembersGrid extends Component {
                   <td className='td'>{`${startDate}`}</td>
                   <td className='td'>{`${this.countAge(birthDate)}`}</td>
                   <td className='td buttons-wrap'>
-                    <ButtonLink
+                    <Button
                       className='btn btn-progress'
                       onClick={this.onProgressClick}
                       name='Progress'
                       to={'/MemberProgressGrid'}
                     />
-                    <ButtonLink
-                      className='btn btn-tasks'
-                      onClick={this.onShowClick}
-                      name='Tasks'
-                      to={'/MemberTasksGrid'}
-                    />
+                    <Button className='btn btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
                     <Button className='btn btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
                     <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
                   </td>
@@ -167,7 +136,12 @@ export default class MembersGrid extends Component {
             })}
           </tbody>
         </table>
+        <ToastContainer />
       </div>
     );
   }
 }
+
+export default (props) => (
+  <ThemeContext.Consumer>{(theme) => <MembersGrid {...props} theme={theme} />}</ThemeContext.Consumer>
+);

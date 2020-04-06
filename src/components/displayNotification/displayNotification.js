@@ -1,12 +1,22 @@
-const displayNotification = (message) => {
-  const spawnNotification = (title) => {
-    const notification = new Notification(title);
-    setTimeout(notification.close.bind(notification), 4000);
+import React, { Component } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { createNotify } from '../../services/helpers';
+import 'react-toastify/dist/ReactToastify.css';
+
+export default class DisplayNotification extends Component {
+  notify = (status, title) => {
+    if (status === 'success') {
+      toast.success(title, createNotify());
+    } else if (status === 'error') {
+      toast.error(title, createNotify());
+    }
   };
 
-  if (message) {
-    spawnNotification(message.title);
+  render() {
+    return (
+      <div>
+        <ToastContainer newestOnTop={false} rtl={false} pauseOnVisibilityChange={false} />
+      </div>
+    );
   }
-};
-
-export default displayNotification;
+}

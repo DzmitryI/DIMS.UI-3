@@ -1,14 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Button from '../button';
+import ColorSwitch from '../../../components/colorSwitch';
+import { TABLE_ROLES } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
-import ButtonLink from '../buttonLink';
-import { tableRoles } from '../../helpersComponents';
+import { ThemeContext, RoleContext } from '../../context';
+import { connect } from 'react-redux';
+import { logout } from '../../../store/actions/auth';
 
-export default class Header extends Component {
-  logoutClick = () => {
-    this.props.logout();
-  };
+const Header = (props) => {
+  const { isAuthenticated, theme, email } = props;
+  const links = [];
 
-  renderLinks = (links) => {
+  const renderLinks = (links) => {
     return links.map((link) => {
       return (
         <li key={link.to}>
@@ -18,25 +21,38 @@ export default class Header extends Component {
     });
   };
 
-  render() {
-    const { isAuthenticated, email } = this.props;
-    const links = [];
-
-    if (isAuthenticated && (email === tableRoles.get('admin') || email === tableRoles.get('mentor'))) {
-      links.push({ to: '/MembersGrid', label: 'Members Grid' });
-      links.push({ to: '/TasksGrid', label: 'Tasks Grid' });
-    } else if (isAuthenticated) {
-      links.push({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
-    }
-
-    return (
-      <div className='header'>
-        <h3>
-          <NavLink to='/'>DIMS</NavLink>
-        </h3>
-        <ul className='nav'>{this.renderLinks(links)}</ul>
-        <ButtonLink className='btn btn-tasks' onClick={this.logoutClick} name='Logout' to={'/Auth'} />
-      </div>
-    );
+  if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
+    links.push({ to: '/MembersGrid', label: 'Members Grid' });
+    links.push({ to: '/TasksGrid', label: 'Tasks Grid' });
+  } else if (isAuthenticated) {
+    links.push({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
   }
-}
+
+  return (
+    <div className={`header ${theme}`}>
+      <h3>
+        <NavLink to='/'>DIMS</NavLink>
+      </h3>
+      <ul className='nav'>{renderLinks(links)}</ul>
+      <Button className='btn btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
+      <ColorSwitch theme={props.theme} onColorSwitchClickHandler={props.onColorSwitchClickHandler} />
+    </div>
+  );
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    logout: () => dispatch(logout()),
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)((props) => (
+  <ThemeContext.Consumer>
+    {(theme) => (
+      <RoleContext.Consumer>{(email) => <Header {...props} email={email} theme={theme} />}</RoleContext.Consumer>
+    )}
+  </ThemeContext.Consumer>
+));

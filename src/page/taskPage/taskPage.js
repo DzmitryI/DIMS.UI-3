@@ -8,8 +8,10 @@ import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
+import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
+const notification = new DisplayNotification();
 export default class TaskPage extends Component {
   state = {
     isFormValid: false,
@@ -108,16 +110,16 @@ export default class TaskPage extends Component {
         if (index !== -1 && !member.checked) {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
-            DisplayNotification({ title: `User's task was deleted.` });
+            notification.notify('success', `User's task was deleted.`);
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
-            DisplayNotification({ title: `User's task state was deleted.` });
+            notification.notify('success', `User's task state was deleted.`);
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
-            DisplayNotification({ title: `User's task state was added.` });
+            notification.notify('success', `User's task state was added.`);
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -125,7 +127,7 @@ export default class TaskPage extends Component {
             stateId: responseTaskState.data.name,
           });
           if (responseUserTask.statusText) {
-            DisplayNotification({ title: `User's task was added.` });
+            notification.notify('success', `User's task was added.`);
           }
         }
       }
@@ -185,7 +187,7 @@ export default class TaskPage extends Component {
     if (!taskId) {
       const responseTask = await fetchService.setTask(task);
       if (responseTask.statusText) {
-        DisplayNotification({ title: `${task.name} was added.` });
+        notification.notify('success', `${task.name} was added.`);
         this.setState({ taskId: responseTask.data.name });
       }
       const addMembersTask = await this.createTaskState();
@@ -193,7 +195,7 @@ export default class TaskPage extends Component {
         for (const addMemberTask of addMembersTask) {
           const responseUserTask = await fetchService.setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
-            DisplayNotification({ title: `${task.name} was added for user.` });
+            notification.notify('success', `${task.name} was added for user.`);
           }
         }
       }
@@ -201,7 +203,7 @@ export default class TaskPage extends Component {
       const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
-        DisplayNotification({ title: `${task.name} was edited.` });
+        notification.notify('success', `${task.name} was edited.`);
       }
     }
     const res = clearOblectValue(taskInput, task);
@@ -298,6 +300,7 @@ export default class TaskPage extends Component {
     } = this.state;
     return (
       <>
+        <ToastContainer />
         <div className={isOpen ? `page-wrap` : `page-wrap close`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
