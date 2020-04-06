@@ -36,6 +36,7 @@ export default class MemberPage extends Component {
         {
           label: 'Email',
           errorMessage: 'enter correct email',
+          placeholder: 'xxxx@xx',
         },
         { required: true, email: true },
       ),
@@ -81,6 +82,7 @@ export default class MemberPage extends Component {
         {
           label: 'Mobile phone',
           errorMessage: 'enter mobile phone',
+          placeholder: '+375 xx xxxxxxx',
         },
         { required: true },
       ),
@@ -274,6 +276,7 @@ export default class MemberPage extends Component {
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
+          placeholder={control.placeholder}
         />
       );
     });

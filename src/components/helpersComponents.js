@@ -1,4 +1,9 @@
 import FetchService from '../services/fetch-service';
+import DisplayNotification from './displayNotification';
+
+const fetchService = new FetchService();
+const notification = new DisplayNotification();
+
 const headerTasksGrid = ['#', 'Name', 'Start', 'Deadline', ''];
 const headerTaskTrackGrid = ['#', 'Task', 'Note', 'Date', ''];
 const headerMembersGrid = ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
@@ -27,7 +32,6 @@ const TABLE_ROLES = {
 };
 
 async function updateMemberProgress(userId = '', taskId = '') {
-  const fetchService = new FetchService();
   const memberProgresses = [];
   const userTasks = await fetchService.getAllUserTasks();
   const curUserTasks = [];
@@ -54,6 +58,36 @@ async function updateMemberProgress(userId = '', taskId = '') {
   return memberProgresses;
 }
 
+async function deleteAllElements(id, element) {
+  const resAllUserTasks = await fetchService.getAllUserTasks();
+  if (resAllUserTasks.length) {
+    const curUserTasks = resAllUserTasks.filter((resAllUserTask) => resAllUserTask[id] === element);
+    if (curUserTasks.length) {
+      for (const curUserTask of curUserTasks) {
+        const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
+        if (responseUserTask.statusText) {
+          notification.notify('success', `User's task was deleted`);
+        }
+        const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
+        if (responseTaskState.statusText) {
+          notification.notify('success', `User's task state was deleted`);
+        }
+        const usersTaskTrack = await fetchService.getAllUserTaskTrack();
+        if (usersTaskTrack.length) {
+          for (const userTaskTrack of usersTaskTrack) {
+            if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
+              const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
+              if (responseTaskTrackId.statusText) {
+                notification.notify('success', `Task track was deleted`);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 export {
   headerTasksGrid,
   headerTaskTrackGrid,
@@ -65,4 +99,5 @@ export {
   h1TaskTrackPage,
   TABLE_ROLES,
   updateMemberProgress,
+  deleteAllElements,
 };

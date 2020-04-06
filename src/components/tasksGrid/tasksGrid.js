@@ -4,7 +4,7 @@ import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
-import { headerTasksGrid, h1TaskPage } from '../helpersComponents';
+import { headerTasksGrid, h1TaskPage, deleteAllElements } from '../helpersComponents';
 import { ThemeContext } from '../context';
 import { ToastContainer } from 'react-toastify';
 
@@ -56,6 +56,7 @@ class TasksGrid extends Component {
     const taskId = target.closest('tr').id;
     const { name } = this.state.tasks.find((task) => task.taskId === taskId);
     const response = await fetchService.delTask(taskId);
+    deleteAllElements('taskId', taskId);
     if (response.statusText) {
       notification.notify('success', `${name} was deleted!`);
     }

@@ -4,7 +4,7 @@ import Spinner from '../spinner';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
-import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, deleteAllElements } from '../helpersComponents';
 import { ThemeContext } from '../context';
 import { ToastContainer } from 'react-toastify';
 
@@ -64,33 +64,7 @@ class MembersGrid extends Component {
     const memberId = target.closest('tr').id;
     const member = this.state.members.find((member) => member.userId === memberId);
     const { fullName } = member;
-    const resAllUserTasks = await fetchService.getAllUserTasks();
-    if (resAllUserTasks.length) {
-      const curUserTasks = resAllUserTasks.filter((resAllUserTask) => resAllUserTask.userId === memberId);
-      if (curUserTasks.length) {
-        for (const curUserTask of curUserTasks) {
-          const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
-          if (responseUserTask.statusText) {
-            notification.notify('success', `User's task was deleted`);
-          }
-          const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
-          if (responseTaskState.statusText) {
-            notification.notify('success', `User's task state was deleted`);
-          }
-          const usersTaskTrack = await fetchService.getAllUserTaskTrack();
-          if (usersTaskTrack.length) {
-            for (const userTaskTrack of usersTaskTrack) {
-              if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
-                const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
-                if (responseTaskTrackId.statusText) {
-                  notification.notify('success', `Task track was deleted`);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    deleteAllElements('userId', memberId);
     const response = await fetchService.delMember(memberId);
     if (response.statusText) {
       notification.notify('success', `${fullName} was deleted`);
