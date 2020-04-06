@@ -20,7 +20,6 @@ const fetchService = new FetchService();
 
 class App extends Component {
   state = {
-    email: '',
     isRegister: false,
     isTask: false,
     isMemberTasks: false,
@@ -39,36 +38,21 @@ class App extends Component {
 
   async componentDidMount() {
     this.props.autoLogin();
-    const token = localStorage.getItem('token');
-    const email = localStorage.getItem('email');
     const theme = localStorage.getItem('theme');
     this.setState({ theme });
-    if (token) {
-      const members = await fetchService.getAllMember();
-      const member = members.find((member) => member.values.email === email);
-      if (member) {
-        this.setState({ userId: member.userId, title: member.values.name, theme });
-      }
-    }
   }
 
   async componentDidUpdate(prevProps) {
-    const { token } = this.props;
-    if (token !== prevProps.token) {
-      const email = localStorage.getItem('email');
+    const { email } = this.props;
+    if (email !== prevProps.email) {
       const members = await fetchService.getAllMember();
       const member = members.find((member) => member.values.email === email);
-      this.setState({ email, userId: member ? member.userId : '' });
+      this.setState({ userId: member ? member.userId : '' });
     }
   }
 
   onColorSwitchClickHandler = (color) => {
-    let theme = '';
-    if (color) {
-      theme = 'dark';
-    } else {
-      theme = 'light';
-    }
+    let theme = color ? 'dark' : 'light';
     this.setState({ theme });
     localStorage.setItem('theme', theme);
   };
@@ -129,7 +113,6 @@ class App extends Component {
 
   render() {
     const {
-      email,
       isRegister,
       isTask,
       isTaskTrack,
@@ -144,7 +127,7 @@ class App extends Component {
       directions,
       theme,
     } = this.state;
-    const { isAuthenticated } = this.props;
+    const { isAuthenticated, email } = this.props;
 
     let routes = (
       <Switch>
@@ -264,6 +247,7 @@ class App extends Component {
 const mapStateToProps = (state) => {
   return {
     isAuthenticated: !!state.auth.token,
+    email: state.auth.email,
   };
 };
 

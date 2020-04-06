@@ -8,6 +8,9 @@ import { connect } from 'react-redux';
 import { logout } from '../../../store/actions/auth';
 
 const Header = (props) => {
+  const { isAuthenticated, theme, email } = props;
+  const links = [];
+
   const renderLinks = (links) => {
     return links.map((link) => {
       return (
@@ -17,9 +20,6 @@ const Header = (props) => {
       );
     });
   };
-  const email = localStorage.getItem('email');
-  const { isAuthenticated, theme } = props;
-  const links = [];
 
   if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
     links.push({ to: '/MembersGrid', label: 'Members Grid' });
@@ -45,13 +45,14 @@ const mapDispatchToProps = (dispatch) => {
     logout: () => dispatch(logout()),
   };
 };
+
 export default connect(
   null,
   mapDispatchToProps,
 )((props) => (
   <ThemeContext.Consumer>
-    {(them) => (
-      <RoleContext.Consumer>{(email) => <Header {...props} email={email} them={them} />}</RoleContext.Consumer>
+    {(theme) => (
+      <RoleContext.Consumer>{(email) => <Header {...props} email={email} theme={theme} />}</RoleContext.Consumer>
     )}
   </ThemeContext.Consumer>
 ));
