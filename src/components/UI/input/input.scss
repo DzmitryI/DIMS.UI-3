@@ -1,3 +1,6 @@
+$dark: rgb(0, 0, 0);
+$red: rgb(223, 18, 18);
+
 .form-group {
   display: flex;
   flex-wrap: wrap;
@@ -13,11 +16,11 @@ label {
 }
 
 .invalid label {
-  color: rgb(223, 18, 18);
+  color: $red;
 }
 
 .invalid input {
-  border: 1px solid rgb(223, 18, 18);
+  border: 1px solid $red;
 }
 
 input {
@@ -26,13 +29,14 @@ input {
   margin: 0 1rem;
   font-size: inherit;
   outline: none;
+  border: solid 1px $dark;
   &:disabled {
     cursor: not-allowed;
   }
 }
 
 span {
-  color: rgb(223, 18, 18);
+  color: $red;
   font-size: 12px;
   font-weight: bold;
   display: block;

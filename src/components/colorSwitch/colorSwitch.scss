@@ -1,10 +1,14 @@
+$dark: rgb(0, 0, 0);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+
 .switch-btn {
   display: inline-block;
   width: 57px;
   height: 30px;
-  border: 1px solid black;
+  border: 1px solid $dark;
   border-radius: 20px;
-  background-color: black;
+  background-color: $dark;
   z-index: 0;
   position: relative;
   cursor: pointer;
@@ -17,15 +21,15 @@
     height: 25px;
     border-radius: 50%;
     position: absolute;
-    background: white;
+    background-color: $light;
     z-index: 1;
     transition-duration: 300ms;
-    box-shadow: 0 0 2px 3px rgb(57, 126, 237);
+    box-shadow: 0 0 2px 3px $blue;
   }
 }
 
 .switch-btn__on {
-  box-shadow: 0 0 2px 3px rgb(250, 250, 250);
+  box-shadow: 0 0 2px 3px $light;
   &::after {
     left: 30px;
   }

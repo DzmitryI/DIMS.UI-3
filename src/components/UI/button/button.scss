@@ -1,8 +1,21 @@
+$dark: rgb(0, 0, 0);
+$dark-light: rgba(0, 0, 0, 0.2);
+$dark-lighten: rgba(0, 0, 0, 0.6);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+$blue-light: rgba(57, 126, 237, 0.6);
+$grin: rgb(47, 230, 30);
+$grin-light: rgba(23, 235, 59, 0.6);
+$red: rgb(230, 30, 30);
+$red-light: rgba(230, 30, 30, 0.6);
+$grey: rgb(204, 204, 204);
+
 .btn {
+  margin: 5px;
   border: 1px solid transparent;
   border-radius: 5px;
-  margin: 5px;
-  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14);
+  box-shadow: 0 4px 5px 0 $dark-light;
+  color: $light;
   &:focus {
     outline: none;
   }
@@ -10,26 +23,26 @@
     cursor: pointer;
   }
   &:active {
-    box-shadow: inset 2px 2px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 2px 2px 1px $dark-lighten;
   }
   &:disabled {
     cursor: not-allowed;
-    background-color: #ccc;
-    color: #000;
+    background-color: $grey;
+    color: $dark;
   }
   & a {
     text-decoration: none;
-    color: rgb(255, 255, 255);
+    color: $light;
   }
 }
 
 .dark--btn:hover {
-  border: 1px solid rgb(252, 250, 250);
-  box-shadow: 0 4px 15px 0 rgba(255, 255, 255, 1);
+  border: 1px solid $light;
+  box-shadow: 0 4px 15px 0 $light;
 }
 
 .light--btn:hover {
-  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 15px 0 $dark-lighten;
 }
 
 .btn-register {
@@ -50,10 +63,9 @@
 
 .btn-delete,
 .btn-fail {
-  background-color: rgba(230, 30, 30, 0.6);
-  color: rgb(255, 255, 255);
+  background-color: $red-light;
   &:not(:disabled):hover {
-    background-color: rgba(230, 30, 30, 1);
+    background-color: $red;
   }
 }
 
@@ -61,18 +73,16 @@
 .btn-progress,
 .btn-tasks,
 .btn-edit {
-  background-color: rgba(57, 126, 237, 0.6);
-  color: rgba(255, 255, 255, 1);
+  background-color: $blue-light;
   &:not(:disabled):hover {
-    background-color: rgba(57, 126, 237, 1);
+    background-color: $blue;
   }
 }
 
 .btn-success {
-  background-color: rgba(23, 235, 59, 0.6);
-  color: rgb(255, 255, 255);
+  background-color: $grin-light;
   &:not(:disabled):hover {
-    background-color: rgba(23, 235, 59, 1);
+    background-color: $grin;
   }
 }
 
@@ -83,19 +93,18 @@
 }
 
 .btn-add {
-  background-color: rgba(42, 235, 35, 0.6);
-  color: #fff;
+  background-color: $grin-light;
   &:not(:disabled):hover {
-    background-color: rgba(42, 235, 35, 1);
+    background-color: $grin;
   }
 }
 
 .btn-close {
-  background-color: rgba(255, 255, 255, 1);
-  border-color: rgba(0, 0, 0, 0.6);
-  color: rgba(0, 0, 0, 0.6);
+  background-color: $light;
+  border-color: $dark-lighten;
+  color: $dark-lighten;
   &:not(:disabled):hover {
-    border-color: rgba(0, 0, 0, 1);
-    color: rgba(0, 0, 0, 1);
+    border-color: $dark;
+    color: $dark;
   }
 }

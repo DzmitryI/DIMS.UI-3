@@ -1,3 +1,8 @@
+$dark: rgb(0, 0, 0);
+$dark-light: rgba(0, 0, 0, 0.3);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+
 .page-wrap {
   display: block;
   width: 90%;
@@ -13,10 +18,10 @@
 .page-form {
   max-width: 650px;
   width: 70%;
-  border: 1px solid black;
+  border: 1px solid $dark;
   border-radius: 5px;
   margin: 0 auto;
-  background-color: rgba(255, 255, 255, 1);
+  background-color: $light;
 }
 
 .close {
@@ -27,8 +32,8 @@
   width: 200px;
   height: 100px;
   overflow: auto;
-  border: solid 1px #c3e4fe;
-  background: white;
+  border: solid 1px $dark;
+  background: $light;
 }
 
 textarea {
@@ -37,6 +42,7 @@ textarea {
   margin: 0 1rem;
   font-size: inherit;
   outline: none;
+  border: solid 1px $dark;
   &:disabled {
     cursor: not-allowed;
   }
