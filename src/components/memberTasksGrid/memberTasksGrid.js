@@ -13,7 +13,7 @@ import { ToastContainer } from 'react-toastify';
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
 
-class MemberTasksGrid extends Component {
+export default class MemberTasksGrid extends Component {
   state = {
     userTasks: [],
     loading: true,
@@ -86,77 +86,74 @@ class MemberTasksGrid extends Component {
   };
 
   render() {
-    const { title, email, theme } = this.props;
+    const { title } = this.props;
     const { userTasks, loading } = this.state;
-    const admin = TABLE_ROLES.ADMIN;
-    const mentor = TABLE_ROLES.MENTOR;
+    const { ADMIN, MENTOR } = TABLE_ROLES;
     if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={`grid-wrap`}>
-        {email === admin || email === mentor ? <Link to='/MembersGrid'>back to grid</Link> : null}
-        <h1>Member's Tasks Manage Grid</h1>
-        <table border='1' className={`${theme}--table`}>
-          <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
-          <thead>
-            <HeaderTable arr={headerMemberTasksGrid} />
-          </thead>
-          <tbody>
-            {userTasks.map((userTask, index) => {
-              const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
-              return (
-                <tr key={userTaskId} id={userTaskId}>
-                  <td className='td'>{index + 1}</td>
-                  <td className='td' id={taskId}>
-                    <span onClick={this.onOpenTaskTracksClick}>
-                      <Link to='/TaskTracksGrid'>{name}</Link>
-                    </span>
-                  </td>
-                  <td className='td'>{startDate}</td>
-                  <td className='td'>{deadlineDate}</td>
-                  <td className='td'>{stateName}</td>
-                  <td className='td' id={name}>
-                    <Button
-                      className='btn btn-progress'
-                      onClick={this.onTrackClick}
-                      name='Track'
-                      disabled={email === admin || email === mentor}
-                    />
-                  </td>
-                  <td className='td' id={stateId}>
-                    <Button
-                      className='btn btn-success'
-                      onClick={this.onStateTaskClick}
-                      id='success'
-                      name='Success'
-                      disabled={!(email === admin || email === mentor)}
-                    />
-                    <Button
-                      className='btn btn-fail'
-                      onClick={this.onStateTaskClick}
-                      id='fail'
-                      name='Fail'
-                      disabled={!(email === admin || email === mentor)}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <ToastContainer />
-      </div>
+      <ThemeContext.Consumer>
+        {(theme) => (
+          <RoleContext.Consumer>
+            {(email) => (
+              <div className={`grid-wrap`}>
+                {email === ADMIN || email === MENTOR ? <Link to='/MembersGrid'>back to grid</Link> : null}
+                <h1>Member's Tasks Manage Grid</h1>
+                <table border='1' className={`${theme}--table`}>
+                  <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
+                  <thead>
+                    <HeaderTable arr={headerMemberTasksGrid} />
+                  </thead>
+                  <tbody>
+                    {userTasks.map((userTask, index) => {
+                      const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
+                      return (
+                        <tr key={userTaskId} id={userTaskId}>
+                          <td className='td'>{index + 1}</td>
+                          <td className='td' id={taskId}>
+                            <span onClick={this.onOpenTaskTracksClick}>
+                              <Link to='/TaskTracksGrid'>{name}</Link>
+                            </span>
+                          </td>
+                          <td className='td'>{startDate}</td>
+                          <td className='td'>{deadlineDate}</td>
+                          <td className='td'>{stateName}</td>
+                          <td className='td' id={name}>
+                            <Button
+                              className='btn btn-progress'
+                              onClick={this.onTrackClick}
+                              name='Track'
+                              disabled={email === ADMIN || email === MENTOR}
+                            />
+                          </td>
+                          <td className='td' id={stateId}>
+                            <Button
+                              className='btn btn-success'
+                              onClick={this.onStateTaskClick}
+                              id='success'
+                              name='Success'
+                              disabled={!(email === ADMIN || email === MENTOR)}
+                            />
+                            <Button
+                              className='btn btn-fail'
+                              onClick={this.onStateTaskClick}
+                              id='fail'
+                              name='Fail'
+                              disabled={!(email === ADMIN || email === MENTOR)}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <ToastContainer />
+              </div>
+            )}
+          </RoleContext.Consumer>
+        )}
+      </ThemeContext.Consumer>
     );
   }
 }
-
-export default (props) => (
-  <ThemeContext.Consumer>
-    {(theme) => (
-      <RoleContext.Consumer>
-        {(email) => <MemberTasksGrid {...props} theme={theme} email={email} />}
-      </RoleContext.Consumer>
-    )}
-  </ThemeContext.Consumer>
-);

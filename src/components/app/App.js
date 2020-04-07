@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import Layout from '../../hoc/layout';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
 import MemberProgressGrid from '../memberProgressGrid';
@@ -45,9 +44,10 @@ class App extends Component {
   async componentDidUpdate(prevProps) {
     const { email } = this.props;
     if (email !== prevProps.email) {
+      const theme = localStorage.getItem('theme');
       const members = await fetchService.getAllMember();
       const member = members.find((member) => member.values.email === email);
-      this.setState({ userId: member ? member.userId : '' });
+      this.setState({ userId: member ? member.userId : '', theme });
     }
   }
 
@@ -209,37 +209,30 @@ class App extends Component {
     }
 
     return (
-      <Layout>
-        <main className={`${theme}`}>
-          <RoleContext.Provider value={email}>
-            <ThemeContext.Provider value={theme}>
-              {routes}
-              <MemberPage
-                onRegisterClick={this.onRegisterClickHandler}
-                isOpen={isRegister}
-                title={title}
-                member={curMember}
-                directions={directions}
-              />
-              <TaskPage
-                onCreateTaskClick={this.onCreateTaskClickHandler}
-                isOpen={isTask}
-                title={title}
-                task={curTask}
-              />
-              <TaskTrackPage
-                onTrackClick={this.onTrackClickHandler}
-                isOpen={isTaskTrack}
-                track={track}
-                title={title}
-                taskId={taskId}
-                userTaskId={userTaskId}
-                subtitle={subtitle}
-              />
-            </ThemeContext.Provider>
-          </RoleContext.Provider>
-        </main>
-      </Layout>
+      <main className={`${theme}`}>
+        <RoleContext.Provider value={email}>
+          <ThemeContext.Provider value={theme}>
+            {routes}
+            <MemberPage
+              onRegisterClick={this.onRegisterClickHandler}
+              isOpen={isRegister}
+              title={title}
+              member={curMember}
+              directions={directions}
+            />
+            <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
+            <TaskTrackPage
+              onTrackClick={this.onTrackClickHandler}
+              isOpen={isTaskTrack}
+              track={track}
+              title={title}
+              taskId={taskId}
+              userTaskId={userTaskId}
+              subtitle={subtitle}
+            />
+          </ThemeContext.Provider>
+        </RoleContext.Provider>
+      </main>
     );
   }
 }

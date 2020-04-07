@@ -92,11 +92,13 @@ td {
   padding: 10px 2px;
   text-align: center;
   vertical-align: center;
-  & span {
+  & span,
+  span a {
     text-decoration-line: underline;
     color: $blue;
   }
-  & span:hover {
+  & span:hover,
+  span a:hover {
     cursor: pointer;
     color: $grin;
   }

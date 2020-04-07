@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify';
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
 
-class TasksGrid extends Component {
+export default class TasksGrid extends Component {
   state = {
     tasks: [],
     loading: true,
@@ -71,39 +71,39 @@ class TasksGrid extends Component {
       return <Spinner />;
     }
     return (
-      <div className={'grid-wrap'}>
-        <h1>Tasks Manage Grid</h1>
-        <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
-        <table border='1' className={`${this.props.theme}--table`}>
-          <thead>
-            <HeaderTable arr={headerTasksGrid} />
-          </thead>
-          <tbody>
-            {tasks.map((task, index) => {
-              const { taskId, name, startDate, deadlineDate } = task;
-              return (
-                <tr key={task.taskId} id={taskId}>
-                  <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onChangeClick}>{name}</span>
-                  </td>
-                  <td className='td'>{startDate}</td>
-                  <td className='td'>{deadlineDate}</td>
-                  <td className='td'>
-                    <Button className='btn btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
-                    <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <ToastContainer />
-      </div>
+      <ThemeContext.Consumer>
+        {(theme) => (
+          <div className={'grid-wrap'}>
+            <h1>Tasks Manage Grid</h1>
+            <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
+            <table border='1' className={`${theme}--table`}>
+              <thead>
+                <HeaderTable arr={headerTasksGrid} />
+              </thead>
+              <tbody>
+                {tasks.map((task, index) => {
+                  const { taskId, name, startDate, deadlineDate } = task;
+                  return (
+                    <tr key={task.taskId} id={taskId}>
+                      <td className='td'>{index + 1}</td>
+                      <td className='td'>
+                        <span onClick={this.onChangeClick}>{name}</span>
+                      </td>
+                      <td className='td'>{startDate}</td>
+                      <td className='td'>{deadlineDate}</td>
+                      <td className='td'>
+                        <Button className='btn btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
+                        <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <ToastContainer />
+          </div>
+        )}
+      </ThemeContext.Consumer>
     );
   }
 }
-
-export default (props) => (
-  <ThemeContext.Consumer>{(theme) => <TasksGrid {...props} theme={theme} />}</ThemeContext.Consumer>
-);

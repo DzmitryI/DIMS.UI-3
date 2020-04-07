@@ -5,7 +5,7 @@ import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress } from '../h
 import { Link } from 'react-router-dom';
 import { ThemeContext } from '../context';
 
-class MemberProgressGrid extends Component {
+export default class MemberProgressGrid extends Component {
   state = {
     memberProgresses: [],
     loading: true,
@@ -41,43 +41,43 @@ class MemberProgressGrid extends Component {
       return <Spinner />;
     }
     return (
-      <div className={`grid-wrap`}>
-        <span>
-          <Link to='/MembersGrid'>back to grid</Link>
-        </span>
-        <h1>Member Progress Grid</h1>
-        <table border='1' className={`${this.props.theme}--table`}>
-          <caption>{title ? `${title}'s progress:` : null}</caption>
-          <thead>
-            <HeaderTable arr={headerMemberProgressGrid} />
-          </thead>
-          <tbody>
-            {memberProgresses.map((memberProgress, index) => {
-              const {
-                userTaskTrack: { taskTrackId, trackDate, trackNote },
-                task: [task],
-              } = memberProgress;
-              const { name } = task;
-              return (
-                <tr key={taskTrackId} id={taskTrackId}>
-                  <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onShowClick} id={taskTrackId}>
-                      {name}
-                    </span>
-                  </td>
-                  <td className='td'>{trackNote}</td>
-                  <td className='td'>{trackDate}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <ThemeContext.Consumer>
+        {(theme) => (
+          <div className={`grid-wrap`}>
+            <span>
+              <Link to='/MembersGrid'>back to grid</Link>
+            </span>
+            <h1>Member Progress Grid</h1>
+            <table border='1' className={`${theme}--table`}>
+              <caption>{title ? `${title}'s progress:` : null}</caption>
+              <thead>
+                <HeaderTable arr={headerMemberProgressGrid} />
+              </thead>
+              <tbody>
+                {memberProgresses.map((memberProgress, index) => {
+                  const {
+                    userTaskTrack: { taskTrackId, trackDate, trackNote },
+                    task: [task],
+                  } = memberProgress;
+                  const { name } = task;
+                  return (
+                    <tr key={taskTrackId} id={taskTrackId}>
+                      <td className='td'>{index + 1}</td>
+                      <td className='td'>
+                        <span onClick={this.onShowClick} id={taskTrackId}>
+                          {name}
+                        </span>
+                      </td>
+                      <td className='td'>{trackNote}</td>
+                      <td className='td'>{trackDate}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </ThemeContext.Consumer>
     );
   }
 }
-
-export default (props) => (
-  <ThemeContext.Consumer>{(theme) => <MemberProgressGrid {...props} theme={theme} />}</ThemeContext.Consumer>
-);

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
 import { createControl, validateControl } from '../../services/helpers.js';
@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
 import { auth } from '../../store/actions/auth';
 
-class Auth extends Component {
+class Auth extends PureComponent {
   state = {
     isFormValid: false,
     authInput: {
