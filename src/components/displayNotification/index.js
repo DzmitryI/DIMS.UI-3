@@ -1,3 +1,3 @@
-import DisplayNotification from './displayNotification';
+import DisplayNotification from './DisplayNotification';
 
 export default DisplayNotification;

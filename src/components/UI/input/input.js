@@ -18,7 +18,7 @@ const Input = ({
 }) => {
   const result = isInvalid(valid, touched, shouldValidation);
   return (
-    <div className={result ? `form-group invalid` : `form-group`}>
+    <div className={`form-group ${result ? `invalid` : ''}`}>
       <label htmlFor={id}>{label}</label>
       <input
         type={type}
@@ -29,7 +29,7 @@ const Input = ({
         placeholder={placeholder}
         autoComplete={autocomplete}
       />
-      {result ? <span>{errorMessage}</span> : null}
+      {result && <span>{errorMessage}</span>}
     </div>
   );
 };

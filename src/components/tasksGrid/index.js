@@ -1,3 +1,3 @@
-import TasksGrid from './tasksGrid';
+import TasksGrid from './TasksGrid';
 
 export default TasksGrid;

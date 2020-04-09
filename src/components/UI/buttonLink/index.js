@@ -1,3 +1,3 @@
-import ButtonLink from './buttonLink';
+import ButtonLink from './ButtonLink';
 
 export default ButtonLink;

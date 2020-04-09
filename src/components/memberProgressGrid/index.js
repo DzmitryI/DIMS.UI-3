@@ -1,3 +1,3 @@
-import MemberProgressGrid from './memberProgressGrid';
+import MemberProgressGrid from './MemberProgressGrid';
 
 export default MemberProgressGrid;

@@ -9,7 +9,7 @@ import { logout } from '../../../store/actions/auth';
 
 const Header = (props) => {
   const { isAuthenticated, email } = props;
-  const links = [];
+  let links = [];
 
   const renderLinks = (links) => {
     return links.map((link) => {
@@ -22,22 +22,22 @@ const Header = (props) => {
   };
 
   if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
-    links.push({ to: '/MembersGrid', label: 'Members Grid' });
-    links.push({ to: '/TasksGrid', label: 'Tasks Grid' });
+    links = links.concat({ to: '/MembersGrid', label: 'Members Grid' });
+    links = links.concat({ to: '/TasksGrid', label: 'Tasks Grid' });
   } else if (isAuthenticated) {
-    links.push({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
+    links = [].concat({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
   }
 
   return (
     <ThemeContext.Consumer>
-      {(theme) => (
+      {({ theme }) => (
         <div className={`header ${theme}`}>
           <h3>
             <NavLink to='/'>DIMS</NavLink>
           </h3>
           <ul className='nav'>{renderLinks(links)}</ul>
           <Button className='btn btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
-          <ColorSwitch theme={theme} onColorSwitchClickHandler={props.onColorSwitchClickHandler} />
+          <ColorSwitch />
         </div>
       )}
     </ThemeContext.Consumer>

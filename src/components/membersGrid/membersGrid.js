@@ -4,37 +4,24 @@ import Spinner from '../spinner';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
+import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage, deleteAllElements } from '../helpersComponents';
 import { ThemeContext } from '../context';
 import { ToastContainer } from 'react-toastify';
-import ButtonLink from '../UI/buttonLink/buttonLink';
+import { connect } from 'react-redux';
+import { fetchMembers } from '../../store/actions/members';
 
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
 
-export default class MembersGrid extends Component {
-  state = {
-    members: [],
-    directions: [],
-    loading: true,
-  };
-
-  async componentDidMount() {
-    const members = await fetchService.getAllMember();
-    const directions = await fetchService.getDirection();
-    this.setState({
-      members,
-      directions,
-      loading: false,
-    });
+class MembersGrid extends Component {
+  componentDidMount() {
+    this.props.fetchMembers();
   }
 
   async componentDidUpdate(prevProps) {
     if (this.props.isRegister !== prevProps.isRegister) {
-      const members = await fetchService.getAllMember();
-      this.setState({
-        members,
-      });
+      this.props.fetchMembers();
     }
   }
 
@@ -46,12 +33,12 @@ export default class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions } = this.state;
+    const { directions } = this.props;
     this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
   };
 
   onChangeClick = ({ target }) => {
-    const { directions, members } = this.state;
+    const { directions, members } = this.props;
     const memberId = target.closest('tr').id;
     const member = members.filter((member) => member.userId === memberId);
     if (target.id === 'edit') {
@@ -63,7 +50,7 @@ export default class MembersGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const memberId = target.closest('tr').id;
-    const member = this.state.members.find((member) => member.userId === memberId);
+    const member = this.props.members.find((member) => member.userId === memberId);
     const { fullName } = member;
     deleteAllElements('userId', memberId);
     const response = await fetchService.delMember(memberId);
@@ -78,7 +65,7 @@ export default class MembersGrid extends Component {
     const memberId = target.closest('tr').id;
     const {
       values: { name },
-    } = this.state.members.find((member) => member.userId === memberId);
+    } = this.props.members.find((member) => member.userId === memberId);
     this.props.onTaskClick(memberId, name);
   };
 
@@ -86,19 +73,19 @@ export default class MembersGrid extends Component {
     const memberId = target.closest('tr').id;
     const {
       values: { name },
-    } = this.state.members.find((member) => member.userId === memberId);
+    } = this.props.members.find((member) => member.userId === memberId);
     this.props.onProgressClick(memberId, name);
   };
 
   render() {
-    const { members, directions, loading } = this.state;
+    const { members, directions, loading } = this.props;
     if (loading) {
       return <Spinner />;
     }
     return (
       <ThemeContext.Consumer>
         {(theme) => (
-          <div className={`grid-wrap`}>
+          <div className='grid-wrap'>
             <h1>Members Manage Grid</h1>
             <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
             <table border='1' className={`${theme}--table`}>
@@ -151,3 +138,18 @@ export default class MembersGrid extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    members: state.members.members,
+    directions: state.members.directions,
+    loading: state.members.loading,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchMembers: () => dispatch(fetchMembers()),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(MembersGrid);

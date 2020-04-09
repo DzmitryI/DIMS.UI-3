@@ -18,7 +18,6 @@ code {
 
 main {
   display: flex;
-  flex-wrap: wrap;
   flex-direction: column;
   align-content: center;
   height: 100vh;
@@ -36,6 +35,16 @@ h2 {
   text-align: center;
 }
 
+.dims__inner {
+  width: 100%;
+  & .dims {
+    width: 30%;
+    margin: 0 auto;
+    & img {
+      width: 100%;
+    }
+  }
+}
 caption {
   margin-bottom: 10px;
   text-align: left;

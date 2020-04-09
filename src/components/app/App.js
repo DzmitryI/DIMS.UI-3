@@ -14,6 +14,7 @@ import FetchService from '../../services/fetch-service';
 import { ThemeContext, RoleContext } from '../../components/context';
 import { connect } from 'react-redux';
 import { autoLogin } from '../../store/actions/auth';
+import humanImg from '../../assets/images/human.png';
 
 const fetchService = new FetchService();
 
@@ -108,7 +109,14 @@ class App extends Component {
   };
 
   mainPage = () => {
-    return <h2>Welcome to DIMS</h2>;
+    return (
+      <div className='dims__inner'>
+        <h2>Welcome to DIMS</h2>
+        <div className='dims'>
+          <img src={humanImg} alt='human' />
+        </div>
+      </div>
+    );
   };
 
   render() {
@@ -211,7 +219,7 @@ class App extends Component {
     return (
       <main className={`${theme}`}>
         <RoleContext.Provider value={email}>
-          <ThemeContext.Provider value={theme}>
+          <ThemeContext.Provider value={{ theme, onColorSwitchClickHandler: this.onColorSwitchClickHandler }}>
             {routes}
             <MemberPage
               onRegisterClick={this.onRegisterClickHandler}
