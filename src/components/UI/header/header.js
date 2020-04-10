@@ -31,7 +31,7 @@ const Header = (props) => {
   return (
     <ThemeContext.Consumer>
       {({ theme }) => (
-        <div className={`header ${theme}`}>
+        <div className={`header header--${theme} ${theme}`}>
           <h3>
             <NavLink to='/'>DIMS</NavLink>
           </h3>

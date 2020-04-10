@@ -9,12 +9,12 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
+import Main from '../UI/main';
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
 import { ThemeContext, RoleContext } from '../../components/context';
 import { connect } from 'react-redux';
 import { autoLogin } from '../../store/actions/auth';
-import humanImg from '../../assets/images/human.png';
 
 const fetchService = new FetchService();
 
@@ -108,16 +108,16 @@ class App extends Component {
     }
   };
 
-  mainPage = () => {
-    return (
-      <div className='dims__inner'>
-        <h2>Welcome to DIMS</h2>
-        <div className='dims'>
-          <img src={humanImg} alt='human' />
-        </div>
-      </div>
-    );
-  };
+  // mainPage = () => {
+  //   return (
+  //     <div className='dims__inner'>
+  //       <h2>Welcome to DIMS</h2>
+  //       <div className='dims'>
+  //         <img src={humanImg} alt='human' />
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   render() {
     const {
@@ -209,7 +209,7 @@ class App extends Component {
                 />
               )}
             />
-            <Route path='/' render={this.mainPage} exact />
+            <Route path='/' component={Main} exact />
             <Redirect to='/' />
           </Switch>
         </>
