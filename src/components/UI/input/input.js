@@ -1,7 +1,9 @@
 import React from 'react';
+
 function isInvalid(valid, touched, shouldValidation) {
   return !valid && touched && shouldValidation;
 }
+
 const Input = ({
   type = 'text',
   autocomplete = 'on',

@@ -1,10 +1,10 @@
 import React from 'react';
 import { ThemeContext } from '../context';
 
-const spinner = () => {
+const Spinner = () => {
   return (
     <ThemeContext.Consumer>
-      {(theme) => (
+      {({ theme }) => (
         <div className={`loadingio-spinner-ripple ${theme}`}>
           <div className='ldio'>
             <div></div>
@@ -16,4 +16,4 @@ const spinner = () => {
   );
 };
 
-export default spinner;
+export default Spinner;

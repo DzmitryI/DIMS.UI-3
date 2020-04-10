@@ -301,7 +301,7 @@ export default class TaskPage extends Component {
     return (
       <>
         <ToastContainer />
-        <div className={isOpen ? `page-wrap` : `page-wrap close`}>
+        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             {loading ? (

@@ -5,7 +5,7 @@ const Button = ({ type = 'button', id, name, className, onClick, disabled = fals
   id = id || name;
   return (
     <ThemeContext.Consumer>
-      {(theme) => (
+      {({ theme }) => (
         <button type={type} className={`${className} ${theme}--btn`} onClick={onClick} disabled={disabled} id={id}>
           {name}
         </button>

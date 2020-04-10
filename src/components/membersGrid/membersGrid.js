@@ -84,7 +84,7 @@ class MembersGrid extends Component {
     }
     return (
       <ThemeContext.Consumer>
-        {(theme) => (
+        {({ theme }) => (
           <div className='grid-wrap'>
             <h1>Members Manage Grid</h1>
             <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
