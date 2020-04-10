@@ -64,7 +64,7 @@ export default class TaskTracsGrid extends Component {
     }
     return (
       <ThemeContext.Consumer>
-        {(theme) => (
+        {({ theme }) => (
           <RoleContext.Consumer>
             {(email) => (
               <div className={`grid-wrap`}>

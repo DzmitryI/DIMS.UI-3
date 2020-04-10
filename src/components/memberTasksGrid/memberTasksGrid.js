@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import FetchService from '../../services/fetch-service';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
@@ -13,13 +13,11 @@ import { ToastContainer } from 'react-toastify';
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
 
-export default class MemberTasksGrid extends Component {
-  state = {
-    userTasks: [],
-    loading: true,
-  };
+const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick }) => {
+  const [userTasks, setUserTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  updateMemberTasks = async (userId) => {
+  const updateMemberTasks = async (userId) => {
     const tasks = [];
     const userTasks = await fetchService.getAllUserTasks();
     if (userTasks.length) {
@@ -40,32 +38,27 @@ export default class MemberTasksGrid extends Component {
     return tasks;
   };
 
-  async componentDidMount() {
-    const { userId } = this.props;
-    const userTasks = await this.updateMemberTasks(userId);
-    this.setState({ userTasks, loading: false });
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const userTasks = await updateMemberTasks(userId);
+      setUserTasks(userTasks);
+      setLoading(false);
+    };
+    fetchData();
+  }, [userId]);
 
-  async componentDidUpdate(prevProps) {
-    const { userId } = this.props;
-    if (userId !== prevProps.userId) {
-      const userTasks = await this.updateMemberTasks(userId);
-      this.setState({ userTasks, loading: false });
-    }
-  }
-
-  onTrackClick = ({ target }) => {
+  const onTrackClickHandler = ({ target }) => {
     const userTaskId = target.closest('tr').id;
     const taskName = target.closest('td').id;
-    this.props.onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
+    onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
   };
 
-  onOpenTaskTracksClick = async ({ target }) => {
+  const onOpenTaskTracksClickHandler = async ({ target }) => {
     const taskId = target.closest('td').id;
-    this.props.onOpenTaskTracksClick('', taskId);
+    onOpenTaskTracksClick('', taskId);
   };
 
-  onStateTaskClick = async ({ target }) => {
+  const onStateTaskClick = async ({ target }) => {
     const taskState = {
       stateName: 'Active',
     };
@@ -77,83 +70,74 @@ export default class MemberTasksGrid extends Component {
     }
     const response = await fetchService.editTaskState(stateId, taskState);
     if (response.statusText) {
-      const { userTasks } = this.state;
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
-      this.setState(userTasks);
+      setUserTasks(userTasks);
       notification.notify('success', `Task state was edited`);
     }
   };
 
-  render() {
-    const { title } = this.props;
-    const { userTasks, loading } = this.state;
-    const { ADMIN, MENTOR } = TABLE_ROLES;
-    if (loading) {
-      return <Spinner />;
-    }
-    return (
-      <ThemeContext.Consumer>
-        {(theme) => (
-          <RoleContext.Consumer>
-            {(email) => (
-              <div className={`grid-wrap`}>
-                {email === ADMIN || email === MENTOR ? <Link to='/MembersGrid'>back to grid</Link> : null}
-                <h1>Member's Tasks Manage Grid</h1>
-                <table border='1' className={`${theme}--table`}>
-                  <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
-                  <thead>
-                    <HeaderTable arr={headerMemberTasksGrid} />
-                  </thead>
-                  <tbody>
-                    {userTasks.map((userTask, index) => {
-                      const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
-                      return (
-                        <tr key={userTaskId} id={userTaskId}>
-                          <td className='td'>{index + 1}</td>
-                          <td className='td' id={taskId}>
-                            <span onClick={this.onOpenTaskTracksClick}>
-                              <Link to='/TaskTracksGrid'>{name}</Link>
-                            </span>
-                          </td>
-                          <td className='td'>{startDate}</td>
-                          <td className='td'>{deadlineDate}</td>
-                          <td className='td'>{stateName}</td>
-                          <td className='td' id={name}>
-                            <Button
-                              className='btn btn-progress'
-                              onClick={this.onTrackClick}
-                              name='Track'
-                              disabled={email === ADMIN || email === MENTOR}
-                            />
-                          </td>
-                          <td className='td' id={stateId}>
-                            <Button
-                              className='btn btn-success'
-                              onClick={this.onStateTaskClick}
-                              id='success'
-                              name='Success'
-                              disabled={!(email === ADMIN || email === MENTOR)}
-                            />
-                            <Button
-                              className='btn btn-fail'
-                              onClick={this.onStateTaskClick}
-                              id='fail'
-                              name='Fail'
-                              disabled={!(email === ADMIN || email === MENTOR)}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <ToastContainer />
-              </div>
-            )}
-          </RoleContext.Consumer>
-        )}
-      </ThemeContext.Consumer>
-    );
+  const { ADMIN, MENTOR } = TABLE_ROLES;
+  const { theme } = useContext(ThemeContext);
+  const email = useContext(RoleContext);
+  if (loading) {
+    return <Spinner />;
   }
-}
+  return (
+    <div className='grid-wrap'>
+      {email === ADMIN || email === MENTOR ? <Link to='/MembersGrid'>back to grid</Link> : null}
+      <h1>Member's Tasks Manage Grid</h1>
+      <table border='1' className={`${theme}--table`}>
+        <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
+        <thead>
+          <HeaderTable arr={headerMemberTasksGrid} />
+        </thead>
+        <tbody>
+          {userTasks.map((userTask, index) => {
+            const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
+            return (
+              <tr key={userTaskId} id={userTaskId}>
+                <td className='td'>{index + 1}</td>
+                <td className='td' id={taskId}>
+                  <span onClick={onOpenTaskTracksClickHandler}>
+                    <Link to='/TaskTracksGrid'>{name}</Link>
+                  </span>
+                </td>
+                <td className='td'>{startDate}</td>
+                <td className='td'>{deadlineDate}</td>
+                <td className='td'>{stateName}</td>
+                <td className='td' id={name}>
+                  <Button
+                    className='btn btn-progress'
+                    onClick={onTrackClickHandler}
+                    name='Track'
+                    disabled={email === ADMIN || email === MENTOR}
+                  />
+                </td>
+                <td className='td' id={stateId}>
+                  <Button
+                    className='btn btn-success'
+                    onClick={onStateTaskClick}
+                    id='success'
+                    name='Success'
+                    disabled={!(email === ADMIN || email === MENTOR)}
+                  />
+                  <Button
+                    className='btn btn-fail'
+                    onClick={onStateTaskClick}
+                    id='fail'
+                    name='Fail'
+                    disabled={!(email === ADMIN || email === MENTOR)}
+                  />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <ToastContainer />
+    </div>
+  );
+};
+
+export default MemberTasksGrid;
