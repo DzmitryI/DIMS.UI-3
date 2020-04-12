@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import Input from '../UI/input';
 import Button from '../UI/button';
+import DisplayNotification from '../displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
-import { ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
 import { auth } from '../../store/actions/auth';
 
@@ -78,38 +78,47 @@ class Auth extends PureComponent {
   }
 
   render() {
+    const { notification, onNotification } = this.props;
     return (
-      <div className='auth'>
-        <h1>Authorization</h1>
-        <form onSubmit={this.submitHandler}>
-          {this.renderInputs()}
-          <div className='form-group row'>
-            <Button
-              className='btn btn-add'
-              type='success'
-              id='Login'
-              name='Log in'
-              disabled={!this.state.isFormValid}
-              onClick={this.loginHanler}
-            />
-            <Button
-              className='btn btn-add'
-              type='submit'
-              name='Register'
-              disabled={!this.state.isFormValid}
-              onClick={this.registerHandler}
-            />
-          </div>
-        </form>
-        <ToastContainer />
-      </div>
+      <>
+        {onNotification && <DisplayNotification notification={notification} />}
+        <div className='auth'>
+          <h1>Authorization</h1>
+          <form onSubmit={this.submitHandler}>
+            {this.renderInputs()}
+            <div className='form-group row'>
+              <Button
+                className='btn-add'
+                type='success'
+                id='Login'
+                name='Log in'
+                disabled={!this.state.isFormValid}
+                onClick={this.loginHanler}
+              />
+              <Button
+                className='btn-add'
+                type='submit'
+                name='Register'
+                disabled={!this.state.isFormValid}
+                onClick={this.registerHandler}
+              />
+            </div>
+          </form>
+        </div>
+      </>
     );
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    onNotification: state.auth.onNotification,
+    notification: state.auth.notification,
+  };
+};
 const mapDispatchToProps = (dispatch) => {
   return {
     auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
   };
 };
-export default connect(null, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);

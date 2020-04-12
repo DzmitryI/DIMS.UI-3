@@ -32,30 +32,29 @@ class App extends Component {
     userId: null,
     taskId: null,
     userTaskId: null,
-    theme: '',
+    theme: 'light',
     directions: [],
   };
 
   async componentDidMount() {
     this.props.autoLogin();
-    const theme = localStorage.getItem('theme');
-    this.setState({ theme });
   }
 
   async componentDidUpdate(prevProps) {
     const { email } = this.props;
     if (email !== prevProps.email) {
-      const theme = localStorage.getItem('theme');
+      if (!email) {
+        this.setState({ theme: 'light' });
+      }
       const members = await fetchService.getAllMember();
       const member = members.find((member) => member.values.email === email);
-      this.setState({ userId: member ? member.userId : '', theme });
+      this.setState({ userId: member ? member.userId : '' });
     }
   }
 
   onColorSwitchClickHandler = (color) => {
     let theme = color ? 'dark' : 'light';
     this.setState({ theme });
-    localStorage.setItem('theme', theme);
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
@@ -108,17 +107,6 @@ class App extends Component {
     }
   };
 
-  // mainPage = () => {
-  //   return (
-  //     <div className='dims__inner'>
-  //       <h2>Welcome to DIMS</h2>
-  //       <div className='dims'>
-  //         <img src={humanImg} alt='human' />
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
   render() {
     const {
       isRegister,
@@ -139,7 +127,7 @@ class App extends Component {
 
     let routes = (
       <Switch>
-        <Route path='/Auth' render={() => <Auth exact />} />
+        <Route path='/Auth' exact component={Auth} />
         <Redirect to='/Auth' />
       </Switch>
     );
@@ -147,7 +135,7 @@ class App extends Component {
     if (isAuthenticated) {
       routes = (
         <>
-          <Header isAuthenticated={isAuthenticated} onColorSwitchClickHandler={this.onColorSwitchClickHandler} />
+          <Header isAuthenticated={isAuthenticated} />
           <Switch>
             <Route
               path='/MembersGrid'

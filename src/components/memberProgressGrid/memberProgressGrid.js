@@ -36,7 +36,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick }) => {
           </span>
           <h1>Member Progress Grid</h1>
           <table border='1' className={`${theme}--table`}>
-            <caption>{title ? `${title}'s progress:` : null}</caption>
+            <caption>{title && `${title}'s progress:`}</caption>
             <thead>
               <HeaderTable arr={headerMemberProgressGrid} />
             </thead>

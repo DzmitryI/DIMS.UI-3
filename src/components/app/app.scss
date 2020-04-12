@@ -3,6 +3,7 @@ $dark-light: rgba(0, 0, 0, 0.2);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
 $grin: rgb(47, 230, 30);
+$red: rgb(230, 30, 30);
 
 body {
   margin: 0;
@@ -101,6 +102,16 @@ td {
     cursor: pointer;
     color: $grin;
   }
+}
+
+.td-Fail {
+  color: $red;
+  font-weight: bold;
+}
+
+.td-Success {
+  color: $grin;
+  font-weight: bold;
 }
 
 .grid-wrap {

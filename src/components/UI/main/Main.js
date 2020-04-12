@@ -1,6 +1,5 @@
 import React from 'react';
 import Footer from '../footer';
-
 import humanImg from '../../../assets/images/human.png';
 
 const Main = () => {

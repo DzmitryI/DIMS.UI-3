@@ -65,11 +65,11 @@ async function deleteAllElements(id, element) {
     if (curUserTasks.length) {
       for (const curUserTask of curUserTasks) {
         const responseUserTask = await fetchService.delUserTask(curUserTask.userTaskId);
-        if (responseUserTask.statusText) {
+        if (responseUserTask) {
           notification.notify('success', `User's task was deleted`);
         }
         const responseTaskState = await fetchService.delTaskState(curUserTask.stateId);
-        if (responseTaskState.statusText) {
+        if (responseTaskState) {
           notification.notify('success', `User's task state was deleted`);
         }
         const usersTaskTrack = await fetchService.getAllUserTaskTrack();
@@ -77,7 +77,7 @@ async function deleteAllElements(id, element) {
           for (const userTaskTrack of usersTaskTrack) {
             if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
               const responseTaskTrackId = await fetchService.delTaskTrack(userTaskTrack.taskTrackId);
-              if (responseTaskTrackId.statusText) {
+              if (responseTaskTrackId) {
                 notification.notify('success', `Task track was deleted`);
               }
             }

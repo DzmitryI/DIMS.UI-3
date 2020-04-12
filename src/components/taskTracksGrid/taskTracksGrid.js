@@ -8,16 +8,16 @@ import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress } from '../h
 import { Link } from 'react-router-dom';
 import { TABLE_ROLES } from '../helpersComponents';
 import { ThemeContext, RoleContext } from '../context';
-import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
 
 export default class TaskTracsGrid extends Component {
   state = {
     tracks: [],
     loading: true,
     taskId: '',
+    onNotification: false,
+    notification: {},
   };
 
   async componentDidMount() {
@@ -49,15 +49,17 @@ export default class TaskTracsGrid extends Component {
   onDeleteClick = async ({ target }) => {
     const taskTrackId = target.closest('tr').id;
     const responseTaskTrackId = await fetchService.delTaskTrack(taskTrackId);
-    if (responseTaskTrackId.statusText) {
-      notification.notify('success', `Task track was deleted`);
+    if (responseTaskTrackId) {
+      const notification = { status: 'success', title: 'Task track was deleted' };
+      this.setState({ onNotification: true, notification });
+      setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+      const tracks = await updateMemberProgress('', this.state.taskId);
+      this.setState({ tracks, loading: false });
     }
-    const tracks = await updateMemberProgress('', this.state.taskId);
-    this.setState({ tracks, loading: false });
   };
 
   render() {
-    const { tracks, loading } = this.state;
+    const { tracks, loading, notification, onNotification } = this.state;
     const { ADMIN, MENTOR } = TABLE_ROLES;
     if (loading) {
       return <Spinner />;
@@ -67,11 +69,11 @@ export default class TaskTracsGrid extends Component {
         {({ theme }) => (
           <RoleContext.Consumer>
             {(email) => (
-              <div className={`grid-wrap`}>
+              <div className='grid-wrap'>
                 <Link to='/MemberTasksGrid'>back to grid</Link>
                 <h1>Task Tracks Manage Grid</h1>
                 <table border='1' className={`${theme}--table`}>
-                  <caption>{`This is your task tracks`}</caption>
+                  <caption>This is your task tracks</caption>
                   <thead>
                     <HeaderTable arr={headerTaskTrackGrid} />
                   </thead>
@@ -92,14 +94,14 @@ export default class TaskTracsGrid extends Component {
                           <td className='td'>{trackDate}</td>
                           <td className='td'>
                             <Button
-                              className='btn btn-edit'
+                              className='btn-edit'
                               onClick={this.onChangeClick}
                               id='edit'
                               name='Edit'
                               disabled={email === ADMIN || email === MENTOR}
                             />
                             <Button
-                              className='btn btn-delete'
+                              className='btn-delete'
                               onClick={this.onDeleteClick}
                               name='Delete'
                               disabled={email === ADMIN || email === MENTOR}
@@ -110,7 +112,7 @@ export default class TaskTracsGrid extends Component {
                     })}
                   </tbody>
                 </table>
-                <ToastContainer />
+                {onNotification && <DisplayNotification notification={notification} />}
               </div>
             )}
           </RoleContext.Consumer>

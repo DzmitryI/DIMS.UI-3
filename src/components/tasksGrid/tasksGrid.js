@@ -6,15 +6,15 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import { headerTasksGrid, h1TaskPage, deleteAllElements } from '../helpersComponents';
 import { ThemeContext } from '../context';
-import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
 
 export default class TasksGrid extends Component {
   state = {
     tasks: [],
     loading: true,
+    onNotification: false,
+    notification: {},
   };
 
   async componentDidMount() {
@@ -57,15 +57,17 @@ export default class TasksGrid extends Component {
     const { name } = this.state.tasks.find((task) => task.taskId === taskId);
     const response = await fetchService.delTask(taskId);
     deleteAllElements('taskId', taskId);
-    if (response.statusText) {
-      notification.notify('success', `${name} was deleted!`);
+    if (response) {
+      const notification = { status: 'success', title: `${name} was deleted!` };
+      this.setState({ onNotification: true, notification });
+      setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+      const tasks = await fetchService.getAllTask();
+      this.setState({ tasks });
     }
-    const tasks = await fetchService.getAllTask();
-    this.setState({ tasks });
   };
 
   render() {
-    const { tasks, loading } = this.state;
+    const { tasks, loading, onNotification, notification } = this.state;
 
     if (loading) {
       return <Spinner />;
@@ -75,7 +77,7 @@ export default class TasksGrid extends Component {
         {({ theme }) => (
           <div className={'grid-wrap'}>
             <h1>Tasks Manage Grid</h1>
-            <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
+            <Button className='btn-register' name='Create' onClick={this.onCreateTaskClick} />
             <table border='1' className={`${theme}--table`}>
               <thead>
                 <HeaderTable arr={headerTasksGrid} />
@@ -92,15 +94,15 @@ export default class TasksGrid extends Component {
                       <td className='td'>{startDate}</td>
                       <td className='td'>{deadlineDate}</td>
                       <td className='td'>
-                        <Button className='btn btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
-                        <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
+                        <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
+                        <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-            <ToastContainer />
+            {onNotification && <DisplayNotification notification={notification} />}
           </div>
         )}
       </ThemeContext.Consumer>

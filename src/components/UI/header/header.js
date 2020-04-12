@@ -36,7 +36,7 @@ const Header = (props) => {
             <NavLink to='/'>DIMS</NavLink>
           </h3>
           <ul className='nav'>{renderLinks(links)}</ul>
-          <Button className='btn btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
+          <Button className='btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
           <ColorSwitch />
         </div>
       )}

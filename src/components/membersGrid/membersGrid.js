@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
 import Spinner from '../spinner';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import DisplayNotification from '../displayNotification';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, deleteAllElements } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
 import { ThemeContext } from '../context';
-import { ToastContainer } from 'react-toastify';
 import { connect } from 'react-redux';
-import { fetchMembers } from '../../store/actions/members';
-
-const fetchService = new FetchService();
-const notification = new DisplayNotification();
+import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 
 class MembersGrid extends Component {
   componentDidMount() {
@@ -50,15 +45,8 @@ class MembersGrid extends Component {
 
   onDeleteClick = async ({ target }) => {
     const memberId = target.closest('tr').id;
-    const member = this.props.members.find((member) => member.userId === memberId);
-    const { fullName } = member;
-    deleteAllElements('userId', memberId);
-    const response = await fetchService.delMember(memberId);
-    if (response.statusText) {
-      notification.notify('success', `${fullName} was deleted`);
-    }
-    const members = await fetchService.getAllMember();
-    this.setState({ members });
+    await this.props.fetchMembersDelete(memberId, this.props.members);
+    await this.props.fetchMembers();
   };
 
   onShowClick = ({ target }) => {
@@ -78,7 +66,7 @@ class MembersGrid extends Component {
   };
 
   render() {
-    const { members, directions, loading } = this.props;
+    const { members, directions, loading, onNotification, notification } = this.props;
     if (loading) {
       return <Spinner />;
     }
@@ -87,7 +75,7 @@ class MembersGrid extends Component {
         {({ theme }) => (
           <div className='grid-wrap'>
             <h1>Members Manage Grid</h1>
-            <Button className='btn btn-register' onClick={this.onRegisterClick} name='Register' />
+            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
             <table border='1' className={`${theme}--table`}>
               <thead>
                 <HeaderTable arr={headerMembersGrid} />
@@ -112,26 +100,26 @@ class MembersGrid extends Component {
                       <td className='td'>{`${this.countAge(birthDate)}`}</td>
                       <td className='td buttons-wrap'>
                         <ButtonLink
-                          className='btn btn-progress'
+                          className='btn-progress'
                           onClick={this.onProgressClick}
                           name='Progress'
                           to={'/MemberProgressGrid'}
                         />
                         <ButtonLink
-                          className='btn btn-tasks'
+                          className='btn-tasks'
                           onClick={this.onShowClick}
                           name='Tasks'
                           to={'/MemberTasksGrid'}
                         />
-                        <Button className='btn btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                        <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                        <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                        <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-            <ToastContainer />
+            {onNotification && <DisplayNotification notification={notification} />}
           </div>
         )}
       </ThemeContext.Consumer>
@@ -144,12 +132,15 @@ const mapStateToProps = (state) => {
     members: state.members.members,
     directions: state.members.directions,
     loading: state.members.loading,
+    onNotification: state.members.onNotification,
+    notification: state.members.notification,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchMembers: () => dispatch(fetchMembers()),
+    fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(MembersGrid);

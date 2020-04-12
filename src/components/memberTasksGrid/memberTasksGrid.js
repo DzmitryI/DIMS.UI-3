@@ -8,14 +8,14 @@ import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
 import { Link } from 'react-router-dom';
 import { TABLE_ROLES } from '../helpersComponents';
 import { ThemeContext, RoleContext } from '../context';
-import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
 
 const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick }) => {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [onNotification, setOnNotification] = useState(true);
+  const [notification, setNotification] = useState({});
 
   const updateMemberTasks = async (userId) => {
     const tasks = [];
@@ -69,11 +69,14 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
       taskState.stateName = 'Fail';
     }
     const response = await fetchService.editTaskState(stateId, taskState);
-    if (response.statusText) {
+    if (response) {
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       setUserTasks(userTasks);
-      notification.notify('success', `Task state was edited`);
+      setNotification({ status: 'success', title: `Task state was edited` });
+      setOnNotification(true);
+      setNotification({});
+      setOnNotification(false);
     }
   };
 
@@ -85,10 +88,10 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
   }
   return (
     <div className='grid-wrap'>
-      {email === ADMIN || email === MENTOR ? <Link to='/MembersGrid'>back to grid</Link> : null}
+      {(email === ADMIN || email === MENTOR) && <Link to='/MembersGrid'>back to grid</Link>}
       <h1>Member's Tasks Manage Grid</h1>
       <table border='1' className={`${theme}--table`}>
-        <caption>{title ? `Hi, dear ${title}! This is your current tasks:` : null}</caption>
+        <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
         <thead>
           <HeaderTable arr={headerMemberTasksGrid} />
         </thead>
@@ -105,10 +108,10 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
                 </td>
                 <td className='td'>{startDate}</td>
                 <td className='td'>{deadlineDate}</td>
-                <td className='td'>{stateName}</td>
+                <td className={`td-${stateName}`}>{stateName}</td>
                 <td className='td' id={name}>
                   <Button
-                    className='btn btn-progress'
+                    className='btn-progress'
                     onClick={onTrackClickHandler}
                     name='Track'
                     disabled={email === ADMIN || email === MENTOR}
@@ -116,14 +119,14 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
                 </td>
                 <td className='td' id={stateId}>
                   <Button
-                    className='btn btn-success'
+                    className='btn-success'
                     onClick={onStateTaskClick}
                     id='success'
                     name='Success'
                     disabled={!(email === ADMIN || email === MENTOR)}
                   />
                   <Button
-                    className='btn btn-fail'
+                    className='btn-fail'
                     onClick={onStateTaskClick}
                     id='fail'
                     name='Fail'
@@ -135,7 +138,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
           })}
         </tbody>
       </table>
-      <ToastContainer />
+      {onNotification && <DisplayNotification notification={notification} />}
     </div>
   );
 };

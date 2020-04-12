@@ -8,10 +8,9 @@ import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
-import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
+
 export default class TaskPage extends Component {
   state = {
     isFormValid: false,
@@ -51,6 +50,8 @@ export default class TaskPage extends Component {
     disabled: false,
     members: [],
     userTasks: [],
+    onNotification: false,
+    notification: {},
   };
 
   taskState = {
@@ -101,7 +102,7 @@ export default class TaskPage extends Component {
   }
 
   checkTaskMembers = async (taskId) => {
-    const { members, userTasks } = this.state;
+    const { members, userTasks, notification } = this.state;
     if (members.length) {
       for (const member of members) {
         const index = userTasks.findIndex(
@@ -110,16 +111,19 @@ export default class TaskPage extends Component {
         if (index !== -1 && !member.checked) {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
-            notification.notify('success', `User's task was deleted.`);
+            notification.status = 'success';
+            notification.title = `User's task was deleted.`;
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
-            notification.notify('success', `User's task state was deleted.`);
+            notification.status = 'success';
+            notification.title = `User's task state was deleted.`;
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
-            notification.notify('success', `User's task state was added.`);
+            notification.status = 'success';
+            notification.title = `User's task state was added.`;
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -127,9 +131,12 @@ export default class TaskPage extends Component {
             stateId: responseTaskState.data.name,
           });
           if (responseUserTask.statusText) {
-            notification.notify('success', `User's task was added.`);
+            notification.status = 'success';
+            notification.title = `User's task was added.`;
           }
         }
+        this.setState({ onNotification: true, notification });
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
       }
     }
     return members;
@@ -182,12 +189,13 @@ export default class TaskPage extends Component {
   };
 
   createTaskHandler = async () => {
-    const { taskId, task, taskInput } = this.state;
+    const { taskId, task, taskInput, notification } = this.state;
     this.setState({ loading: false });
     if (!taskId) {
       const responseTask = await fetchService.setTask(task);
       if (responseTask.statusText) {
-        notification.notify('success', `${task.name} was added.`);
+        notification.status = 'success';
+        notification.title = `${task.name} was added.`;
         this.setState({ taskId: responseTask.data.name });
       }
       const addMembersTask = await this.createTaskState();
@@ -195,7 +203,8 @@ export default class TaskPage extends Component {
         for (const addMemberTask of addMembersTask) {
           const responseUserTask = await fetchService.setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
-            notification.notify('success', `${task.name} was added for user.`);
+            notification.status = 'success';
+            notification.title = `${task.name} was added for user.`;
           }
         }
       }
@@ -203,9 +212,12 @@ export default class TaskPage extends Component {
       const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
-        notification.notify('success', `${task.name} was edited.`);
+        notification.status = 'success';
+        notification.title = `${task.name} was edited.`;
       }
     }
+    this.setState({ onNotification: true, notification });
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
     const res = clearOblectValue(taskInput, task);
     this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', members: [] });
     this.props.onCreateTaskClick();
@@ -250,7 +262,7 @@ export default class TaskPage extends Component {
         );
       }
       return (
-        <React.Fragment key={'form-group' + index}>
+        <React.Fragment key={`form-group ${index}`}>
           <Input
             key={controlName + index}
             id={controlName}
@@ -297,10 +309,12 @@ export default class TaskPage extends Component {
       loading,
       disabled,
       isFormValid,
+      onNotification,
+      notification,
     } = this.state;
     return (
       <>
-        <ToastContainer />
+        {onNotification && <DisplayNotification notification={notification} />}
         <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
@@ -318,13 +332,13 @@ export default class TaskPage extends Component {
                 </div>
                 <div className='form-group row'>
                   <Button
-                    className='btn btn-add'
+                    className='btn-add'
                     type='submit'
                     name='Save'
                     disabled={disabled || !isFormValid}
                     onClick={this.createTaskHandler}
                   />
-                  <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+                  <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
                 </div>
               </>
             )}

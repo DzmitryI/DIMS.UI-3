@@ -9,10 +9,8 @@ import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
-import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
 
 export default class MemberPage extends Component {
   state = {
@@ -142,6 +140,8 @@ export default class MemberPage extends Component {
     disabled: false,
     loading: true,
     directions: [],
+    onNotification: false,
+    notification: {},
   };
 
   componentDidUpdate(prevProps) {
@@ -228,18 +228,22 @@ export default class MemberPage extends Component {
   };
 
   createMemberHandler = async () => {
-    const { userId, member, memberInput, directions } = this.state;
+    const { userId, member, memberInput, directions, notification } = this.state;
     if (!userId) {
       const response = await fetchService.setMember(member);
-      if (response.statusText) {
-        notification.notify('success', `New member: ${member.name} ${member.lastName} was added`);
+      if (response) {
+        notification.status = 'success';
+        notification.title = `New member: ${member.name} ${member.lastName} was added`;
       }
     } else {
       const response = await fetchService.editMember(userId, member);
-      if (response.statusText) {
-        notification.notify('success', `Member: ${member.name} ${member.lastName} was edited`);
+      if (response) {
+        notification.status = 'success';
+        notification.title = `Member: ${member.name} ${member.lastName} was edited`;
       }
     }
+    this.setState({ onNotification: true, notification });
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
     const res = clearOblectValue(memberInput, member);
     this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
     this.props.onRegisterClick(directions);
@@ -317,12 +321,14 @@ export default class MemberPage extends Component {
       disabled,
       loading,
       isFormValid,
+      onNotification,
+      notification,
     } = this.state;
     const { isOpen, title } = this.props;
     return (
       <>
-        <ToastContainer />
-        <div className={isOpen ? `page-wrap` : `page-wrap close`}>
+        {onNotification && <DisplayNotification notification={notification} />}
+        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             {loading ? (
@@ -334,13 +340,13 @@ export default class MemberPage extends Component {
                 {this.renderSelect()}
                 <div className='form-group row'>
                   <Button
-                    className='btn btn-add'
+                    className='btn-add'
                     disabled={disabled || !isFormValid}
                     type='submit'
                     onClick={this.createMemberHandler}
                     name='Save'
                   />
-                  <Button className='btn btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
+                  <Button className='btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
                 </div>
               </>
             )}

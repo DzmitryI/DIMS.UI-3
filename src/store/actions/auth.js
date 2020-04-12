@@ -1,9 +1,7 @@
 import axios from 'axios';
-import DisplayNotification from '../../components/displayNotification';
-import { AUTH_SUCCESS, AUTH_LOGOUT } from './actionTypes';
+import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from './actionTypes';
 
 const API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
-const notification = new DisplayNotification();
 
 export function auth(email, password, isLogin) {
   return async (dispatch) => {
@@ -26,10 +24,13 @@ export function auth(email, password, isLogin) {
       localStorage.setItem('email', data.email);
       dispatch(authSuccess(data.idToken, data.email));
       dispatch(autoLogout(data.expiresIn));
-      notification.notify('success', `Email is correct`);
+      dispatch(authNotification(true, { status: 'success', title: 'Email is correct' }));
     } catch (error) {
-      notification.notify('error', error.message);
+      dispatch(authNotification(true, { status: 'error', title: error.message }));
     }
+    setTimeout(() => {
+      dispatch(authNotification(false, {}));
+    }, 1000);
   };
 }
 
@@ -76,5 +77,13 @@ export function authSuccess(token, email) {
     type: AUTH_SUCCESS,
     token,
     email,
+  };
+}
+
+export function authNotification(onNotification, notification) {
+  return {
+    type: AUTH_NOTIFICATION,
+    onNotification,
+    notification,
   };
 }

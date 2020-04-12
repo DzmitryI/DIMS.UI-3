@@ -4,6 +4,11 @@ import { createNotify } from '../../services/helpers';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default class DisplayNotification extends Component {
+  componentDidMount() {
+    const { status, title } = this.props.notification;
+    this.notify(status, title);
+  }
+
   notify = (status, title) => {
     if (status === 'success') {
       toast.success(title, createNotify());

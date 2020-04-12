@@ -1,32 +1,54 @@
-## The link to principal idea of design - [design](https://symu.co/freebies/templates-4/merkury-dashboard-psd-template/). **You do not have to follow it, just use it as a guide**
+<h1 align="center">Welcome to &#34;Dev-Incubator-Management-System&#34; 👋</h1>
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000" />
+  <a href="https://github.com/DzmitryI/DIMS.UI-3#readme" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="https://github.com/DzmitryI/DIMS.UI-3/graphs/commit-activity" target="_blank">
+    <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
+  </a>
+  <a href="https://github.com/DzmitryI/DIMS.UI-3/blob/master/LICENSE" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/github/license/DzmitryI/&#34;Dev-Incubator-Management-System&#34;" />
+  </a>
+</p>
 
-*In **/docs** you can find all other guides regarding project structure, pan and etc.*
+> It is a system for getting tasks and tracking time.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 🏠 [Homepage](https://github.com/DzmitryI/DIMS.UI-3)
 
-## Available Scripts
+## Install
 
-In the project directory, you can run:
+```sh
+npm install
+```
 
-### `yarn start`
+## Usage
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```sh
+npm run start
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Run tests
 
-### `yarn test`
+```sh
+npm run test
+```
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Author
 
-### `yarn build`
+👤 **Dmitriy Ivanov**
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Github: [@DzmitryI](https://github.com/DzmitryI)
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Show your support
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Give a ⭐️ if this project helped you!
+
+## 📝 License
+
+Copyright © 2020 [Dmitriy Ivanov](https://github.com/DzmitryI).<br />
+This project is [MIT](https://github.com/DzmitryI/DIMS.UI-3/blob/master/LICENSE) licensed.
+
+---
+
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
