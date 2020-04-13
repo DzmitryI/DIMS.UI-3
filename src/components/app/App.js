@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import Layout from '../../hoc/layout';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
 import MemberProgressGrid from '../memberProgressGrid';
@@ -10,6 +9,7 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import Header from '../UI/header';
+import Main from '../UI/main';
 import Auth from '../auth';
 import FetchService from '../../services/fetch-service';
 import { ThemeContext, RoleContext } from '../../components/context';
@@ -32,19 +32,20 @@ class App extends Component {
     userId: null,
     taskId: null,
     userTaskId: null,
-    theme: '',
+    theme: 'light',
     directions: [],
   };
 
   async componentDidMount() {
     this.props.autoLogin();
-    const theme = localStorage.getItem('theme');
-    this.setState({ theme });
   }
 
   async componentDidUpdate(prevProps) {
     const { email } = this.props;
     if (email !== prevProps.email) {
+      if (!email) {
+        this.setState({ theme: 'light' });
+      }
       const members = await fetchService.getAllMember();
       const member = members.find((member) => member.values.email === email);
       this.setState({ userId: member ? member.userId : '' });
@@ -54,7 +55,6 @@ class App extends Component {
   onColorSwitchClickHandler = (color) => {
     let theme = color ? 'dark' : 'light';
     this.setState({ theme });
-    localStorage.setItem('theme', theme);
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
@@ -107,10 +107,6 @@ class App extends Component {
     }
   };
 
-  mainPage = () => {
-    return <h2>Welcome to DIMS</h2>;
-  };
-
   render() {
     const {
       isRegister,
@@ -131,7 +127,7 @@ class App extends Component {
 
     let routes = (
       <Switch>
-        <Route path='/Auth' render={() => <Auth exact />} />
+        <Route path='/Auth' exact component={Auth} />
         <Redirect to='/Auth' />
       </Switch>
     );
@@ -139,7 +135,7 @@ class App extends Component {
     if (isAuthenticated) {
       routes = (
         <>
-          <Header isAuthenticated={isAuthenticated} onColorSwitchClickHandler={this.onColorSwitchClickHandler} />
+          <Header isAuthenticated={isAuthenticated} />
           <Switch>
             <Route
               path='/MembersGrid'
@@ -201,7 +197,7 @@ class App extends Component {
                 />
               )}
             />
-            <Route path='/' render={this.mainPage} exact />
+            <Route path='/' component={Main} exact />
             <Redirect to='/' />
           </Switch>
         </>
@@ -209,37 +205,30 @@ class App extends Component {
     }
 
     return (
-      <Layout>
-        <main className={`${theme}`}>
-          <RoleContext.Provider value={email}>
-            <ThemeContext.Provider value={theme}>
-              {routes}
-              <MemberPage
-                onRegisterClick={this.onRegisterClickHandler}
-                isOpen={isRegister}
-                title={title}
-                member={curMember}
-                directions={directions}
-              />
-              <TaskPage
-                onCreateTaskClick={this.onCreateTaskClickHandler}
-                isOpen={isTask}
-                title={title}
-                task={curTask}
-              />
-              <TaskTrackPage
-                onTrackClick={this.onTrackClickHandler}
-                isOpen={isTaskTrack}
-                track={track}
-                title={title}
-                taskId={taskId}
-                userTaskId={userTaskId}
-                subtitle={subtitle}
-              />
-            </ThemeContext.Provider>
-          </RoleContext.Provider>
-        </main>
-      </Layout>
+      <main className={`${theme}`}>
+        <RoleContext.Provider value={email}>
+          <ThemeContext.Provider value={{ theme, onColorSwitchClickHandler: this.onColorSwitchClickHandler }}>
+            {routes}
+            <MemberPage
+              onRegisterClick={this.onRegisterClickHandler}
+              isOpen={isRegister}
+              title={title}
+              member={curMember}
+              directions={directions}
+            />
+            <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} isOpen={isTask} title={title} task={curTask} />
+            <TaskTrackPage
+              onTrackClick={this.onTrackClickHandler}
+              isOpen={isTaskTrack}
+              track={track}
+              title={title}
+              taskId={taskId}
+              userTaskId={userTaskId}
+              subtitle={subtitle}
+            />
+          </ThemeContext.Provider>
+        </RoleContext.Provider>
+      </main>
     );
   }
 }

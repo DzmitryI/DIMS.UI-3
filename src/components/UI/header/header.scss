@@ -7,9 +7,8 @@ $blue: rgb(57, 126, 237);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-top: 0.5rem;
-  padding-left: 10px;
-  width: 90%;
+  width: 100%;
+  height: 8%;
   text-align: center;
   & h3 a:hover {
     color: #00bc8c;
@@ -19,7 +18,8 @@ $blue: rgb(57, 126, 237);
   }
 }
 
-.dark {
+.header--dark {
+  box-shadow: 0 4px 4px 0 $light;
   & h3 a {
     color: $light;
   }
@@ -31,7 +31,8 @@ $blue: rgb(57, 126, 237);
   }
 }
 
-.light {
+.header--light {
+  box-shadow: 0 4px 4px 0 $dark-light;
   & h3 a {
     color: $dark;
   }

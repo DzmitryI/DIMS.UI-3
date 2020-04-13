@@ -1,3 +1,3 @@
-import MemberTasksGrid from './memberTasksGrid';
+import MemberTasksGrid from './MemberTasksGrid';
 
 export default MemberTasksGrid;

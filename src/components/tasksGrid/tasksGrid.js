@@ -6,15 +6,15 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import { headerTasksGrid, h1TaskPage, deleteAllElements } from '../helpersComponents';
 import { ThemeContext } from '../context';
-import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
 
-class TasksGrid extends Component {
+export default class TasksGrid extends Component {
   state = {
     tasks: [],
     loading: true,
+    onNotification: false,
+    notification: {},
   };
 
   async componentDidMount() {
@@ -57,53 +57,55 @@ class TasksGrid extends Component {
     const { name } = this.state.tasks.find((task) => task.taskId === taskId);
     const response = await fetchService.delTask(taskId);
     deleteAllElements('taskId', taskId);
-    if (response.statusText) {
-      notification.notify('success', `${name} was deleted!`);
+    if (response) {
+      const notification = { status: 'success', title: `${name} was deleted!` };
+      this.setState({ onNotification: true, notification });
+      setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+      const tasks = await fetchService.getAllTask();
+      this.setState({ tasks });
     }
-    const tasks = await fetchService.getAllTask();
-    this.setState({ tasks });
   };
 
   render() {
-    const { tasks, loading } = this.state;
+    const { tasks, loading, onNotification, notification } = this.state;
 
     if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={'grid-wrap'}>
-        <h1>Tasks Manage Grid</h1>
-        <Button className='btn btn-register' name='Create' onClick={this.onCreateTaskClick} />
-        <table border='1' className={`${this.props.theme}--table`}>
-          <thead>
-            <HeaderTable arr={headerTasksGrid} />
-          </thead>
-          <tbody>
-            {tasks.map((task, index) => {
-              const { taskId, name, startDate, deadlineDate } = task;
-              return (
-                <tr key={task.taskId} id={taskId}>
-                  <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onChangeClick}>{name}</span>
-                  </td>
-                  <td className='td'>{startDate}</td>
-                  <td className='td'>{deadlineDate}</td>
-                  <td className='td'>
-                    <Button className='btn btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
-                    <Button className='btn btn-delete' name='Delete' onClick={this.onDeleteClick} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <ToastContainer />
-      </div>
+      <ThemeContext.Consumer>
+        {({ theme }) => (
+          <div className={'grid-wrap'}>
+            <h1>Tasks Manage Grid</h1>
+            <Button className='btn-register' name='Create' onClick={this.onCreateTaskClick} />
+            <table border='1' className={`${theme}--table`}>
+              <thead>
+                <HeaderTable arr={headerTasksGrid} />
+              </thead>
+              <tbody>
+                {tasks.map((task, index) => {
+                  const { taskId, name, startDate, deadlineDate } = task;
+                  return (
+                    <tr key={task.taskId} id={taskId}>
+                      <td className='td'>{index + 1}</td>
+                      <td className='td'>
+                        <span onClick={this.onChangeClick}>{name}</span>
+                      </td>
+                      <td className='td'>{startDate}</td>
+                      <td className='td'>{deadlineDate}</td>
+                      <td className='td'>
+                        <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
+                        <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {onNotification && <DisplayNotification notification={notification} />}
+          </div>
+        )}
+      </ThemeContext.Consumer>
     );
   }
 }
-
-export default (props) => (
-  <ThemeContext.Consumer>{(theme) => <TasksGrid {...props} theme={theme} />}</ThemeContext.Consumer>
-);

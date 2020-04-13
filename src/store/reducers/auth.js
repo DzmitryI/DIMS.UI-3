@@ -1,8 +1,10 @@
-import { AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/actionTypes';
+import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from '../actions/actionTypes';
 
 const initialState = {
   token: null,
   email: null,
+  onNotification: false,
+  notification: {},
 };
 
 export default function authReducer(state = initialState, action) {
@@ -18,6 +20,12 @@ export default function authReducer(state = initialState, action) {
         ...state,
         token: null,
         email: null,
+      };
+    case AUTH_NOTIFICATION:
+      return {
+        ...state,
+        onNotification: action.onNotification,
+        notification: action.notification,
       };
     default:
       return state;

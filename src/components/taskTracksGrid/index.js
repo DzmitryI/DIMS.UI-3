@@ -1,3 +1,3 @@
-import TaskTracksGrid from './taskTracksGrid';
+import TaskTracksGrid from './TaskTracksGrid';
 
 export default TaskTracksGrid;

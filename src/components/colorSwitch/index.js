@@ -1,4 +1,4 @@
-import ColorSwitch from './colorSwitch';
+import ColorSwitch from './ColorSwitch';
 
 import './colorSwitch.scss';
 

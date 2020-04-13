@@ -1,17 +1,19 @@
 import React from 'react';
 import { ThemeContext } from '../context';
 
-const Spinner = (props) => {
+const Spinner = () => {
   return (
-    <div className={`loadingio-spinner-ripple ${props.theme}`}>
-      <div className='ldio'>
-        <div></div>
-        <div></div>
-      </div>
-    </div>
+    <ThemeContext.Consumer>
+      {({ theme }) => (
+        <div className={`loadingio-spinner-ripple ${theme}`}>
+          <div className='ldio'>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
+    </ThemeContext.Consumer>
   );
 };
 
-export default (props) => (
-  <ThemeContext.Consumer>{(theme) => <Spinner {...props} theme={theme} />}</ThemeContext.Consumer>
-);
+export default Spinner;

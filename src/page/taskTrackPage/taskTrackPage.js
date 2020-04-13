@@ -7,10 +7,10 @@ import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
-import { ToastContainer } from 'react-toastify';
+// import { ToastContainer } from 'react-toastify';
 
 const fetchService = new FetchService();
-const notification = new DisplayNotification();
+// const notification = new DisplayNotification();
 
 export default class TaskTrackPage extends Component {
   state = {
@@ -29,6 +29,8 @@ export default class TaskTrackPage extends Component {
     disabled: false,
     taskTrackId: null,
     taskId: '',
+    onNotification: false,
+    notification: {},
   };
 
   componentDidUpdate(prevProps) {
@@ -88,19 +90,23 @@ export default class TaskTrackPage extends Component {
   };
 
   createTaskTrackHandler = async () => {
-    const { taskTrackId, taskTrack, taskTrackInput, taskId } = this.state;
+    const { taskTrackId, taskTrack, taskTrackInput, taskId, notification } = this.state;
     taskTrack.userTaskId = this.props.userTaskId;
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
-      if (response.statusText) {
-        notification.notify('success', `Add new task track.`);
+      if (response) {
+        notification.status = 'success';
+        notification.title = `Add new task track.`;
       }
     } else {
       const response = await fetchService.editTaskTrack(taskTrackId, taskTrack);
-      if (response.statusText) {
-        notification.notify('success', `Task track was edited.`);
+      if (response) {
+        notification.status = 'success';
+        notification.title = `Task track was edited.`;
       }
     }
+    this.setState({ onNotification: true, notification });
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
     const res = clearOblectValue(taskTrackInput, taskTrack);
     this.setState({ taskTrackInput: res.objInputClear, taskTrack: res.objElemClear });
     this.props.onTrackClick(taskId);
@@ -130,11 +136,11 @@ export default class TaskTrackPage extends Component {
 
   render() {
     const { isOpen, title, subtitle } = this.props;
-    const { taskTrack, disabled, isFormValid } = this.state;
+    const { taskTrack, disabled, isFormValid, notification, onNotification } = this.state;
     return (
       <>
-        <ToastContainer />
-        <div className={isOpen ? `page-wrap` : `page-wrap close`}>
+        {onNotification && <DisplayNotification notification={notification} />}
+        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
@@ -152,13 +158,13 @@ export default class TaskTrackPage extends Component {
             </div>
             <div className='form-group row'>
               <Button
-                className='btn btn-add'
+                className='btn-add'
                 type='submit'
                 name='Save'
                 disabled={disabled || !isFormValid}
                 onClick={this.createTaskTrackHandler}
               />
-              <Button className='btn btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+              <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
             </div>
           </form>
         </div>

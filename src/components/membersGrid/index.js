@@ -1,3 +1,3 @@
-import MembersGrid from './membersGrid';
+import MembersGrid from './MembersGrid';
 
 export default MembersGrid;

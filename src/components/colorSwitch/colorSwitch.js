@@ -1,15 +1,15 @@
 import React from 'react';
+import { ThemeContext } from '../context';
 import imgMoon from '../../assets/images/moon.png';
 import imgSun from '../../assets/images/sun.png';
 
-const colorSwitch = (props) => {
+const ColorSwitch = ({ theme, onColorSwitchClickHandler }) => {
   const clickSwitch = () => {
     const switchBtn = document.querySelector('.switch-btn');
     const result = switchBtn.classList.toggle('switch-btn__on');
-    props.onColorSwitchClickHandler(result);
+    onColorSwitchClickHandler(result);
   };
 
-  const { theme } = props;
   return (
     <div className={`switch-btn ${theme === 'dark' ? 'switch-btn__on' : ''}`} onClick={clickSwitch}>
       <div className='switch-btn--moon'>
@@ -22,4 +22,10 @@ const colorSwitch = (props) => {
   );
 };
 
-export default colorSwitch;
+export default (props) => (
+  <ThemeContext.Consumer>
+    {({ theme, onColorSwitchClickHandler }) => (
+      <ColorSwitch {...props} theme={theme} onColorSwitchClickHandler={onColorSwitchClickHandler} />
+    )}
+  </ThemeContext.Consumer>
+);

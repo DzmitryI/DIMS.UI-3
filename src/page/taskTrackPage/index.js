@@ -1,4 +1,5 @@
-import TaskTrackPage from './taskTrackPage';
+import TaskTrackPage from './TaskTrackPage';
+
 import '../page.scss';
 
 export default TaskTrackPage;

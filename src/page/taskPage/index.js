@@ -1,4 +1,4 @@
-import TaskPage from './taskPage';
+import TaskPage from './TaskPage';
 
 import '../page.scss';
 
