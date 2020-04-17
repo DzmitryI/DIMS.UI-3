@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import DisplayNotification from '../displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
-import { connect } from 'react-redux';
 import { auth } from '../../store/actions/auth';
 
 class Auth extends PureComponent {

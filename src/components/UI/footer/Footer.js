@@ -1,9 +1,9 @@
 import React from 'react';
-import { ThemeContext } from '../../context';
+import { ThemeContextConsumer } from '../../context';
 
 const Footer = () => {
   return (
-    <ThemeContext.Consumer>
+    <ThemeContextConsumer>
       {({ theme }) => (
         <footer className={`footer--${theme}`}>
           <span>
@@ -11,7 +11,7 @@ const Footer = () => {
           </span>
         </footer>
       )}
-    </ThemeContext.Consumer>
+    </ThemeContextConsumer>
   );
 };
 

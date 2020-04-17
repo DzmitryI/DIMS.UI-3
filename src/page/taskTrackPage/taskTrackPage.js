@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
+import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
 import Input from '../../components/UI/input';
 import Backdrop from '../../components/UI/backdrop';
-import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
-// import { ToastContainer } from 'react-toastify';
+import { withFetchService } from '../../hoc';
 
-const fetchService = new FetchService();
-// const notification = new DisplayNotification();
-
-export default class TaskTrackPage extends Component {
+class TaskTrackPage extends Component {
   state = {
     isFormValid: false,
     taskTrackInput: {
@@ -36,20 +33,22 @@ export default class TaskTrackPage extends Component {
   componentDidUpdate(prevProps) {
     const { track, title, taskId } = this.props;
     let disabled = false;
-    if (track !== prevProps.track) {
-      const taskTrackInput = updateInput(this.state.taskTrackInput, track);
-      const { taskTrackId, ...taskTrack } = track;
-      if (title === h1TaskTrackPage.get('Detail')) {
-        disabled = true;
+    if (Object.keys(track).length !== 0) {
+      if (track !== prevProps.track) {
+        const taskTrackInput = updateInput(this.state.taskTrackInput, track);
+        const { taskTrackId, ...taskTrack } = track;
+        if (title === h1TaskTrackPage.get('Detail')) {
+          disabled = true;
+        }
+        this.setState({
+          disabled,
+          taskTrack,
+          taskTrackId,
+          isFormValid: true,
+          taskTrackInput,
+          taskId,
+        });
       }
-      this.setState({
-        disabled,
-        taskTrack,
-        taskTrackId,
-        isFormValid: true,
-        taskTrackInput,
-        taskId,
-      });
     }
   }
 
@@ -91,6 +90,7 @@ export default class TaskTrackPage extends Component {
 
   createTaskTrackHandler = async () => {
     const { taskTrackId, taskTrack, taskTrackInput, taskId, notification } = this.state;
+    const { fetchService } = this.props;
     taskTrack.userTaskId = this.props.userTaskId;
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
@@ -173,3 +173,5 @@ export default class TaskTrackPage extends Component {
     );
   }
 }
+
+export default withFetchService(TaskTrackPage);

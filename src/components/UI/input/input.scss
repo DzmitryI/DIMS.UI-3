@@ -1,5 +1,6 @@
 $dark: rgb(0, 0, 0);
 $red: rgb(223, 18, 18);
+$blue: rgb(57, 126, 237);
 
 .form-group {
   display: flex;
@@ -15,12 +16,13 @@ label {
   font-weight: bold;
 }
 
-.invalid label {
-  color: $red;
-}
-
-.invalid input {
-  border: 1px solid $red;
+.invalid {
+  & input {
+    border-color: $red;
+  }
+  & label {
+    color: $red;
+  }
 }
 
 input {
@@ -33,12 +35,16 @@ input {
   &:disabled {
     cursor: not-allowed;
   }
+  &:focus {
+    border-color: $blue;
+    box-shadow: 0px 0px 1px 1px $blue;
+  }
 }
 
 span {
-  color: $red;
-  font-size: 12px;
-  font-weight: bold;
   display: block;
   margin: 0 1rem;
+  font-size: 12px;
+  font-weight: bold;
+  color: $red;
 }

@@ -1,17 +1,13 @@
 import React from 'react';
-import { ThemeContext } from '../../context';
+import { withTheme } from '../../../hoc';
 
-const Button = ({ type = 'button', id, name, className, onClick, disabled = false }) => {
+const Button = ({ type = 'button', id, name, className, onClick, disabled = false, theme }) => {
   id = id || name;
   return (
-    <ThemeContext.Consumer>
-      {({ theme }) => (
-        <button type={type} className={`btn ${className} ${theme}--btn`} onClick={onClick} disabled={disabled} id={id}>
-          {name}
-        </button>
-      )}
-    </ThemeContext.Consumer>
+    <button type={type} className={`btn ${className} ${theme}--btn`} onClick={onClick} disabled={disabled} id={id}>
+      {name}
+    </button>
   );
 };
 
-export default Button;
+export default withTheme(Button);

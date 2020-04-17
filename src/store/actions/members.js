@@ -1,4 +1,5 @@
 import FetchService from '../../services/fetch-service';
+import FetchBackEnd from '../../services/fetch-back-end';
 import { deleteAllElements } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
@@ -7,12 +8,14 @@ import {
   FETCH_MEMBERS_DELETE_FINISH,
 } from '../actions/actionTypes';
 const fetchService = new FetchService();
+const fetchBackEnd = new FetchBackEnd();
 
 export function fetchMembers() {
   return async (dispatch) => {
     dispatch(fetchMembersStart());
     const members = await fetchService.getAllMember();
     const directions = await fetchService.getDirection();
+    const membersBackEnd = await fetchBackEnd.getAllMember();
     dispatch(fetchMembersSuccess(members, directions));
   };
 }

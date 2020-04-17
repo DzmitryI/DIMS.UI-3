@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeContext } from '../context';
+import { withTheme } from '../../hoc';
 import imgMoon from '../../assets/images/moon.png';
 import imgSun from '../../assets/images/sun.png';
 
@@ -22,10 +22,4 @@ const ColorSwitch = ({ theme, onColorSwitchClickHandler }) => {
   );
 };
 
-export default (props) => (
-  <ThemeContext.Consumer>
-    {({ theme, onColorSwitchClickHandler }) => (
-      <ColorSwitch {...props} theme={theme} onColorSwitchClickHandler={onColorSwitchClickHandler} />
-    )}
-  </ThemeContext.Consumer>
-);
+export default withTheme(ColorSwitch);

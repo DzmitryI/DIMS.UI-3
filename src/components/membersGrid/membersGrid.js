@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Spinner from '../spinner';
+import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
-import DisplayNotification from '../displayNotification';
 import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
-import { ThemeContext } from '../context';
-import { connect } from 'react-redux';
+import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 
 class MembersGrid extends Component {
@@ -65,64 +65,58 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
+  renderTBody = (members, directions) => {
+    return members.map((member, index) => {
+      const {
+        userId,
+        fullName,
+        values: { directionId, education, startDate, birthDate },
+      } = member;
+      const curDirect = directions.find((direction) => direction.value === directionId);
+      return (
+        <tr key={userId} id={userId}>
+          <td className='td'>{index + 1}</td>
+          <td className='td'>
+            <span onClick={this.onChangeClick}>{`${fullName}`}</span>
+          </td>
+          <td className='td'>{`${curDirect.name}`}</td>
+          <td className='td'>{`${education}`}</td>
+          <td className='td'>{`${startDate}`}</td>
+          <td className='td'>{`${this.countAge(birthDate)}`}</td>
+          <td className='td buttons-wrap'>
+            <ButtonLink
+              className='btn-progress'
+              onClick={this.onProgressClick}
+              name='Progress'
+              to={'/MemberProgressGrid'}
+            />
+            <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
+            <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+            <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+          </td>
+        </tr>
+      );
+    });
+  };
+
   render() {
-    const { members, directions, loading, onNotification, notification } = this.props;
+    const { members, directions, loading, onNotification, notification, theme } = this.props;
     if (loading) {
       return <Spinner />;
     }
+
     return (
-      <ThemeContext.Consumer>
-        {({ theme }) => (
-          <div className='grid-wrap'>
-            <h1>Members Manage Grid</h1>
-            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
-            <table border='1' className={`${theme}--table`}>
-              <thead>
-                <HeaderTable arr={headerMembersGrid} />
-              </thead>
-              <tbody>
-                {members.map((member, index) => {
-                  const {
-                    userId,
-                    fullName,
-                    values: { directionId, education, startDate, birthDate },
-                  } = member;
-                  const curDirect = directions.find((direction) => direction.value === directionId);
-                  return (
-                    <tr key={userId} id={userId}>
-                      <td className='td'>{index + 1}</td>
-                      <td className='td'>
-                        <span onClick={this.onChangeClick}>{`${fullName}`}</span>
-                      </td>
-                      <td className='td'>{`${curDirect.name}`}</td>
-                      <td className='td'>{`${education}`}</td>
-                      <td className='td'>{`${startDate}`}</td>
-                      <td className='td'>{`${this.countAge(birthDate)}`}</td>
-                      <td className='td buttons-wrap'>
-                        <ButtonLink
-                          className='btn-progress'
-                          onClick={this.onProgressClick}
-                          name='Progress'
-                          to={'/MemberProgressGrid'}
-                        />
-                        <ButtonLink
-                          className='btn-tasks'
-                          onClick={this.onShowClick}
-                          name='Tasks'
-                          to={'/MemberTasksGrid'}
-                        />
-                        <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                        <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {onNotification && <DisplayNotification notification={notification} />}
-          </div>
-        )}
-      </ThemeContext.Consumer>
+      <div className='grid-wrap'>
+        <h1>Members Manage Grid</h1>
+        <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+        <table border='1' className={`${theme}--table`}>
+          <thead>
+            <HeaderTable arr={headerMembersGrid} />
+          </thead>
+          <tbody>{this.renderTBody(members, directions)}</tbody>
+        </table>
+        {onNotification && <DisplayNotification notification={notification} />}
+      </div>
     );
   }
 }
@@ -143,4 +137,4 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(MembersGrid);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));

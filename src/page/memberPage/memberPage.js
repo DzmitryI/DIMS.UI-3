@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
+import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
-import Spinner from '../../components/spinner';
-import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
+import { withFetchService } from '../../hoc';
 
-const fetchService = new FetchService();
-
-export default class MemberPage extends Component {
+class MemberPage extends Component {
   state = {
     isFormValid: false,
     memberInput: {
@@ -229,6 +227,7 @@ export default class MemberPage extends Component {
 
   createMemberHandler = async () => {
     const { userId, member, memberInput, directions, notification } = this.state;
+    const { fetchService } = this.props;
     if (!userId) {
       const response = await fetchService.setMember(member);
       if (response) {
@@ -325,6 +324,7 @@ export default class MemberPage extends Component {
       notification,
     } = this.state;
     const { isOpen, title } = this.props;
+
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
@@ -357,3 +357,5 @@ export default class MemberPage extends Component {
     );
   }
 }
+
+export default withFetchService(MemberPage);

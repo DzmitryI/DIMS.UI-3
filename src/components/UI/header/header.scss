@@ -18,6 +18,18 @@ $blue: rgb(57, 126, 237);
   }
 }
 
+.imgMain-wrap {
+  width: 24px;
+  height: 24px;
+  border-radius: 20px;
+  &:hover {
+    box-shadow: 0px 0px 8px 4px $blue;
+  }
+  & img {
+    width: 100%;
+  }
+}
+
 .header--dark {
   box-shadow: 0 4px 4px 0 $light;
   & h3 a {
@@ -68,5 +80,54 @@ $blue: rgb(57, 126, 237);
   & li a.active {
     font-weight: bold;
     text-decoration: none;
+  }
+}
+
+.dropdawn-menu {
+  width: 27px;
+  height: 20px;
+  text-align: center;
+  &:hover {
+    cursor: pointer;
+  }
+  & .burger-line {
+    height: 4px;
+    border-radius: 10px;
+    transition: 0.5s all;
+  }
+  & .burger-line--dark {
+    background: $light;
+  }
+  & .burger-line--light {
+    background: $dark;
+  }
+  & .second,
+  & .third {
+    margin-top: 5px;
+  }
+  & .burger-menu {
+    display: block;
+    width: 100px;
+    max-height: 0;
+    margin-top: 5px;
+    font-size: 0;
+    overflow: hidden;
+    transition: 0.5s all;
+    & li {
+      list-style-type: none;
+    }
+  }
+  .burger-menu-item {
+    display: inline-block;
+    border: 1px solid $blue;
+    background: $light;
+    padding: 5px;
+    color: $dark;
+    text-decoration: none;
+  }
+  .show {
+    max-height: 40px;
+    font-size: 16px;
+    color: $dark;
   }
 }
