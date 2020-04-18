@@ -2,6 +2,8 @@ $dark: rgb(0, 0, 0);
 $dark-light: rgba(0, 0, 0, 0.3);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
+$grееn: rgb(47, 230, 30);
+$red: rgb(230, 30, 30);
 
 .page-wrap {
   display: block;
@@ -59,4 +61,12 @@ textarea {
 
 #members {
   margin: 0 1rem;
+}
+
+.green {
+  color: $grееn;
+}
+
+.red {
+  color: $red;
 }

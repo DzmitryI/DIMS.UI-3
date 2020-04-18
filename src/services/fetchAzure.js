@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export default class FetchService {
-  api_base = `http://localhost:5555/`;
+export default class FetchAzure {
+  api_base = `https://dimsserver.azurewebsites.net/`;
 
   getSource = async (url) => {
     try {

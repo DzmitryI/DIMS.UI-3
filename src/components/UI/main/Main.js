@@ -4,7 +4,7 @@ import humanImg from '../../../assets/images/human.png';
 
 const Main = () => {
   return (
-    <>
+    <div className='main-page__wrap'>
       <h2>Welcome to DIMS</h2>
       <div className='dims__inner'>
         <div className='dims'>
@@ -12,7 +12,7 @@ const Main = () => {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

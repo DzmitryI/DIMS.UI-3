@@ -13,11 +13,11 @@ import AboutAppPage from '../../page/aboutAppPage';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
-import FetchService from '../../services/fetch-service';
+import FetchFirebase from '../../services/fetchFirebase';
+import FetchAzure from '../../services/fetchAzure';
 import { autoLogin } from '../../store/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../../components/context';
-
-const fetchService = new FetchService();
+import Footer from '../UI/footer';
 
 class App extends Component {
   state = {
@@ -35,6 +35,7 @@ class App extends Component {
     userTaskId: null,
     theme: 'light',
     directions: [],
+    fetchService: '',
   };
 
   async componentDidMount() {
@@ -42,14 +43,20 @@ class App extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    const { email } = this.props;
+    const { email, base } = this.props;
+    let fetchService = '';
     if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
+      if (base === 'firebase') {
+        fetchService = new FetchFirebase();
+      } else {
+        fetchService = new FetchAzure();
+      }
       const members = await fetchService.getAllMember();
       const member = members.find((member) => member.values.email === email);
-      this.setState({ userId: member ? member.userId : '' });
+      this.setState({ userId: member ? member.userId : '', fetchService });
     }
   }
 
@@ -123,6 +130,7 @@ class App extends Component {
       track,
       directions,
       theme,
+      fetchService,
     } = this.state;
     const { isAuthenticated, email } = this.props;
 
@@ -202,6 +210,7 @@ class App extends Component {
             <Route path='/' component={Main} exact />
             <Redirect to='/' />
           </Switch>
+          {/* <Footer/> */}
         </>
       );
     }
@@ -246,6 +255,7 @@ const mapStateToProps = (state) => {
   return {
     isAuthenticated: !!state.auth.token,
     email: state.auth.email,
+    base: state.auth.base,
   };
 };
 

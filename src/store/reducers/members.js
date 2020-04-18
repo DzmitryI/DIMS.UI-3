@@ -1,6 +1,7 @@
 import {
   FETCH_MEMBERS_START,
   FETCH_MEMBERS_SUCCESS,
+  FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
 } from '../actions/actionTypes';
@@ -19,13 +20,21 @@ export default function membersReducer(state = initialState, action) {
       return {
         ...state,
         loading: true,
+        error: false,
       };
     case FETCH_MEMBERS_SUCCESS:
       return {
         ...state,
         loading: false,
+        error: false,
         members: action.members,
         directions: action.directions,
+      };
+    case FETCH_MEMBERS_ERROR:
+      return {
+        ...state,
+        loading: false,
+        error: true,
       };
     case FETCH_MEMBERS_DELETE_SUCCESS:
       return {

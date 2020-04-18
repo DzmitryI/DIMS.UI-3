@@ -3,7 +3,7 @@ import DisplayNotification from '../components/displayNotification';
 
 const notification = new DisplayNotification();
 
-export default class FetchService {
+export default class FetchFirebase {
   api_base = process.env.REACT_APP_API_BASE;
 
   getSource = async (url) => {

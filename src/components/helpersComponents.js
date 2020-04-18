@@ -1,4 +1,4 @@
-import FetchService from '../services/fetch-service';
+import FetchService from '../services/fetchFirebase';
 import DisplayNotification from './displayNotification';
 
 const fetchService = new FetchService();

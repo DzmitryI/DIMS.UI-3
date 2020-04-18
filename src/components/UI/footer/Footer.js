@@ -1,18 +1,14 @@
 import React from 'react';
-import { ThemeContextConsumer } from '../../context';
+import { withTheme } from '../../../hoc';
 
-const Footer = () => {
+const Footer = ({ theme }) => {
   return (
-    <ThemeContextConsumer>
-      {({ theme }) => (
-        <footer className={`footer--${theme}`}>
-          <span>
-            <sup>&copy;</sup> 2020 Devincubator.
-          </span>
-        </footer>
-      )}
-    </ThemeContextConsumer>
+    <footer className={`footer--${theme}`}>
+      <span>
+        <sup>&copy;</sup> 2020 Devincubator.
+      </span>
+    </footer>
   );
 };
 
-export default Footer;
+export default withTheme(Footer);

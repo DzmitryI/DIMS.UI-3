@@ -1,9 +1,32 @@
+$dark: rgb(0, 0, 0);
 $dark-light: rgba(0, 0, 0, 0.2);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
 
 .auth {
   width: 90%;
   max-width: 500px;
-  border: 1px solid black;
   margin: 150px auto;
+  border: 1px solid $dark;
   box-shadow: 0 9px 10px 0 $dark-light;
+}
+
+.base-wrap {
+  width: 50%;
+  height: 70px;
+  margin: 10px auto;
+  padding: 0;
+  border: 1px solid $dark;
+  box-shadow: 0 9px 10px 0 $dark-light;
+  & label {
+    color: $blue;
+  }
+}
+
+.btn-radio {
+  width: 10%;
+  display: inline-block;
+  &:focus {
+    outline: 3px solid #fff !important;
+  }
 }

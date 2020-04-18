@@ -2,7 +2,7 @@ $dark: rgb(0, 0, 0);
 $dark-light: rgba(0, 0, 0, 0.2);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
-$grin: rgb(47, 230, 30);
+$green: rgb(35, 245, 16);
 $red: rgb(230, 30, 30);
 
 body {
@@ -32,7 +32,8 @@ h1 {
   text-align: center;
 }
 
-h2 {
+h2,
+h3 {
   text-align: center;
 }
 
@@ -100,7 +101,7 @@ td {
   & span:hover,
   span a:hover {
     cursor: pointer;
-    color: $grin;
+    color: $green;
   }
 }
 
@@ -110,7 +111,7 @@ td {
 }
 
 .td-Success {
-  color: $grin;
+  color: $green;
   font-weight: bold;
 }
 

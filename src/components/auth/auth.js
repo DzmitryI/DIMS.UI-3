@@ -27,16 +27,25 @@ class Auth extends PureComponent {
         { required: true, minLenght: 6 },
       ),
     },
+    base: 'firebase',
   };
 
   API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
 
   loginHanler = () => {
-    this.props.auth(this.state.authInput.email.value, this.state.authInput.password.value, true);
+    const {
+      authInput: { email, password },
+      base,
+    } = this.state;
+    this.props.auth(email.value, password.value, base, true);
   };
 
   registerHandler = () => {
-    this.props.auth(this.state.authInput.email.value, this.state.authInput.password.value, false);
+    const {
+      authInput: { email, password },
+      base,
+    } = this.state;
+    this.props.auth(email.value, password.value, base, false);
   };
 
   submitHandler = (event) => {
@@ -54,6 +63,10 @@ class Auth extends PureComponent {
       isFormValid = authInput[name].valid && isFormValid;
     });
     this.setState({ authInput, isFormValid });
+  };
+
+  handleRadio = ({ target: { value } }) => {
+    this.setState({ base: value });
   };
 
   renderInputs() {
@@ -86,6 +99,31 @@ class Auth extends PureComponent {
           <h1>Authorization</h1>
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
+            <fieldset className='base-wrap'>
+              <legend>Use base</legend>
+              <label>
+                <input
+                  type='radio'
+                  className='btn-radio'
+                  value='firebase'
+                  name='base'
+                  checked={this.state.base === 'firebase'}
+                  onClick={this.handleRadio}
+                />
+                Firebase
+              </label>
+              <label>
+                <input
+                  type='radio'
+                  className='btn-radio'
+                  value='azure'
+                  name='base'
+                  checked={this.state.base !== 'firebase'}
+                  onClick={this.handleRadio}
+                />
+                Azure
+              </label>
+            </fieldset>
             <div className='form-group row'>
               <Button
                 className='btn-add'
@@ -118,7 +156,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
+    auth: (email, password, base, isLogin) => dispatch(auth(email, password, base, isLogin)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

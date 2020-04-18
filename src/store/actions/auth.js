@@ -3,11 +3,12 @@ import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from './actionTypes';
 
 const API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
 
-export function auth(email, password, isLogin) {
+export function auth(email, password, base, isLogin) {
   return async (dispatch) => {
     const authData = {
       email,
       password,
+      base,
       returnSecureToken: true,
     };
 
@@ -22,7 +23,8 @@ export function auth(email, password, isLogin) {
       localStorage.setItem('token', data.idToken);
       localStorage.setItem('expirationDate', expirationDate);
       localStorage.setItem('email', data.email);
-      dispatch(authSuccess(data.idToken, data.email));
+      localStorage.setItem('base', base);
+      dispatch(authSuccess(data.idToken, data.email, base));
       dispatch(autoLogout(data.expiresIn));
       dispatch(authNotification(true, { status: 'success', title: 'Email is correct' }));
     } catch (error) {
@@ -46,6 +48,7 @@ export function autoLogin() {
   return (dispatch) => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
+    const base = localStorage.getItem('base');
     if (!token) {
       dispatch(logout());
     } else {
@@ -53,7 +56,7 @@ export function autoLogin() {
       if (expirationDate <= new Date()) {
         dispatch(logout());
       } else {
-        dispatch(authSuccess(token, email));
+        dispatch(authSuccess(token, email, base));
         dispatch(autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000));
       }
     }
@@ -72,11 +75,12 @@ export function logout() {
   };
 }
 
-export function authSuccess(token, email) {
+export function authSuccess(token, email, base) {
   return {
     type: AUTH_SUCCESS,
     token,
     email,
+    base,
   };
 }
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
+import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
@@ -100,11 +101,13 @@ class MembersGrid extends Component {
   };
 
   render() {
-    const { members, directions, loading, onNotification, notification, theme } = this.props;
+    const { members, directions, loading, onNotification, notification, theme, error } = this.props;
     if (loading) {
       return <Spinner />;
     }
-
+    if (error) {
+      return <ErrorIndicator />;
+    }
     return (
       <div className='grid-wrap'>
         <h1>Members Manage Grid</h1>
@@ -126,6 +129,7 @@ const mapStateToProps = (state) => {
     members: state.members.members,
     directions: state.members.directions,
     loading: state.members.loading,
+    error: state.members.error,
     onNotification: state.members.onNotification,
     notification: state.members.notification,
   };

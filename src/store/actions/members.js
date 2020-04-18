@@ -1,22 +1,32 @@
-import FetchService from '../../services/fetch-service';
-import FetchBackEnd from '../../services/fetch-back-end';
+import FetchFirabase from '../../services/fetchFirebase';
+import FetchAzure from '../../services/fetchAzure';
 import { deleteAllElements } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
   FETCH_MEMBERS_SUCCESS,
+  FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
 } from '../actions/actionTypes';
-const fetchService = new FetchService();
-const fetchBackEnd = new FetchBackEnd();
+let fetchService = '';
+// const base = localStorage.getItem('base');
 
 export function fetchMembers() {
   return async (dispatch) => {
     dispatch(fetchMembersStart());
-    const members = await fetchService.getAllMember();
-    const directions = await fetchService.getDirection();
-    const membersBackEnd = await fetchBackEnd.getAllMember();
-    dispatch(fetchMembersSuccess(members, directions));
+    if (localStorage.getItem('base') === 'firebase') {
+      fetchService = new FetchFirabase();
+    } else {
+      fetchService = new FetchAzure();
+    }
+    try {
+      const members = await fetchService.getAllMember();
+      const directions = await fetchService.getDirection();
+
+      dispatch(fetchMembersSuccess(members, directions));
+    } catch (error) {
+      dispatch(fetchMembersError());
+    }
   };
 }
 
@@ -47,6 +57,12 @@ export function fetchMembersSuccess(members, directions) {
     type: FETCH_MEMBERS_SUCCESS,
     members,
     directions,
+  };
+}
+
+export function fetchMembersError() {
+  return {
+    type: FETCH_MEMBERS_ERROR,
   };
 }
 

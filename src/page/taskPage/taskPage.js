@@ -74,10 +74,10 @@ class TaskPage extends Component {
     return members;
   };
 
-  async componentDidMount() {
-    const members = await this.props.fetchService.getAllMember();
-    this.setState({ members, loading: false });
-  }
+  // async componentDidMount() {
+  //   const members = await this.props.fetchService.getAllMember();
+  //   this.setState({ members, loading: false });
+  // }
 
   async componentDidUpdate(prevProps) {
     const { task, title, fetchService } = this.props;
