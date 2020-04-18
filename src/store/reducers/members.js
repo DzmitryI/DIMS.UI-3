@@ -14,8 +14,8 @@ const initialState = {
   notification: {},
 };
 
-export default function membersReducer(state = initialState, action) {
-  switch (action.type) {
+export default function membersReducer(state = initialState, { type, members, directions, notification }) {
+  switch (type) {
     case FETCH_MEMBERS_START:
       return {
         ...state,
@@ -27,8 +27,8 @@ export default function membersReducer(state = initialState, action) {
         ...state,
         loading: false,
         error: false,
-        members: action.members,
-        directions: action.directions,
+        members,
+        directions,
       };
     case FETCH_MEMBERS_ERROR:
       return {
@@ -40,7 +40,7 @@ export default function membersReducer(state = initialState, action) {
       return {
         ...state,
         onNotification: true,
-        notification: action.notification,
+        notification,
       };
     case FETCH_MEMBERS_DELETE_FINISH:
       return {

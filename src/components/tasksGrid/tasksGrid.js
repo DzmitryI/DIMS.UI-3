@@ -57,7 +57,7 @@ class TasksGrid extends Component {
     const response = await fetchService.delTask(taskId);
     deleteAllElements('taskId', taskId);
     if (response) {
-      const notification = { status: 'success', title: `${name} was deleted!` };
+      const notification = { title: `${name} was deleted!` };
       this.setState({ onNotification: true, notification });
       setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
       const tasks = await fetchService.getAllTask();

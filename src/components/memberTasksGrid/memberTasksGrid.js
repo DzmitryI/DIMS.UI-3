@@ -50,7 +50,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
     onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
   };
 
-  const onOpenTaskTracksClickHandler = async ({ target }) => {
+  const onOpenTaskTracksClickHandler = ({ target }) => {
     const taskId = target.closest('td').id;
     onOpenTaskTracksClick('', taskId);
   };
@@ -70,7 +70,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       setUserTasks(userTasks);
-      setNotification({ status: 'success', title: `Task state was edited` });
+      setNotification({ title: `Task state was edited` });
       setOnNotification(true);
       setNotification({});
       setOnNotification(false);

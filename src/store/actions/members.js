@@ -9,7 +9,6 @@ import {
   FETCH_MEMBERS_DELETE_FINISH,
 } from '../actions/actionTypes';
 let fetchService = '';
-// const base = localStorage.getItem('base');
 
 export function fetchMembers() {
   return async (dispatch) => {
@@ -35,7 +34,7 @@ export function fetchMembersDelete(memberId, members) {
     if (members) {
       const member = members.find((member) => member.userId === memberId);
       const { fullName } = member;
-      deleteAllElements('userId', memberId);
+      await deleteAllElements('userId', memberId);
       const response = await fetchService.delMember(memberId);
       if (response) {
         const notification = { status: 'success', title: `${fullName} was deleted` };

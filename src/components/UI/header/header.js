@@ -60,9 +60,9 @@ const Header = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ auth: { email } }) => {
   return {
-    email: state.auth.email,
+    email,
   };
 };
 

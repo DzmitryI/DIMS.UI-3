@@ -30,8 +30,6 @@ class Auth extends PureComponent {
     base: 'firebase',
   };
 
-  API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
-
   loginHanler = () => {
     const {
       authInput: { email, password },
@@ -148,10 +146,10 @@ class Auth extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ auth: { onNotification, notification } }) => {
   return {
-    onNotification: state.auth.onNotification,
-    notification: state.auth.notification,
+    onNotification,
+    notification,
   };
 };
 const mapDispatchToProps = (dispatch) => {

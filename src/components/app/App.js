@@ -55,7 +55,7 @@ class App extends Component {
         fetchService = new FetchAzure();
       }
       const members = await fetchService.getAllMember();
-      const member = members.find((member) => member.values.email === email);
+      const member = members.find((member) => member.email === email);
       this.setState({ userId: member ? member.userId : '', fetchService });
     }
   }
@@ -210,7 +210,6 @@ class App extends Component {
             <Route path='/' component={Main} exact />
             <Redirect to='/' />
           </Switch>
-          {/* <Footer/> */}
         </>
       );
     }

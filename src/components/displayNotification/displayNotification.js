@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default class DisplayNotification extends Component {
   componentDidMount() {
-    const { status, title } = this.props.notification;
+    const { status = 'success', title } = this.props.notification;
     this.notify(status, title);
   }
 

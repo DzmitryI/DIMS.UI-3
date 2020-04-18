@@ -46,7 +46,7 @@ export default class FetchFirebase {
         const [userId, values] = key;
         members.push({
           userId,
-          values,
+          ...values,
           fullName: `${values.name} ${values.lastName}`,
           checked: false,
         });

@@ -40,15 +40,43 @@ export default class FetchAzure {
     const members = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
-        // const [userId, values] = key;
-        // members.push({
-        //   userId,
-        //   values,
-        //   fullName: `${values.name} ${values.lastName}`,
-        //   checked: false,
-        // });
+        const [, values] = key;
+        const [name, lastName] = values.FullName.split(',');
+        members.push({
+          userId: values.UserId,
+          email: values.Email,
+          education: values.Education,
+          age: values.Age,
+          universityAverageScore: values.UniversityAverageScore,
+          mathScore: values.MathScore,
+          address: values.Address,
+          mobilePhone: values.MobilePhone,
+          skype: values.Skype,
+          startDate: values.StartDate,
+          sex: values.Sex,
+          direction: values.Direction,
+          fullName: `${values.FullName}`,
+          checked: false,
+          name,
+          lastName,
+        });
       });
     }
     return members;
+  };
+
+  getDirection = async () => {
+    const response = await this.getSource(`/Direction.json`);
+    const direction = [];
+    if (response && response.data) {
+      Object.entries(response.data).forEach((key) => {
+        const [value, { name }] = key;
+        direction.push({
+          value,
+          name,
+        });
+      });
+    }
+    return direction;
   };
 }

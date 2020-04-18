@@ -11,13 +11,13 @@ import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 
 class MembersGrid extends Component {
-  componentDidMount() {
-    this.props.fetchMembers();
+  async componentDidMount() {
+    await this.props.fetchMembers();
   }
 
   async componentDidUpdate(prevProps) {
     if (this.props.isRegister !== prevProps.isRegister) {
-      this.props.fetchMembers();
+      await this.props.fetchMembers();
     }
   }
 
@@ -52,27 +52,19 @@ class MembersGrid extends Component {
 
   onShowClick = ({ target }) => {
     const memberId = target.closest('tr').id;
-    const {
-      values: { name },
-    } = this.props.members.find((member) => member.userId === memberId);
+    const { name } = this.props.members.find((member) => member.userId === memberId);
     this.props.onTaskClick(memberId, name);
   };
 
   onProgressClick = ({ target }) => {
     const memberId = target.closest('tr').id;
-    const {
-      values: { name },
-    } = this.props.members.find((member) => member.userId === memberId);
+    const { name } = this.props.members.find((member) => member.userId === memberId);
     this.props.onProgressClick(memberId, name);
   };
 
   renderTBody = (members, directions) => {
     return members.map((member, index) => {
-      const {
-        userId,
-        fullName,
-        values: { directionId, education, startDate, birthDate },
-      } = member;
+      const { userId, fullName, directionId, education, startDate, birthDate } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
         <tr key={userId} id={userId}>
@@ -80,7 +72,7 @@ class MembersGrid extends Component {
           <td className='td'>
             <span onClick={this.onChangeClick}>{`${fullName}`}</span>
           </td>
-          <td className='td'>{`${curDirect.name}`}</td>
+          <td className='td'>{`${!!curDirect && curDirect.name}`}</td>
           <td className='td'>{`${education}`}</td>
           <td className='td'>{`${startDate}`}</td>
           <td className='td'>{`${this.countAge(birthDate)}`}</td>
@@ -124,14 +116,14 @@ class MembersGrid extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ members: { members, directions, loading, error, onNotification, notification } }) => {
   return {
-    members: state.members.members,
-    directions: state.members.directions,
-    loading: state.members.loading,
-    error: state.members.error,
-    onNotification: state.members.onNotification,
-    notification: state.members.notification,
+    members,
+    directions,
+    loading,
+    error,
+    onNotification,
+    notification,
   };
 };
 

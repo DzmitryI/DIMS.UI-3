@@ -74,11 +74,6 @@ class TaskPage extends Component {
     return members;
   };
 
-  // async componentDidMount() {
-  //   const members = await this.props.fetchService.getAllMember();
-  //   this.setState({ members, loading: false });
-  // }
-
   async componentDidUpdate(prevProps) {
     const { task, title, fetchService } = this.props;
     let disabled = false;
@@ -189,23 +184,22 @@ class TaskPage extends Component {
   };
 
   createTaskHandler = async () => {
-    const { taskId, task, taskInput, notification } = this.state;
+    const { taskId, task, taskInput } = this.state;
     const { fetchService } = this.props;
+    let notification = '';
     this.setState({ loading: false });
     if (!taskId) {
       const responseTask = await fetchService.setTask(task);
       if (responseTask.statusText) {
-        notification.status = 'success';
-        notification.title = `${task.name} was added.`;
-        this.setState({ taskId: responseTask.data.name });
+        notification = { title: `${task.name} was added.` };
+        this.setState({ taskId: responseTask.data.name, notification });
       }
       const addMembersTask = await this.createTaskState();
       if (addMembersTask.length) {
         for (const addMemberTask of addMembersTask) {
           const responseUserTask = await fetchService.setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
-            notification.status = 'success';
-            notification.title = `${task.name} was added for user.`;
+            notification = { title: `${task.name} was added for user.` };
           }
         }
       }
@@ -213,8 +207,7 @@ class TaskPage extends Component {
       const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
-        notification.status = 'success';
-        notification.title = `${task.name} was edited.`;
+        notification = { title: `${task.name} was edited.` };
       }
     }
     this.setState({ onNotification: true, notification });

@@ -8,14 +8,14 @@ const initialState = {
   notification: {},
 };
 
-export default function authReducer(state = initialState, action) {
-  switch (action.type) {
+export default function authReducer(state = initialState, { type, token, email, base, onNotification, notification }) {
+  switch (type) {
     case AUTH_SUCCESS:
       return {
         ...state,
-        token: action.token,
-        email: action.email,
-        base: action.base,
+        token,
+        email,
+        base,
       };
     case AUTH_LOGOUT:
       return {
@@ -27,8 +27,8 @@ export default function authReducer(state = initialState, action) {
     case AUTH_NOTIFICATION:
       return {
         ...state,
-        onNotification: action.onNotification,
-        notification: action.notification,
+        onNotification,
+        notification,
       };
     default:
       return state;

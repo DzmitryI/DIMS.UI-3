@@ -12,10 +12,10 @@ export function auth(email, password, base, isLogin) {
       returnSecureToken: true,
     };
 
-    let url = `${process.env.REACT_APP_URL_SIGNUP}${API_Key}`;
+    let url = `${process.env.REACT_APP_URL_SIGNUP}${process.env.API_KEY}`;
 
     if (isLogin) {
-      url = `${process.env.REACT_APP_URL_SIGNIN}${API_Key}`;
+      url = `${process.env.REACT_APP_URL_SIGNIN}${process.env.API_KEY}`;
     }
     try {
       const { data } = await axios.post(url, authData);

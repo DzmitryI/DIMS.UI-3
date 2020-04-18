@@ -226,19 +226,18 @@ class MemberPage extends Component {
   };
 
   createMemberHandler = async () => {
-    const { userId, member, memberInput, directions, notification } = this.state;
+    const { userId, member, memberInput, directions } = this.state;
     const { fetchService } = this.props;
+    let notification = '';
     if (!userId) {
       const response = await fetchService.setMember(member);
       if (response) {
-        notification.status = 'success';
-        notification.title = `New member: ${member.name} ${member.lastName} was added`;
+        notification = { title: `New member: ${member.name} ${member.lastName} was added` };
       }
     } else {
       const response = await fetchService.editMember(userId, member);
       if (response) {
-        notification.status = 'success';
-        notification.title = `Member: ${member.name} ${member.lastName} was edited`;
+        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
       }
     }
     this.setState({ onNotification: true, notification });

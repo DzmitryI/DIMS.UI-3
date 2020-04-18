@@ -30,7 +30,7 @@ function clearOblectValue(objInput, objElem) {
 
 function updateInput(objInput, objValues) {
   const objInputUpdate = { ...objInput };
-  Object.entries(objValues).forEach(([key, value]) => {
+  Object.entries(objInput).forEach(([key, value]) => {
     if (objInputUpdate[key]) {
       objInputUpdate[key].value = value;
       objInputUpdate[key].touched = true;

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
 import Input from '../../components/UI/input';
@@ -89,20 +88,19 @@ class TaskTrackPage extends Component {
   };
 
   createTaskTrackHandler = async () => {
-    const { taskTrackId, taskTrack, taskTrackInput, taskId, notification } = this.state;
-    const { fetchService } = this.props;
-    taskTrack.userTaskId = this.props.userTaskId;
+    const { taskTrackId, taskTrack, taskTrackInput, taskId } = this.state;
+    const { fetchService, userTaskId } = this.props;
+    taskTrack.userTaskId = userTaskId;
+    let notification = '';
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
       if (response) {
-        notification.status = 'success';
-        notification.title = `Add new task track.`;
+        notification = { title: `Add new task track.` };
       }
     } else {
       const response = await fetchService.editTaskTrack(taskTrackId, taskTrack);
       if (response) {
-        notification.status = 'success';
-        notification.title = `Task track was edited.`;
+        notification = { title: `Task track was edited.` };
       }
     }
     this.setState({ onNotification: true, notification });

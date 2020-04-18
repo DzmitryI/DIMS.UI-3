@@ -46,7 +46,7 @@ class TaskTracsGrid extends Component {
     const taskTrackId = target.closest('tr').id;
     const responseTaskTrackId = await this.props.fetchService.delTaskTrack(taskTrackId);
     if (responseTaskTrackId) {
-      const notification = { status: 'success', title: 'Task track was deleted' };
+      const notification = { title: 'Task track was deleted' };
       this.setState({ onNotification: true, notification });
       setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
       const tracks = await updateMemberProgress('', this.state.taskId);
