@@ -30,7 +30,7 @@ class Auth extends PureComponent {
     base: 'firebase',
   };
 
-  loginHanler = () => {
+  loginHandler = () => {
     const {
       authInput: { email, password },
       base,
@@ -63,7 +63,7 @@ class Auth extends PureComponent {
     this.setState({ authInput, isFormValid });
   };
 
-  handleRadio = ({ target: { value } }) => {
+  handleRadioClick = ({ target: { value } }) => {
     this.setState({ base: value });
   };
 
@@ -90,6 +90,7 @@ class Auth extends PureComponent {
 
   render() {
     const { notification, onNotification } = this.props;
+    const { base, isFormValid } = this.state;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
@@ -105,8 +106,8 @@ class Auth extends PureComponent {
                   className='btn-radio'
                   value='firebase'
                   name='base'
-                  checked={this.state.base === 'firebase'}
-                  onClick={this.handleRadio}
+                  checked={base === 'firebase'}
+                  onClick={this.handleRadioClick}
                 />
                 Firebase
               </label>
@@ -116,8 +117,8 @@ class Auth extends PureComponent {
                   className='btn-radio'
                   value='azure'
                   name='base'
-                  checked={this.state.base !== 'firebase'}
-                  onClick={this.handleRadio}
+                  checked={base !== 'firebase'}
+                  onClick={this.handleRadioClick}
                 />
                 Azure
               </label>
@@ -128,14 +129,14 @@ class Auth extends PureComponent {
                 type='success'
                 id='Login'
                 name='Log in'
-                disabled={!this.state.isFormValid}
-                onClick={this.loginHanler}
+                disabled={!isFormValid}
+                onClick={this.loginHandler}
               />
               <Button
                 className='btn-add'
                 type='submit'
                 name='Register'
-                disabled={!this.state.isFormValid}
+                disabled={!isFormValid}
                 onClick={this.registerHandler}
               />
             </div>

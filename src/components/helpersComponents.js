@@ -9,6 +9,7 @@ const headerTaskTrackGrid = ['#', 'Task', 'Note', 'Date', ''];
 const headerMembersGrid = ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
 const headerMemberTasksGrid = ['#', 'Name', 'Start', 'Deadline', 'Status', '', '(Available only for Admin)'];
 const headerMemberProgressGrid = ['#', 'Task', 'Note', 'Date'];
+const headerAboutPage = ['Actions', 'Admin', 'Mentor', 'Member'];
 
 const h1TaskPage = new Map([
   ['Create', 'Create Task page'],
@@ -94,6 +95,7 @@ export {
   headerMembersGrid,
   headerMemberTasksGrid,
   headerMemberProgressGrid,
+  headerAboutPage,
   h1TaskPage,
   h1MemberPage,
   h1TaskTrackPage,

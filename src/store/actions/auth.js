@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from './actionTypes';
 
-const API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
-
 export function auth(email, password, base, isLogin) {
   return async (dispatch) => {
     const authData = {
@@ -12,10 +10,10 @@ export function auth(email, password, base, isLogin) {
       returnSecureToken: true,
     };
 
-    let url = `${process.env.REACT_APP_URL_SIGNUP}${process.env.API_KEY}`;
+    let url = `${process.env.REACT_APP_URL_SIGNUP}${process.env.REACT_APP_API_KEY}`;
 
     if (isLogin) {
-      url = `${process.env.REACT_APP_URL_SIGNIN}${process.env.API_KEY}`;
+      url = `${process.env.REACT_APP_URL_SIGNIN}${process.env.REACT_APP_API_KEY}`;
     }
     try {
       const { data } = await axios.post(url, authData);

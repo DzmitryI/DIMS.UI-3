@@ -1,12 +1,13 @@
 import React from 'react';
 import ButtonLink from '../buttonLink';
 import ColorSwitch from '../../../components/colorSwitch';
+import DropDownMenu from '../dropDownMenu';
 import { TABLE_ROLES } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../../../store/actions/auth';
-import imgMain from '../../../assets/images/main.png';
 import { withTheme } from '../../../hoc';
+import imgMain from '../../../assets/images/main.png';
 
 const Header = (props) => {
   const { isAuthenticated, email, theme } = props;
@@ -20,11 +21,6 @@ const Header = (props) => {
         </li>
       );
     });
-  };
-
-  const dropdawnMenuClick = () => {
-    const burgerMenu = document.querySelector('.burger-menu');
-    burgerMenu.classList.toggle('show');
   };
 
   if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
@@ -43,18 +39,7 @@ const Header = (props) => {
       </div>
       <ul className='nav'>{renderLinks(links)}</ul>
       <ButtonLink className='btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
-      <div className='dropdawn-menu' onClick={dropdawnMenuClick}>
-        <div className={`burger-line first burger-line--${theme}`}></div>
-        <div className={`burger-line second burger-line--${theme}`}></div>
-        <div className={`burger-line third burger-line--${theme}`}></div>
-        <nav className='burger-menu'>
-          <li>
-            <NavLink to='/AboutApp' className='burger-menu-item'>
-              About app
-            </NavLink>
-          </li>
-        </nav>
-      </div>
+      <DropDownMenu to='/AboutApp' />
       <ColorSwitch />
     </div>
   );

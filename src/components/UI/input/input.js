@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function isInvalid(valid, touched, shouldValidation) {
   return !valid && touched && shouldValidation;
@@ -42,6 +43,14 @@ Input.defaultProps = {
   autocomplete: 'on',
   disabled: false,
   placeholder: '',
+};
+
+Input.propTypes = {
+  type: PropTypes.string.isRequired,
+  autocomlete: PropTypes.string,
+  disabled: PropTypes.bool,
+  placeholder: PropTypes.string,
+  label: PropTypes.string,
 };
 
 export default Input;
