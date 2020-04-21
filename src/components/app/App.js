@@ -17,7 +17,6 @@ import FetchFirebase from '../../services/fetchFirebase';
 import FetchAzure from '../../services/fetchAzure';
 import { autoLogin } from '../../store/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../../components/context';
-import Footer from '../UI/footer';
 
 class App extends Component {
   state = {

@@ -152,8 +152,8 @@ class MemberPage extends Component {
       this.setState({ loading: false });
     }
     if (member.length) {
-      const [{ userId, values }] = member;
-      if (direction.options.length === 0) {
+      const [{ userId, ...values }] = member;
+      if (direction.options.length === 0 && directions.length) {
         const { memberSelect } = this.state;
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });

@@ -6,7 +6,7 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 
@@ -74,7 +74,7 @@ class MembersGrid extends Component {
           </td>
           <td className='td'>{`${!!curDirect && curDirect.name}`}</td>
           <td className='td'>{`${education}`}</td>
-          <td className='td'>{`${startDate}`}</td>
+          <td className='td'>{getDate(startDate)}</td>
           <td className='td'>{`${this.countAge(birthDate)}`}</td>
           <td className='td buttons-wrap'>
             <ButtonLink

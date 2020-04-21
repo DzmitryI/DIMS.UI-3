@@ -32,6 +32,11 @@ const TABLE_ROLES = {
   MENTOR: 'mentor@mail.ru',
 };
 
+const getDate = (date) => {
+  const [year, month, day] = date.split('-');
+  return `${day.slice(0, 2)}.${month}.${year}`;
+};
+
 async function updateMemberProgress(userId = '', taskId = '') {
   const memberProgresses = [];
   const userTasks = await fetchService.getAllUserTasks();
@@ -100,6 +105,7 @@ export {
   h1MemberPage,
   h1TaskTrackPage,
   TABLE_ROLES,
+  getDate,
   updateMemberProgress,
   deleteAllElements,
 };

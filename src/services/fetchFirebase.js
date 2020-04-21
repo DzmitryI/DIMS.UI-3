@@ -4,7 +4,7 @@ import DisplayNotification from '../components/displayNotification';
 const notification = new DisplayNotification();
 
 export default class FetchFirebase {
-  api_base = process.env.REACT_APP_API_BASE;
+  api_base = process.env.REACT_APP_API_BASE_FIREBASE;
 
   getSource = async (url) => {
     try {

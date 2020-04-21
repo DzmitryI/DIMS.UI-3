@@ -16,10 +16,10 @@ const Main = ({ theme }) => {
       </div>
       <div className={`dims-develop__wrap dims-develop__wrap--${theme}`}>
         <p>App developed by Ivanov Dmitriy</p>
-        <a href='mailto:dmitriy.ivanou@gmail.com' target='_blank'>
+        <a href='mailto:dmitriy.ivanou@gmail.com'>
           <img src={imgMail} width='32px' alt='mail' />
         </a>
-        <a href='https://github.com/DzmitryI' target='_blank'>
+        <a href='https://github.com/DzmitryI'>
           <img src={imgGit} width='32px' alt='git' />
         </a>
       </div>
