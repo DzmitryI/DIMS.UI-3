@@ -106,7 +106,6 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            {' '}
             Add, edit, and delete a <b>Subtasks</b> of the current Task
           </>
         ),
@@ -129,7 +128,7 @@ const AboutAppPage = ({ theme }) => {
       </p>
       <ul>
         <li>
-          The first one is <b>Admin</b>.{' '}
+          The first one is <b>Admin</b>.
         </li>
         <li>
           The second one is the <b>Mentor</b>.

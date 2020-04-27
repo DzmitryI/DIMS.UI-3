@@ -2,12 +2,12 @@ $dark: rgb(0, 0, 0);
 $dark-light: rgba(0, 0, 0, 0.3);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
-$grееn: rgb(47, 230, 30);
+$grееn: rgb(0, 143, 2);
 $red: rgb(230, 30, 30);
 
 .page-wrap {
-  display: block;
   width: 90%;
+  display: block;
   margin: 0 auto;
   padding-bottom: 1em;
   z-index: 200;
@@ -15,15 +15,14 @@ $red: rgb(230, 30, 30);
   top: 0;
   left: 0;
   right: 0;
-}
-
-.page-form {
-  max-width: 650px;
-  width: 70%;
-  border: 1px solid $dark;
-  border-radius: 5px;
-  margin: 0 auto;
-  background-color: $light;
+  & .page-form {
+    width: 70%;
+    max-width: 35rem;
+    border: 1px solid $dark;
+    border-radius: 5px;
+    margin: 0 auto;
+    background-color: $light;
+  }
 }
 
 .close {
@@ -31,8 +30,8 @@ $red: rgb(230, 30, 30);
 }
 
 .column {
-  width: 200px;
-  height: 100px;
+  width: 12.5rem;
+  height: 6.3rem;
   overflow: auto;
   border: solid 1px $dark;
   background: $light;
@@ -51,7 +50,7 @@ textarea {
 }
 
 .checkbox {
-  width: 15px;
+  width: 1rem;
   display: inline-block;
   margin: 5px;
   &:disabled {

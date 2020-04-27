@@ -3,13 +3,19 @@ $light: rgb(255, 255, 255);
 
 footer {
   width: 100%;
-  position: absolute;
   height: 8%;
   left: 0;
   bottom: 0;
-  text-align: center;
+  display: flex;
+  position: absolute;
   & span {
     margin: 1rem auto;
+  }
+  & .footer-link__wrap {
+    width: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
   }
 }
 

@@ -7,6 +7,13 @@ $blue: rgb(57, 126, 237);
   flex-wrap: wrap;
   width: 100%;
   margin-bottom: 0.5rem;
+  & span {
+    display: block;
+    margin: 0 1rem;
+    font-size: 12px;
+    font-weight: bold;
+    color: $red;
+  }
 }
 
 label {
@@ -14,15 +21,7 @@ label {
   margin: 0 1rem;
   font-size: inherit;
   font-weight: bold;
-}
-
-.invalid {
-  & input {
-    border-color: $red;
-  }
-  & label {
-    color: $red;
-  }
+  color: $blue;
 }
 
 input {
@@ -32,6 +31,7 @@ input {
   font-size: inherit;
   outline: none;
   border: solid 1px $dark;
+  padding-left: 3px;
   &:disabled {
     cursor: not-allowed;
   }
@@ -40,11 +40,11 @@ input {
     box-shadow: 0px 0px 1px 1px $blue;
   }
 }
-
-span {
-  display: block;
-  margin: 0 1rem;
-  font-size: 12px;
-  font-weight: bold;
-  color: $red;
+.invalid {
+  & input {
+    border-color: $red;
+  }
+  & label {
+    color: $red;
+  }
 }

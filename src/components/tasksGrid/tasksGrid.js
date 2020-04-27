@@ -3,8 +3,9 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
-import { headerTasksGrid, h1TaskPage, deleteAllElements } from '../helpersComponents';
+import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../helpersComponents';
 import { withTheme, withFetchService } from '../../hoc';
+import Cell from '../UI/cell/Cell';
 
 class TasksGrid extends Component {
   state = {
@@ -70,16 +71,18 @@ class TasksGrid extends Component {
       const { taskId, name, startDate, deadlineDate } = task;
       return (
         <tr key={task.taskId} id={taskId}>
-          <td className='td'>{index + 1}</td>
-          <td className='td'>
-            <span onClick={this.onChangeClick}>{name}</span>
-          </td>
-          <td className='td'>{startDate}</td>
-          <td className='td'>{deadlineDate}</td>
-          <td className='td'>
-            <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
-            <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
-          </td>
+          <Cell className='td index' value={index + 1} />
+          <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
+          <Cell value={getDate(startDate)} />
+          <Cell value={getDate(deadlineDate)} />
+          <Cell
+            value={
+              <>
+                <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
+                <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
+              </>
+            }
+          />
         </tr>
       );
     });

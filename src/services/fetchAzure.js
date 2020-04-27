@@ -5,7 +5,6 @@ const notification = new DisplayNotification();
 
 const renderBody = (values) => {
   return {
-    UserId: `${values.UserId}`,
     Email: values.email,
     Education: values.education,
     Age: values.age,
@@ -59,12 +58,12 @@ export default class FetchAzure {
 
   getAllMember = async () => {
     const response = await this.getSource(`/api/profiles`);
-    const members = [];
+    let members = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [, values] = key;
         const [name, lastName] = values.FullName.split(' ');
-        members.push({
+        members = members.concat({
           userId: `${values.UserId}`,
           email: values.Email,
           education: values.Education,
@@ -89,11 +88,11 @@ export default class FetchAzure {
 
   getDirection = async () => {
     const response = await this.getSource(`/Direction.json`);
-    const direction = [];
+    let direction = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [value, { name }] = key;
-        direction.push({
+        direction = direction.concat({
           value,
           name,
         });
@@ -107,7 +106,7 @@ export default class FetchAzure {
   };
 
   editMember = async (memberId, body) => {
-    return await this.editSource(`/api/profile/edit/${memberId}`, renderBody(body));
+    return await this.editSource(`/api/profile/edit/${memberId}`, renderBody(body, memberId));
   };
 
   delMember = async (memberId) => {

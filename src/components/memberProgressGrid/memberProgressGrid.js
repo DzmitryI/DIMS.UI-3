@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
-import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress } from '../helpersComponents';
+import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
+import Cell from '../UI/cell/Cell';
 
 const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
@@ -33,14 +34,16 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
       const { name } = task;
       return (
         <tr key={taskTrackId} id={taskTrackId}>
-          <td className='td'>{index + 1}</td>
-          <td className='td'>
-            <span onClick={onShowClick} id={taskTrackId}>
-              {name}
-            </span>
-          </td>
-          <td className='td'>{trackNote}</td>
-          <td className='td'>{trackDate}</td>
+          <Cell className='td index' value={index + 1} />
+          <Cell
+            value={
+              <span onClick={onShowClick} id={taskTrackId}>
+                {name}
+              </span>
+            }
+          />
+          <Cell value={trackNote} />
+          <Cell value={getDate(trackDate)} />
         </tr>
       );
     });

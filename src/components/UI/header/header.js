@@ -38,9 +38,9 @@ const Header = (props) => {
         </NavLink>
       </div>
       <ul className='nav'>{renderLinks(links)}</ul>
-      <ButtonLink className='btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
-      <DropDownMenu to='/AboutApp' />
       <ColorSwitch />
+      <DropDownMenu to='/AboutApp' />
+      <ButtonLink className='btn-logout' onClick={props.logout} name='Logout' to={'/Auth'} />
     </div>
   );
 };

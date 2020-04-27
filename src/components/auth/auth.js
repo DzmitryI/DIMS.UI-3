@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
+import Radio from '../UI/radio';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { auth } from '../../store/actions/auth';
 
@@ -99,46 +100,13 @@ class Auth extends PureComponent {
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
             <fieldset className='base-wrap'>
-              <legend>Use base</legend>
-              <label>
-                <input
-                  type='radio'
-                  className='btn-radio'
-                  value='firebase'
-                  name='base'
-                  checked={base === 'firebase'}
-                  onClick={this.handleRadioClick}
-                />
-                Firebase
-              </label>
-              <label>
-                <input
-                  type='radio'
-                  className='btn-radio'
-                  value='azure'
-                  name='base'
-                  checked={base !== 'firebase'}
-                  onClick={this.handleRadioClick}
-                />
-                Azure
-              </label>
+              <legend className='legend-auth'>Use base</legend>
+              <Radio value='firebase' checked={base === 'firebase'} onClick={this.handleRadioClick} label='Firebase' />
+              <Radio value='azure' checked={base !== 'firebase'} onClick={this.handleRadioClick} label='Azure' />
             </fieldset>
             <div className='form-group row'>
-              <Button
-                className='btn-add'
-                type='success'
-                id='Login'
-                name='Log in'
-                disabled={!isFormValid}
-                onClick={this.loginHandler}
-              />
-              <Button
-                className='btn-add'
-                type='submit'
-                name='Register'
-                disabled={!isFormValid}
-                onClick={this.registerHandler}
-              />
+              <Button type='success' id='Login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
+              <Button type='submit' name='Register' disabled={!isFormValid} onClick={this.registerHandler} />
             </div>
           </form>
         </div>

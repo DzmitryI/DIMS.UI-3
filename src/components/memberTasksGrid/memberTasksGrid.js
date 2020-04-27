@@ -4,8 +4,9 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
-import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES } from '../helpersComponents';
+import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate } from '../helpersComponents';
 import { withFetchService, withRole, withTheme } from '../../hoc';
+import Cell from '../UI/cell/Cell';
 
 const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, fetchService, theme, email }) => {
   const [userTasks, setUserTasks] = useState([]);
@@ -15,7 +16,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
   const { ADMIN, MENTOR } = TABLE_ROLES;
 
   const updateMemberTasks = async (userId) => {
-    const tasks = [];
+    let tasks = [];
     const userTasks = await fetchService.getAllUserTasks();
     if (userTasks.length) {
       for (const userTask of userTasks) {
@@ -27,7 +28,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
             const [responseTask] = responseTasks;
             const { name, deadlineDate, startDate } = responseTask;
             const { stateName } = responseTasksState.data;
-            tasks.push({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
+            tasks = tasks.concat({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
           }
         }
       }
@@ -82,39 +83,50 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
       const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
       return (
         <tr key={userTaskId} id={userTaskId}>
-          <td className='td'>{index + 1}</td>
-          <td className='td' id={taskId}>
-            <span onClick={onOpenTaskTracksClickHandler}>
-              <Link to='/TaskTracksGrid'>{name}</Link>
-            </span>
-          </td>
-          <td className='td'>{startDate}</td>
-          <td className='td'>{deadlineDate}</td>
-          <td className={`td-${stateName}`}>{stateName}</td>
-          <td className='td' id={name}>
-            <Button
-              className='btn-progress'
-              onClick={onTrackClickHandler}
-              name='Track'
-              disabled={email === ADMIN || email === MENTOR}
-            />
-          </td>
-          <td className='td' id={stateId}>
-            <Button
-              className='btn-success'
-              onClick={onStateTaskClick}
-              id='success'
-              name='Success'
-              disabled={!(email === ADMIN || email === MENTOR)}
-            />
-            <Button
-              className='btn-fail'
-              onClick={onStateTaskClick}
-              id='fail'
-              name='Fail'
-              disabled={!(email === ADMIN || email === MENTOR)}
-            />
-          </td>
+          <Cell className='td index' value={index + 1} />
+          <Cell
+            id={taskId}
+            value={
+              <span onClick={onOpenTaskTracksClickHandler}>
+                <Link to='/TaskTracksGrid'>{name}</Link>
+              </span>
+            }
+          />
+          <Cell value={getDate(startDate)} />
+          <Cell value={getDate(deadlineDate)} />
+          <Cell className={`td-${stateName}`} value={stateName} />
+          <Cell
+            id={name}
+            value={
+              <Button
+                className='btn-progress'
+                onClick={onTrackClickHandler}
+                name='Track'
+                disabled={email === ADMIN || email === MENTOR}
+              />
+            }
+          />
+          <Cell
+            id={stateId}
+            value={
+              <>
+                <Button
+                  className='btn-success'
+                  onClick={onStateTaskClick}
+                  id='success'
+                  name='Success'
+                  disabled={!(email === ADMIN || email === MENTOR)}
+                />
+                <Button
+                  className='btn-fail'
+                  onClick={onStateTaskClick}
+                  id='fail'
+                  name='Fail'
+                  disabled={!(email === ADMIN || email === MENTOR)}
+                />
+              </>
+            }
+          />
         </tr>
       );
     });

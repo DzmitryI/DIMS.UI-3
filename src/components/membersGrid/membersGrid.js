@@ -9,6 +9,7 @@ import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
+import Cell from '../UI/cell/Cell';
 
 class MembersGrid extends Component {
   async componentDidMount() {
@@ -34,20 +35,21 @@ class MembersGrid extends Component {
   };
 
   onChangeClick = ({ target }) => {
-    const { directions, members } = this.props;
+    const { directions, members, onRegisterClick } = this.props;
     const memberId = target.closest('tr').id;
     const member = members.filter((member) => member.userId === memberId);
     if (target.id === 'edit') {
-      this.props.onRegisterClick(directions, h1MemberPage.get('Edit'), member);
+      onRegisterClick(directions, h1MemberPage.get('Edit'), member);
     } else {
-      this.props.onRegisterClick(directions, h1MemberPage.get('Detail'), member);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), member);
     }
   };
 
   onDeleteClick = async ({ target }) => {
     const memberId = target.closest('tr').id;
-    await this.props.fetchMembersDelete(memberId, this.props.members);
-    await this.props.fetchMembers();
+    const { members, fetchMembersDelete, fetchMembers } = this.props;
+    await fetchMembersDelete(memberId, members);
+    await fetchMembers();
   };
 
   onShowClick = ({ target }) => {
@@ -68,25 +70,28 @@ class MembersGrid extends Component {
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
         <tr key={userId} id={userId}>
-          <td className='td'>{index + 1}</td>
-          <td className='td'>
-            <span onClick={this.onChangeClick}>{`${fullName}`}</span>
-          </td>
-          <td className='td'>{`${!!curDirect && curDirect.name}`}</td>
-          <td className='td'>{`${education}`}</td>
-          <td className='td'>{getDate(startDate)}</td>
-          <td className='td'>{`${this.countAge(birthDate)}`}</td>
-          <td className='td buttons-wrap'>
-            <ButtonLink
-              className='btn-progress'
-              onClick={this.onProgressClick}
-              name='Progress'
-              to={'/MemberProgressGrid'}
-            />
-            <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
-            <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-            <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
-          </td>
+          <Cell className='td index' value={index + 1} />
+          <Cell value={<span onClick={this.onChangeClick}>{`${fullName}`}</span>} />
+          <Cell value={`${!!curDirect && curDirect.name}`} />
+          <Cell value={`${education}`} />
+          <Cell value={getDate(startDate)} />
+          <Cell value={`${this.countAge(birthDate)}`} />
+          <Cell
+            className='td buttons-wrap'
+            value={
+              <>
+                <ButtonLink
+                  className='btn-progress'
+                  onClick={this.onProgressClick}
+                  name='Progress'
+                  to={'/MemberProgressGrid'}
+                />
+                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
+                <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+              </>
+            }
+          />
         </tr>
       );
     });

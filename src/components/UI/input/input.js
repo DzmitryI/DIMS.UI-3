@@ -5,21 +5,20 @@ function isInvalid(valid, touched, shouldValidation) {
   return !valid && touched && shouldValidation;
 }
 
-const Input = (props) => {
-  const {
-    type,
-    autocomplete,
-    id,
-    valid,
-    touched,
-    shouldValidation,
-    label,
-    value,
-    onChange,
-    errorMessage,
-    disabled,
-    placeholder,
-  } = props;
+const Input = ({
+  type,
+  autocomplete,
+  id,
+  valid,
+  touched,
+  shouldValidation,
+  label,
+  value,
+  onChange,
+  errorMessage,
+  disabled,
+  placeholder,
+}) => {
   const result = isInvalid(valid, touched, shouldValidation);
   return (
     <div className={`form-group ${result ? 'invalid' : ''}`}>

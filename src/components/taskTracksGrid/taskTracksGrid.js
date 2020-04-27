@@ -6,6 +6,7 @@ import HeaderTable from '../UI/headerTable';
 import Button from '../UI/button';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, TABLE_ROLES } from '../helpersComponents';
 import { withTheme, withRole, withFetchService } from '../../hoc';
+import Cell from '../UI/cell/Cell';
 
 class TaskTracsGrid extends Component {
   state = {
@@ -81,27 +82,29 @@ class TaskTracsGrid extends Component {
               const { name } = task;
               return (
                 <tr key={taskTrackId} id={taskTrackId}>
-                  <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onChangeClick}>{name}</span>
-                  </td>
-                  <td className='td'>{trackNote}</td>
-                  <td className='td'>{trackDate}</td>
-                  <td className='td'>
-                    <Button
-                      className='btn-edit'
-                      onClick={this.onChangeClick}
-                      id='edit'
-                      name='Edit'
-                      disabled={email === ADMIN || email === MENTOR}
-                    />
-                    <Button
-                      className='btn-delete'
-                      onClick={this.onDeleteClick}
-                      name='Delete'
-                      disabled={email === ADMIN || email === MENTOR}
-                    />
-                  </td>
+                  <Cell className='td index' value={index + 1} />
+                  <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
+                  <Cell value={trackNote} />
+                  <Cell value={trackDate} />
+                  <Cell
+                    value={
+                      <>
+                        <Button
+                          className='btn-edit'
+                          onClick={this.onChangeClick}
+                          id='edit'
+                          name='Edit'
+                          disabled={email === ADMIN || email === MENTOR}
+                        />
+                        <Button
+                          className='btn-delete'
+                          onClick={this.onDeleteClick}
+                          name='Delete'
+                          disabled={email === ADMIN || email === MENTOR}
+                        />
+                      </>
+                    }
+                  />
                 </tr>
               );
             })}

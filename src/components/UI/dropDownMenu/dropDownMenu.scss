@@ -3,9 +3,9 @@ $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
 
 .dropdown-menu {
-  width: 27px;
-  height: 20px;
-  text-align: center;
+  width: 1.5rem;
+  height: 10px;
+  margin-bottom: 5px;
   &:hover {
     cursor: pointer;
   }
@@ -22,11 +22,11 @@ $blue: rgb(57, 126, 237);
   }
   & .second,
   & .third {
-    margin-top: 5px;
+    margin-top: 3px;
   }
   & .burger-menu {
     display: block;
-    width: 100px;
+    width: 7rem;
     max-height: 0;
     margin-top: 5px;
     font-size: 0;
@@ -45,8 +45,8 @@ $blue: rgb(57, 126, 237);
     text-decoration: none;
   }
   .show {
-    max-height: 40px;
-    font-size: 16px;
+    max-height: 3rem;
+    font-size: 1rem;
     color: $dark;
   }
 }

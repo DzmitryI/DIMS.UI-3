@@ -40,11 +40,11 @@ export default class FetchFirebase {
 
   getAllMember = async () => {
     const response = await this.getSource(`/UserProfile.json`);
-    const members = [];
+    let members = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [userId, values] = key;
-        members.push({
+        members = members.concat({
           userId,
           ...values,
           fullName: `${values.name} ${values.lastName}`,
@@ -57,12 +57,12 @@ export default class FetchFirebase {
 
   getAllTask = async () => {
     const response = await this.getSource(`/Task.json`);
-    const tasks = [];
+    let tasks = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [taskId, values] = key;
         const { name, description, startDate, deadlineDate } = values;
-        tasks.push({
+        tasks = tasks.concat({
           taskId,
           name,
           description,
@@ -76,21 +76,21 @@ export default class FetchFirebase {
 
   getTask = async (id) => {
     const response = await this.getSource(`/Task/${id}.json`);
-    const tasks = [];
+    let tasks = [];
     if (response && response.data) {
-      tasks.push(response.data);
+      tasks = tasks.concat(response.data);
     }
     return tasks;
   };
 
   getAllUserTasks = async () => {
     const response = await this.getSource(`/UserTask.json`);
-    const userTasks = [];
+    let userTasks = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [userTaskId, values] = key;
         const { taskId, userId, stateId } = values;
-        userTasks.push({
+        userTasks = userTasks.concat({
           userTaskId,
           taskId,
           userId,
@@ -115,12 +115,12 @@ export default class FetchFirebase {
 
   getAllUserTaskTrack = async () => {
     const response = await this.getSource(`/TaskTrack.json`);
-    const taskTrack = [];
+    let taskTrack = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [taskTrackId, values] = key;
         const { userTaskId, trackDate, trackNote } = values;
-        taskTrack.push({
+        taskTrack = taskTrack.concat({
           taskTrackId,
           userTaskId,
           trackDate,
@@ -133,11 +133,11 @@ export default class FetchFirebase {
 
   getDirection = async () => {
     const response = await this.getSource(`/Direction.json`);
-    const direction = [];
+    let direction = [];
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [value, { name }] = key;
-        direction.push({
+        direction = direction.concat({
           value,
           name,
         });

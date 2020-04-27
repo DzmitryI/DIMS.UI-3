@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Select = ({ id, options, label, name, onChange, defaultValue, disabled = false }) => {
+const Select = ({ id, options, label, name, onChange, defaultValue, disabled }) => {
   return (
     <div className='form-group'>
       <label htmlFor={id}>{label}</label>
@@ -13,6 +13,10 @@ const Select = ({ id, options, label, name, onChange, defaultValue, disabled = f
       </select>
     </div>
   );
+};
+
+Select.defaultProps = {
+  disabled: false,
 };
 
 export default Select;

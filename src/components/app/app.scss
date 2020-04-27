@@ -1,8 +1,8 @@
-$dark: rgb(0, 0, 0);
-$dark-light: rgba(0, 0, 0, 0.2);
+$dark: rgb(54, 60, 72);
+$dark-light: rgba(54, 60, 72, 0.2);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
-$green: rgb(35, 245, 16);
+$green: rgb(0, 143, 2);
 $red: rgb(230, 30, 30);
 
 body {
@@ -18,22 +18,28 @@ code {
 }
 
 main {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-content: center;
-  height: 100vh;
 }
 
 h1 {
   margin: 10px auto;
-  color: $blue;
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
 }
 
+h1,
+.title {
+  color: $blue;
+  font-size: 1.9rem;
+  font-weight: bold;
+}
+
+h1,
 h2,
-h3 {
+h3,
+.title,
+.subtitle {
   text-align: center;
 }
 
@@ -43,15 +49,7 @@ caption {
   font-size: 20px;
 }
 
-.title {
-  color: $blue;
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
-}
-
 .subtitle {
-  text-align: center;
   height: 40px;
 }
 
@@ -59,6 +57,37 @@ table {
   width: 100%;
   border-collapse: collapse;
   box-shadow: 0 9px 10px 0 $dark-light;
+  & th {
+    padding: 10px 5px;
+    background-color: $blue;
+    color: $light;
+  }
+  & td {
+    padding: 10px 2px;
+    text-align: center;
+    vertical-align: center;
+    & span,
+    span a {
+      text-decoration-line: underline;
+      color: $blue;
+    }
+    & span:hover,
+    span a:hover {
+      cursor: pointer;
+      color: $green;
+    }
+  }
+  .index {
+    min-width: 20px;
+  }
+  & .td-Fail {
+    color: $red;
+    font-weight: bold;
+  }
+  & .td-Success {
+    color: $green;
+    font-weight: bold;
+  }
 }
 
 .dark {
@@ -83,38 +112,6 @@ table {
   border: 1px solid $dark;
 }
 
-th {
-  padding: 10px 2px;
-  background-color: $blue;
-  color: $light;
-}
-
-td {
-  padding: 10px 2px;
-  text-align: center;
-  vertical-align: center;
-  & span,
-  span a {
-    text-decoration-line: underline;
-    color: $blue;
-  }
-  & span:hover,
-  span a:hover {
-    cursor: pointer;
-    color: $green;
-  }
-}
-
-.td-Fail {
-  color: $red;
-  font-weight: bold;
-}
-
-.td-Success {
-  color: $green;
-  font-weight: bold;
-}
-
 .grid-wrap {
   position: relative;
   width: 90%;
@@ -130,10 +127,6 @@ td {
 }
 
 .buttons-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  height: 100%;
   padding: 0;
 }
 

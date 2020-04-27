@@ -6,7 +6,7 @@ const ErrorIndicator = () => {
   return (
     <div className='error-wrap'>
       <img src={imgError} alt='img error' />
-      <span>Somethings had wrong</span>
+      <span>Somethings broken</span>
       <span>(but we already to fix it)</span>
     </div>
   );

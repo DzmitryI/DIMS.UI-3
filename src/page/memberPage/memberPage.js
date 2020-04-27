@@ -208,6 +208,7 @@ class MemberPage extends Component {
     this.setState({ memberInput, member, isFormValid });
   };
 
+  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
   handleSelect = ({ target }) => {
     const {
       member,
@@ -227,7 +228,7 @@ class MemberPage extends Component {
 
   createMemberHandler = async () => {
     const { userId, member, memberInput, directions } = this.state;
-    const { fetchService } = this.props;
+    const { fetchService, onRegisterClick } = this.props;
     let notification = '';
     if (!userId) {
       const response = await fetchService.setMember(member);
@@ -244,7 +245,7 @@ class MemberPage extends Component {
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
     const res = clearOblectValue(memberInput, member);
     this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
-    this.props.onRegisterClick(directions);
+    onRegisterClick(directions);
   };
 
   buttonCloseClick = () => {
@@ -267,7 +268,6 @@ class MemberPage extends Component {
       const control = memberInput[controlName];
       return (
         <Input
-          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -300,14 +300,13 @@ class MemberPage extends Component {
       }
       return (
         <Select
-          key={controlName}
           options={options}
           defaultValue={defaultValue}
           label={control.label}
           name={controlName}
           id={controlName}
           disabled={disabled}
-          onChange={(event) => this.handleSelect(event, controlName)}
+          onChange={this.onHandlelSelect(controlName)}
         />
       );
     });
