@@ -8,7 +8,7 @@ import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, TABLE_ROLES
 import { withTheme, withRole, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 
-class TaskTracsGrid extends Component {
+class TaskTracksGrid extends Component {
   state = {
     tracks: [],
     loading: true,
@@ -116,4 +116,4 @@ class TaskTracsGrid extends Component {
   }
 }
 
-export default withFetchService(withRole(withTheme(TaskTracsGrid)));
+export default withFetchService(withRole(withTheme(TaskTracksGrid)));

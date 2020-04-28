@@ -1,8 +1,8 @@
 import React from 'react';
-import { configure, shallow, mount } from 'enzyme';
+import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import Spinner from '../spinner';
 import TasksGrid from './TasksGrid';
-import Cell from '../UI/cell';
 import FetchFirebase from '../../services/fetchFirebase';
 import { ThemeContextProvider, FetchServiceProvider } from '../context';
 
@@ -25,9 +25,13 @@ describe('<TasksGrid />', () => {
     );
   });
 
-  it('should render 5 tr cells', () => {
-    wrapper.setProps({ isOpen: true });
-    console.log(wrapper.debug());
-    expect(wrapper.find(Cell)).toHaveLength(4);
+  it('should render spinner at the start', () => {
+    expect(wrapper.find(Spinner)).toHaveLength(1);
+  });
+
+  it('should render table with 5 table heads', () => {
+    wrapper.find('TasksGrid').instance().setState({ loading: false });
+    wrapper.update();
+    expect(wrapper.find('th')).toHaveLength(5);
   });
 });

@@ -11,9 +11,9 @@ configure({
 describe('<ColorSwitch />', () => {
   let wrapper;
   beforeEach(() => {
-    const contextValue = { theme: 'dark' };
+    const contextThemeValue = { theme: 'dark' };
     wrapper = mount(
-      <ThemeContextProvider value={contextValue}>
+      <ThemeContextProvider value={contextThemeValue}>
         <ColorSwitch />
       </ThemeContextProvider>,
     );
