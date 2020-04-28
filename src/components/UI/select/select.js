@@ -17,6 +17,7 @@ const Select = ({ id, options, label, name, onChange, defaultValue, disabled }) 
 
 Select.defaultProps = {
   disabled: false,
+  options: [],
 };
 
 export default Select;

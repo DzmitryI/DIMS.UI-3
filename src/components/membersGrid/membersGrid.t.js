@@ -30,6 +30,7 @@ describe('<MembersGrid />', () => {
     expect(wrapper.find('Spinner')).toHaveLength(1);
   });
 
+  //TODO
   // it('should render table with 5 table heads', () => {
   //   wrapper.find('MembersGrid').instance().setState({ loading: false });
   //   wrapper.update();

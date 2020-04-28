@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<Input/> render Input element 1`] = `
+exports[`<Input /> Snapshot Input element 1`] = `
 <div
   className="form-group "
 >

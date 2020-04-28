@@ -1,4 +1,4 @@
-import Radio from './radio';
+import Radio from './Radio';
 
 import './radio.scss';
 
