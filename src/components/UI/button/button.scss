@@ -1,16 +1,20 @@
-$dark: rgb(0, 0, 0);
-$dark-light: rgba(0, 0, 0, 0.2);
-$dark-lighten: rgba(0, 0, 0, 0.6);
+$dark: rgb(54, 60, 72);
+$dark-light: rgba(54, 60, 72, 0.2);
+$dark-lighten: rgba(54, 60, 72, 0.6);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
 $blue-light: rgba(57, 126, 237, 0.6);
-$grin: rgb(47, 230, 30);
-$grin-light: rgba(23, 235, 59, 0.6);
+$green: rgb(0, 143, 2);
+$green-light: rgba(0, 143, 2, 0.6);
 $red: rgb(230, 30, 30);
 $red-light: rgba(230, 30, 30, 0.6);
 $grey: rgb(204, 204, 204);
 
 .btn {
+  width: 44%;
+  max-width: 7rem;
+  min-width: 4rem;
+  padding: 5px;
   margin: 5px;
   border: 1px solid transparent;
   border-radius: 5px;
@@ -36,6 +40,17 @@ $grey: rgb(204, 204, 204);
   }
 }
 
+.btn-register,
+.btn-add,
+.btn-close {
+  width: 7.5rem;
+  height: 2.5rem;
+}
+
+.btn-logout {
+  width: 1rem;
+}
+
 .dark--btn:hover {
   border: 1px solid $light;
   box-shadow: 0 4px 15px 0 $light;
@@ -43,22 +58,6 @@ $grey: rgb(204, 204, 204);
 
 .light--btn:hover {
   box-shadow: 0 4px 15px 0 $dark-lighten;
-}
-
-.btn-register {
-  width: 120px;
-  height: 40px;
-}
-
-.btn-progress,
-.btn-tasks,
-.btn-edit,
-.btn-delete,
-.btn-fail,
-.btn-success {
-  width: 45%;
-  min-width: 65px;
-  padding: 5px;
 }
 
 .btn-delete,
@@ -72,6 +71,7 @@ $grey: rgb(204, 204, 204);
 .btn-register,
 .btn-progress,
 .btn-tasks,
+.btn-logout,
 .btn-edit {
   background-color: $blue-light;
   &:not(:disabled):hover {
@@ -79,23 +79,11 @@ $grey: rgb(204, 204, 204);
   }
 }
 
-.btn-success {
-  background-color: $grin-light;
-  &:not(:disabled):hover {
-    background-color: $grin;
-  }
-}
-
 .btn-add,
-.btn-close {
-  width: 120px;
-  height: 40px;
-}
-
-.btn-add {
-  background-color: $grin-light;
+.btn-success {
+  background-color: $green-light;
   &:not(:disabled):hover {
-    background-color: $grin;
+    background-color: $green;
   }
 }
 

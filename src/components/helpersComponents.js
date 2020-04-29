@@ -1,14 +1,15 @@
-import FetchService from '../services/fetch-service';
+import FetchService from '../services/fetchFirebase';
 import DisplayNotification from './displayNotification';
 
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
 
-const headerTasksGrid = ['#', 'Name', 'Start', 'Deadline', ''];
-const headerTaskTrackGrid = ['#', 'Task', 'Note', 'Date', ''];
-const headerMembersGrid = ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
-const headerMemberTasksGrid = ['#', 'Name', 'Start', 'Deadline', 'Status', '', '(Available only for Admin)'];
-const headerMemberProgressGrid = ['#', 'Task', 'Note', 'Date'];
+const headerTasksGrid = ['', 'Name', 'Start', 'Deadline', ''];
+const headerTaskTrackGrid = ['', 'Task', 'Note', 'Date', ''];
+const headerMembersGrid = ['', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
+const headerMemberTasksGrid = ['', 'Name', 'Start', 'Deadline', 'Status', '', '(Available only for Admin)'];
+const headerMemberProgressGrid = ['', 'Task', 'Note', 'Date'];
+const headerAboutPage = ['Actions', 'Admin', 'Mentor', 'Member'];
 
 const h1TaskPage = new Map([
   ['Create', 'Create Task page'],
@@ -29,6 +30,11 @@ const h1TaskTrackPage = new Map([
 const TABLE_ROLES = {
   ADMIN: 'admin@mail.ru',
   MENTOR: 'mentor@mail.ru',
+};
+
+const getDate = (date) => {
+  const [year, month, day] = date.split('-');
+  return `${day.slice(0, 2)}.${month}.${year}`;
 };
 
 async function updateMemberProgress(userId = '', taskId = '') {
@@ -94,10 +100,12 @@ export {
   headerMembersGrid,
   headerMemberTasksGrid,
   headerMemberProgressGrid,
+  headerAboutPage,
   h1TaskPage,
   h1MemberPage,
   h1TaskTrackPage,
   TABLE_ROLES,
+  getDate,
   updateMemberProgress,
   deleteAllElements,
 };

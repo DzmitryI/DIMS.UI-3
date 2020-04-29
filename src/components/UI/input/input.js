@@ -1,12 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function isInvalid(valid, touched, shouldValidation) {
   return !valid && touched && shouldValidation;
 }
 
 const Input = ({
-  type = 'text',
-  autocomplete = 'on',
+  type,
+  autocomplete,
   id,
   valid,
   touched,
@@ -15,12 +16,12 @@ const Input = ({
   value,
   onChange,
   errorMessage,
-  disabled = false,
-  placeholder = '',
+  disabled,
+  placeholder,
 }) => {
   const result = isInvalid(valid, touched, shouldValidation);
   return (
-    <div className={`form-group ${result ? `invalid` : ''}`}>
+    <div className={`form-group ${result ? 'invalid' : ''}`}>
       <label htmlFor={id}>{label}</label>
       <input
         type={type}
@@ -34,6 +35,21 @@ const Input = ({
       {result && <span>{errorMessage}</span>}
     </div>
   );
+};
+
+Input.defaultProps = {
+  type: 'text',
+  autocomplete: 'on',
+  disabled: false,
+  placeholder: '',
+};
+
+Input.propTypes = {
+  type: PropTypes.string.isRequired,
+  autocomlete: PropTypes.string,
+  disabled: PropTypes.bool,
+  placeholder: PropTypes.string,
+  label: PropTypes.string,
 };
 
 export default Input;

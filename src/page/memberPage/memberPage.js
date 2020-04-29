@@ -1,18 +1,16 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
+import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
-import Spinner from '../../components/spinner';
-import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
+import { withFetchService } from '../../hoc';
 
-const fetchService = new FetchService();
-
-export default class MemberPage extends Component {
+class MemberPage extends Component {
   state = {
     isFormValid: false,
     memberInput: {
@@ -154,8 +152,8 @@ export default class MemberPage extends Component {
       this.setState({ loading: false });
     }
     if (member.length) {
-      const [{ userId, values }] = member;
-      if (direction.options.length === 0) {
+      const [{ userId, ...values }] = member;
+      if (direction.options.length === 0 && directions.length) {
         const { memberSelect } = this.state;
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });
@@ -210,6 +208,7 @@ export default class MemberPage extends Component {
     this.setState({ memberInput, member, isFormValid });
   };
 
+  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
   handleSelect = ({ target }) => {
     const {
       member,
@@ -228,25 +227,25 @@ export default class MemberPage extends Component {
   };
 
   createMemberHandler = async () => {
-    const { userId, member, memberInput, directions, notification } = this.state;
+    const { userId, member, memberInput, directions } = this.state;
+    const { fetchService, onRegisterClick } = this.props;
+    let notification = '';
     if (!userId) {
       const response = await fetchService.setMember(member);
       if (response) {
-        notification.status = 'success';
-        notification.title = `New member: ${member.name} ${member.lastName} was added`;
+        notification = { title: `New member: ${member.name} ${member.lastName} was added` };
       }
     } else {
       const response = await fetchService.editMember(userId, member);
       if (response) {
-        notification.status = 'success';
-        notification.title = `Member: ${member.name} ${member.lastName} was edited`;
+        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
       }
     }
     this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
     const res = clearOblectValue(memberInput, member);
     this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
-    this.props.onRegisterClick(directions);
+    onRegisterClick(directions);
   };
 
   buttonCloseClick = () => {
@@ -269,7 +268,6 @@ export default class MemberPage extends Component {
       const control = memberInput[controlName];
       return (
         <Input
-          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -302,14 +300,13 @@ export default class MemberPage extends Component {
       }
       return (
         <Select
-          key={controlName}
           options={options}
           defaultValue={defaultValue}
           label={control.label}
           name={controlName}
           id={controlName}
           disabled={disabled}
-          onChange={(event) => this.handleSelect(event, controlName)}
+          onChange={this.onHandlelSelect(controlName)}
         />
       );
     });
@@ -325,6 +322,7 @@ export default class MemberPage extends Component {
       notification,
     } = this.state;
     const { isOpen, title } = this.props;
+
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
@@ -357,3 +355,5 @@ export default class MemberPage extends Component {
     );
   }
 }
+
+export default withFetchService(MemberPage);

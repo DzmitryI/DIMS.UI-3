@@ -3,29 +3,32 @@ import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from '../actions/actionT
 const initialState = {
   token: null,
   email: null,
+  base: null,
   onNotification: false,
   notification: {},
 };
 
-export default function authReducer(state = initialState, action) {
-  switch (action.type) {
+export default function authReducer(state = initialState, { type, token, email, base, onNotification, notification }) {
+  switch (type) {
     case AUTH_SUCCESS:
       return {
         ...state,
-        token: action.token,
-        email: action.email,
+        token,
+        email,
+        base,
       };
     case AUTH_LOGOUT:
       return {
         ...state,
         token: null,
         email: null,
+        base: null,
       };
     case AUTH_NOTIFICATION:
       return {
         ...state,
-        onNotification: action.onNotification,
-        notification: action.notification,
+        onNotification,
+        notification,
       };
     default:
       return state;

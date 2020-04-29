@@ -1,8 +1,8 @@
 import React from 'react';
 
-const Select = ({ id, options, label, name, onChange, defaultValue, disabled = false }) => {
+const Select = ({ id, options, label, name, onChange, defaultValue, disabled }) => {
   return (
-    <div className={`form-group`}>
+    <div className='form-group'>
       <label htmlFor={id}>{label}</label>
       <select id={id} name={name} value={defaultValue} disabled={disabled} onChange={onChange}>
         {options.map((elem) => (
@@ -13,6 +13,11 @@ const Select = ({ id, options, label, name, onChange, defaultValue, disabled = f
       </select>
     </div>
   );
+};
+
+Select.defaultProps = {
+  disabled: false,
+  options: [],
 };
 
 export default Select;

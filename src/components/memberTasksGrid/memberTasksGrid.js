@@ -1,24 +1,22 @@
-import React, { useState, useContext, useEffect } from 'react';
-import FetchService from '../../services/fetch-service';
-import Button from '../UI/button';
-import HeaderTable from '../UI/headerTable';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
-import { headerMemberTasksGrid, h1TaskTrackPage } from '../helpersComponents';
-import { Link } from 'react-router-dom';
-import { TABLE_ROLES } from '../helpersComponents';
-import { ThemeContext, RoleContext } from '../context';
+import Button from '../UI/button';
+import HeaderTable from '../UI/headerTable';
+import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate } from '../helpersComponents';
+import { withFetchService, withRole, withTheme } from '../../hoc';
+import Cell from '../UI/cell/Cell';
 
-const fetchService = new FetchService();
-
-const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick }) => {
+const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, fetchService, theme, email }) => {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [onNotification, setOnNotification] = useState(true);
   const [notification, setNotification] = useState({});
+  const { ADMIN, MENTOR } = TABLE_ROLES;
 
   const updateMemberTasks = async (userId) => {
-    const tasks = [];
+    let tasks = [];
     const userTasks = await fetchService.getAllUserTasks();
     if (userTasks.length) {
       for (const userTask of userTasks) {
@@ -30,7 +28,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
             const [responseTask] = responseTasks;
             const { name, deadlineDate, startDate } = responseTask;
             const { stateName } = responseTasksState.data;
-            tasks.push({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
+            tasks = tasks.concat({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
           }
         }
       }
@@ -53,7 +51,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
     onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
   };
 
-  const onOpenTaskTracksClickHandler = async ({ target }) => {
+  const onOpenTaskTracksClickHandler = ({ target }) => {
     const taskId = target.closest('td').id;
     onOpenTaskTracksClick('', taskId);
   };
@@ -73,19 +71,71 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       setUserTasks(userTasks);
-      setNotification({ status: 'success', title: `Task state was edited` });
+      setNotification({ title: `Task state was edited` });
       setOnNotification(true);
       setNotification({});
       setOnNotification(false);
     }
   };
 
-  const { ADMIN, MENTOR } = TABLE_ROLES;
-  const { theme } = useContext(ThemeContext);
-  const email = useContext(RoleContext);
+  const renderTBody = (userTasks) => {
+    return userTasks.map((userTask, index) => {
+      const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
+      return (
+        <tr key={userTaskId} id={userTaskId}>
+          <Cell className='td index' value={index + 1} />
+          <Cell
+            id={taskId}
+            value={
+              <span onClick={onOpenTaskTracksClickHandler}>
+                <Link to='/TaskTracksGrid'>{name}</Link>
+              </span>
+            }
+          />
+          <Cell value={getDate(startDate)} />
+          <Cell value={getDate(deadlineDate)} />
+          <Cell className={`td-${stateName}`} value={stateName} />
+          <Cell
+            id={name}
+            value={
+              <Button
+                className='btn-progress'
+                onClick={onTrackClickHandler}
+                name='Track'
+                disabled={email === ADMIN || email === MENTOR}
+              />
+            }
+          />
+          <Cell
+            id={stateId}
+            value={
+              <>
+                <Button
+                  className='btn-success'
+                  onClick={onStateTaskClick}
+                  id='success'
+                  name='Success'
+                  disabled={!(email === ADMIN || email === MENTOR)}
+                />
+                <Button
+                  className='btn-fail'
+                  onClick={onStateTaskClick}
+                  id='fail'
+                  name='Fail'
+                  disabled={!(email === ADMIN || email === MENTOR)}
+                />
+              </>
+            }
+          />
+        </tr>
+      );
+    });
+  };
+
   if (loading) {
     return <Spinner />;
   }
+
   return (
     <div className='grid-wrap'>
       {(email === ADMIN || email === MENTOR) && <Link to='/MembersGrid'>back to grid</Link>}
@@ -95,52 +145,11 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick })
         <thead>
           <HeaderTable arr={headerMemberTasksGrid} />
         </thead>
-        <tbody>
-          {userTasks.map((userTask, index) => {
-            const { userTaskId, taskId, name, stateId, deadlineDate, startDate, stateName } = userTask;
-            return (
-              <tr key={userTaskId} id={userTaskId}>
-                <td className='td'>{index + 1}</td>
-                <td className='td' id={taskId}>
-                  <span onClick={onOpenTaskTracksClickHandler}>
-                    <Link to='/TaskTracksGrid'>{name}</Link>
-                  </span>
-                </td>
-                <td className='td'>{startDate}</td>
-                <td className='td'>{deadlineDate}</td>
-                <td className={`td-${stateName}`}>{stateName}</td>
-                <td className='td' id={name}>
-                  <Button
-                    className='btn-progress'
-                    onClick={onTrackClickHandler}
-                    name='Track'
-                    disabled={email === ADMIN || email === MENTOR}
-                  />
-                </td>
-                <td className='td' id={stateId}>
-                  <Button
-                    className='btn-success'
-                    onClick={onStateTaskClick}
-                    id='success'
-                    name='Success'
-                    disabled={!(email === ADMIN || email === MENTOR)}
-                  />
-                  <Button
-                    className='btn-fail'
-                    onClick={onStateTaskClick}
-                    id='fail'
-                    name='Fail'
-                    disabled={!(email === ADMIN || email === MENTOR)}
-                  />
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
+        <tbody>{renderTBody(userTasks)}</tbody>
       </table>
       {onNotification && <DisplayNotification notification={notification} />}
     </div>
   );
 };
 
-export default MemberTasksGrid;
+export default withTheme(withRole(withFetchService(MemberTasksGrid)));

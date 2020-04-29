@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import DisplayNotification from '../displayNotification';
+import Radio from '../UI/radio';
 import { createControl, validateControl } from '../../services/helpers.js';
-import { connect } from 'react-redux';
 import { auth } from '../../store/actions/auth';
 
 class Auth extends PureComponent {
@@ -27,16 +28,23 @@ class Auth extends PureComponent {
         { required: true, minLenght: 6 },
       ),
     },
+    base: 'firebase',
   };
 
-  API_Key = `AIzaSyDHq6aCzLnR-4gyK4nMaY2zHgfUSw_OrVI`;
-
-  loginHanler = () => {
-    this.props.auth(this.state.authInput.email.value, this.state.authInput.password.value, true);
+  loginHandler = () => {
+    const {
+      authInput: { email, password },
+      base,
+    } = this.state;
+    this.props.auth(email.value, password.value, base, true);
   };
 
   registerHandler = () => {
-    this.props.auth(this.state.authInput.email.value, this.state.authInput.password.value, false);
+    const {
+      authInput: { email, password },
+      base,
+    } = this.state;
+    this.props.auth(email.value, password.value, base, false);
   };
 
   submitHandler = (event) => {
@@ -54,6 +62,10 @@ class Auth extends PureComponent {
       isFormValid = authInput[name].valid && isFormValid;
     });
     this.setState({ authInput, isFormValid });
+  };
+
+  handleRadioClick = ({ target: { value } }) => {
+    this.setState({ base: value });
   };
 
   renderInputs() {
@@ -79,6 +91,7 @@ class Auth extends PureComponent {
 
   render() {
     const { notification, onNotification } = this.props;
+    const { base, isFormValid } = this.state;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
@@ -86,22 +99,14 @@ class Auth extends PureComponent {
           <h1>Authorization</h1>
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
+            <fieldset className='base-wrap'>
+              <legend className='legend-auth'>Use base</legend>
+              <Radio value='firebase' checked={base === 'firebase'} onClick={this.handleRadioClick} label='Firebase' />
+              <Radio value='azure' checked={base !== 'firebase'} onClick={this.handleRadioClick} label='Azure' />
+            </fieldset>
             <div className='form-group row'>
-              <Button
-                className='btn-add'
-                type='success'
-                id='Login'
-                name='Log in'
-                disabled={!this.state.isFormValid}
-                onClick={this.loginHanler}
-              />
-              <Button
-                className='btn-add'
-                type='submit'
-                name='Register'
-                disabled={!this.state.isFormValid}
-                onClick={this.registerHandler}
-              />
+              <Button type='success' id='Login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
+              <Button type='submit' name='Register' disabled={!isFormValid} onClick={this.registerHandler} />
             </div>
           </form>
         </div>
@@ -110,15 +115,15 @@ class Auth extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ auth: { onNotification, notification } }) => {
   return {
-    onNotification: state.auth.onNotification,
-    notification: state.auth.notification,
+    onNotification,
+    notification,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
+    auth: (email, password, base, isLogin) => dispatch(auth(email, password, base, isLogin)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

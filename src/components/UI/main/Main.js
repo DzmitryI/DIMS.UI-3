@@ -1,18 +1,18 @@
 import React from 'react';
 import Footer from '../footer';
-import humanImg from '../../../assets/images/human.png';
+import imgHuman from '../../../assets/images/human.png';
 
 const Main = () => {
   return (
-    <>
-      <h2>Welcome to DIMS</h2>
+    <div className='main-page__wrap'>
+      <h1>Welcome to DIMS</h1>
       <div className='dims__inner'>
         <div className='dims'>
-          <img src={humanImg} alt='human' />
+          <img src={imgHuman} alt='human' />
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

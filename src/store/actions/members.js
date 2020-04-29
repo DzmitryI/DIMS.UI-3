@@ -1,19 +1,31 @@
-import FetchService from '../../services/fetch-service';
+import FetchFirabase from '../../services/fetchFirebase';
+import FetchAzure from '../../services/fetchAzure';
 import { deleteAllElements } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
   FETCH_MEMBERS_SUCCESS,
+  FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
 } from '../actions/actionTypes';
-const fetchService = new FetchService();
+let fetchService = '';
 
 export function fetchMembers() {
   return async (dispatch) => {
     dispatch(fetchMembersStart());
-    const members = await fetchService.getAllMember();
-    const directions = await fetchService.getDirection();
-    dispatch(fetchMembersSuccess(members, directions));
+    if (localStorage.getItem('base') === 'firebase') {
+      fetchService = new FetchFirabase();
+    } else {
+      fetchService = new FetchAzure();
+    }
+    try {
+      const members = await fetchService.getAllMember();
+      const directions = await fetchService.getDirection();
+
+      dispatch(fetchMembersSuccess(members, directions));
+    } catch (error) {
+      dispatch(fetchMembersError());
+    }
   };
 }
 
@@ -22,7 +34,7 @@ export function fetchMembersDelete(memberId, members) {
     if (members) {
       const member = members.find((member) => member.userId === memberId);
       const { fullName } = member;
-      deleteAllElements('userId', memberId);
+      await deleteAllElements('userId', memberId);
       const response = await fetchService.delMember(memberId);
       if (response) {
         const notification = { status: 'success', title: `${fullName} was deleted` };
@@ -44,6 +56,12 @@ export function fetchMembersSuccess(members, directions) {
     type: FETCH_MEMBERS_SUCCESS,
     members,
     directions,
+  };
+}
+
+export function fetchMembersError() {
+  return {
+    type: FETCH_MEMBERS_ERROR,
   };
 }
 

@@ -1,19 +1,15 @@
 import React from 'react';
-import { ThemeContext } from '../context';
+import { withTheme } from '../../hoc';
 
-const Spinner = () => {
+const Spinner = ({ theme }) => {
   return (
-    <ThemeContext.Consumer>
-      {({ theme }) => (
-        <div className={`loadingio-spinner-ripple ${theme}`}>
-          <div className='ldio'>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
-      )}
-    </ThemeContext.Consumer>
+    <div className={`loadingio-spinner-ripple ${theme}`}>
+      <div className='ldio'>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
   );
 };
 
-export default Spinner;
+export default withTheme(Spinner);

@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
+import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
-import Spinner from '../../components/spinner';
-import DisplayNotification from '../../components/displayNotification';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
+import { withFetchService } from '../../hoc';
 
-const fetchService = new FetchService();
-
-export default class TaskPage extends Component {
+class TaskPage extends Component {
   state = {
     isFormValid: false,
     taskInput: {
@@ -59,6 +57,7 @@ export default class TaskPage extends Component {
   };
 
   updateTaskMembers = async (taskId) => {
+    const { fetchService } = this.props;
     const members = await fetchService.getAllMember();
     const userTasks = await fetchService.getAllUserTasks();
     if (userTasks.length) {
@@ -75,13 +74,8 @@ export default class TaskPage extends Component {
     return members;
   };
 
-  async componentDidMount() {
-    const members = await fetchService.getAllMember();
-    this.setState({ members, loading: false });
-  }
-
   async componentDidUpdate(prevProps) {
-    const { task, title } = this.props;
+    const { task, title, fetchService } = this.props;
     let disabled = false;
     if (title !== prevProps.title && title === h1TaskPage.get('Create')) {
       const members = await fetchService.getAllMember();
@@ -103,6 +97,7 @@ export default class TaskPage extends Component {
 
   checkTaskMembers = async (taskId) => {
     const { members, userTasks, notification } = this.state;
+    const { fetchService } = this.props;
     if (members.length) {
       for (const member of members) {
         const index = userTasks.findIndex(
@@ -179,7 +174,7 @@ export default class TaskPage extends Component {
     const addMembersTask = [];
     for (const member of members) {
       if (member.checked) {
-        const responseTaskState = await fetchService.setTaskState(this.taskState);
+        const responseTaskState = await this.props.fetchService.setTaskState(this.taskState);
         if (responseTaskState.statusText) {
           addMembersTask.push({ userId: member.userId, taskId, stateId: responseTaskState.data.name });
         }
@@ -189,22 +184,22 @@ export default class TaskPage extends Component {
   };
 
   createTaskHandler = async () => {
-    const { taskId, task, taskInput, notification } = this.state;
+    const { taskId, task, taskInput } = this.state;
+    const { fetchService } = this.props;
+    let notification = '';
     this.setState({ loading: false });
     if (!taskId) {
       const responseTask = await fetchService.setTask(task);
       if (responseTask.statusText) {
-        notification.status = 'success';
-        notification.title = `${task.name} was added.`;
-        this.setState({ taskId: responseTask.data.name });
+        notification = { title: `${task.name} was added.` };
+        this.setState({ taskId: responseTask.data.name, notification });
       }
       const addMembersTask = await this.createTaskState();
       if (addMembersTask.length) {
         for (const addMemberTask of addMembersTask) {
           const responseUserTask = await fetchService.setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
-            notification.status = 'success';
-            notification.title = `${task.name} was added for user.`;
+            notification = { title: `${task.name} was added for user.` };
           }
         }
       }
@@ -212,8 +207,7 @@ export default class TaskPage extends Component {
       const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
-        notification.status = 'success';
-        notification.title = `${task.name} was edited.`;
+        notification = { title: `${task.name} was edited.` };
       }
     }
     this.setState({ onNotification: true, notification });
@@ -264,7 +258,6 @@ export default class TaskPage extends Component {
       return (
         <React.Fragment key={`form-group ${index}`}>
           <Input
-            key={controlName + index}
             id={controlName}
             type={control.type}
             value={control.value}
@@ -349,3 +342,5 @@ export default class TaskPage extends Component {
     );
   }
 }
+
+export default withFetchService(TaskPage);

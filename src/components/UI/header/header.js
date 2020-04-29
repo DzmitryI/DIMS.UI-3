@@ -1,14 +1,16 @@
 import React from 'react';
-import Button from '../button';
+import ButtonLink from '../buttonLink';
 import ColorSwitch from '../../../components/colorSwitch';
+import DropDownMenu from '../dropDownMenu';
 import { TABLE_ROLES } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
-import { ThemeContext } from '../../context';
 import { connect } from 'react-redux';
 import { logout } from '../../../store/actions/auth';
+import { withTheme } from '../../../hoc';
+import imgMain from '../../../assets/images/main.png';
 
 const Header = (props) => {
-  const { isAuthenticated, email } = props;
+  const { isAuthenticated, email, theme } = props;
   let links = [];
 
   const renderLinks = (links) => {
@@ -29,24 +31,23 @@ const Header = (props) => {
   }
 
   return (
-    <ThemeContext.Consumer>
-      {({ theme }) => (
-        <div className={`header header--${theme} ${theme}`}>
-          <h3>
-            <NavLink to='/'>DIMS</NavLink>
-          </h3>
-          <ul className='nav'>{renderLinks(links)}</ul>
-          <Button className='btn-tasks' onClick={props.logout} name='Logout' to={'/Auth'} />
-          <ColorSwitch />
-        </div>
-      )}
-    </ThemeContext.Consumer>
+    <div className={`header header--${theme} ${theme}`}>
+      <div className='imgMain-wrap'>
+        <NavLink to='/'>
+          <img src={imgMain} alt='img home' />
+        </NavLink>
+      </div>
+      <ul className='nav'>{renderLinks(links)}</ul>
+      <ColorSwitch />
+      <DropDownMenu to='/AboutApp' />
+      <ButtonLink className='btn-logout' onClick={props.logout} name='Logout' to={'/Auth'} />
+    </div>
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ auth: { email } }) => {
   return {
-    email: state.auth.email,
+    email,
   };
 };
 
@@ -56,4 +57,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(Header));
