@@ -10,6 +10,7 @@ import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 class MembersGrid extends Component {
   async componentDidMount() {
@@ -113,13 +114,22 @@ class MembersGrid extends Component {
           <thead>
             <HeaderTable arr={headerMembersGrid} />
           </thead>
-          <tbody>{this.renderTBody(members, directions)}</tbody>
+          <tbody>{members && this.renderTBody(members, directions)}</tbody>
         </table>
         {onNotification && <DisplayNotification notification={notification} />}
       </div>
     );
   }
 }
+
+MembersGrid.propTypes = {
+  members: PropTypes.array.isRequired,
+  directions: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.bool,
+  onNotification: PropTypes.bool.isRequired,
+  notification: PropTypes.object.isRequired,
+};
 
 const mapStateToProps = ({ members: { members, directions, loading, error, onNotification, notification } }) => {
   return {
@@ -138,4 +148,5 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
   };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));

@@ -18,8 +18,9 @@ SocialLink.defaultProps = {
 
 SocialLink.propTypes = {
   className: PropTypes.string.isRequired,
-  alt: PropTypes.string,
-  href: PropTypes.string,
+  alt: PropTypes.string.isRequired,
+  href: PropTypes.string.isRequired,
+  src: PropTypes.string.isRequired,
 };
 
 export default SocialLink;

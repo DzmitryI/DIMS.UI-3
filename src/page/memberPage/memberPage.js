@@ -9,6 +9,7 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
+import PropTypes from 'prop-types';
 
 class MemberPage extends Component {
   state = {
@@ -357,5 +358,14 @@ class MemberPage extends Component {
     );
   }
 }
+
+MemberPage.propTypes = {
+  member: PropTypes.array.isRequired,
+  directions: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  onRegisterClick: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default withFetchService(MemberPage);

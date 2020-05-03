@@ -6,6 +6,7 @@ import Button from '../UI/button';
 import Radio from '../UI/radio';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { auth } from '../../store/actions/auth';
+import PropTypes from 'prop-types';
 
 class Auth extends PureComponent {
   state = {
@@ -114,6 +115,11 @@ class Auth extends PureComponent {
     );
   }
 }
+
+Auth.propTypes = {
+  onNotification: PropTypes.bool.isRequired,
+  notification: PropTypes.object.isRequired,
+};
 
 const mapStateToProps = ({ auth: { onNotification, notification } }) => {
   return {

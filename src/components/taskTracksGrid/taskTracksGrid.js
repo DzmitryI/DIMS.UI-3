@@ -7,6 +7,7 @@ import Button from '../UI/button';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, TABLE_ROLES } from '../helpersComponents';
 import { withTheme, withRole, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 class TaskTracksGrid extends Component {
   state = {
@@ -116,5 +117,13 @@ class TaskTracksGrid extends Component {
     );
   }
 }
+
+TaskTracksGrid.propTypes = {
+  taskId: PropTypes.string.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  theme: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+};
 
 export default withFetchService(withRole(withTheme(TaskTracksGrid)));

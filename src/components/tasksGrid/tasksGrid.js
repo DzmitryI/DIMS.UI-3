@@ -6,6 +6,7 @@ import HeaderTable from '../UI/headerTable';
 import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../helpersComponents';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 class TasksGrid extends Component {
   state = {
@@ -111,5 +112,11 @@ class TasksGrid extends Component {
     );
   }
 }
+
+TasksGrid.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  theme: PropTypes.string.isRequired,
+};
 
 export default withTheme(withFetchService(TasksGrid));

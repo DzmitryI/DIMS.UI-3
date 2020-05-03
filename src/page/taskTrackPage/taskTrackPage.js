@@ -8,6 +8,7 @@ import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
+import PropTypes from 'prop-types';
 
 class TaskTrackPage extends Component {
   state = {
@@ -34,6 +35,9 @@ class TaskTrackPage extends Component {
   componentDidUpdate(prevProps) {
     const { track, title, taskId } = this.props;
     let disabled = false;
+    if (title !== prevProps.title && title === h1TaskTrackPage.get('Create')) {
+      this.setState({ loading: false });
+    }
     if (Object.keys(track).length !== 0) {
       if (track !== prevProps.track) {
         const taskTrackInput = updateInput(this.state.taskTrackInput, track);
@@ -120,6 +124,7 @@ class TaskTrackPage extends Component {
       const control = taskTrackInput[controlName];
       return (
         <Input
+          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -181,5 +186,15 @@ class TaskTrackPage extends Component {
     );
   }
 }
+
+TaskTrackPage.propTypes = {
+  title: PropTypes.string.isRequired,
+  taskId: PropTypes.string.isRequired,
+  userTaskId: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  track: PropTypes.object.isRequired,
+};
 
 export default withFetchService(TaskTrackPage);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { configure, mount } from 'enzyme';
+import { configure, mount, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import MembersGrid from './MembersGrid';
 import { ThemeContextProvider } from '../context';
@@ -12,7 +12,10 @@ configure({
 
 describe('<MembersGrid />', () => {
   let wrapper;
-  const store = createStore(() => ({}));
+  const props = {
+    members: [],
+  };
+  const store = createStore(() => props);
 
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
@@ -25,14 +28,7 @@ describe('<MembersGrid />', () => {
     );
   });
 
-  it('should render spinner at the start', () => {
-    // expect(wrapper.find('Spinner')).toHaveLength(1);
-    console.log(wrapper.debug());
+  it('should render table with 7 table heads', () => {
+    expect(wrapper.find('th')).toHaveLength(7);
   });
-
-  // it('should render table with 5 table heads', () => {
-  //   wrapper.find('MembersGrid').instance().setState({ loading: false });
-  //   wrapper.update();
-  //   expect(wrapper.find('th')).toHaveLength(5);
-  // });
 });

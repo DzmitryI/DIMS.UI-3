@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Select = ({ id, options, label, name, onChange, defaultValue, disabled }) => {
   return (
@@ -18,6 +19,16 @@ const Select = ({ id, options, label, name, onChange, defaultValue, disabled }) 
 Select.defaultProps = {
   disabled: false,
   options: [],
+};
+
+Select.propTypes = {
+  id: PropTypes.string.isRequired,
+  options: PropTypes.array.isRequired,
+  label: PropTypes.string,
+  name: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+  defaultValue: PropTypes.string,
 };
 
 export default Select;

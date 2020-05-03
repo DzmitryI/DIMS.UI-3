@@ -3,6 +3,7 @@ import HeaderTable from '../../components/UI/headerTable';
 import { withTheme } from '../../hoc';
 import BodyTable from '../../components/UI/bodyTable/BodyTable';
 import { headerAboutPage } from '../../components/helpersComponents';
+import PropTypes from 'prop-types';
 
 const AboutAppPage = ({ theme }) => {
   const tableBody = [
@@ -148,6 +149,10 @@ const AboutAppPage = ({ theme }) => {
       </table>
     </div>
   );
+};
+
+AboutAppPage.propTypes = {
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(AboutAppPage);

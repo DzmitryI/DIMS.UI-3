@@ -8,6 +8,7 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
+import PropTypes from 'prop-types';
 
 class TaskPage extends Component {
   state = {
@@ -342,5 +343,12 @@ class TaskPage extends Component {
     );
   }
 }
+
+TaskPage.propTypes = {
+  task: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default withFetchService(TaskPage);

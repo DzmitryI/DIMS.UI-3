@@ -35,7 +35,6 @@ describe('<TaskTracksGrid/>', () => {
   });
 
   it('should render table with 5 table heads', () => {
-    console.log(wrapper.debug());
     wrapper.find('TaskTracksGrid').instance().setState({ loading: false });
     wrapper.update();
     expect(wrapper.find('th')).toHaveLength(5);

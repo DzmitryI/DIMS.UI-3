@@ -30,11 +30,11 @@ class App extends Component {
     curTask: [],
     track: {},
     userId: null,
-    taskId: null,
-    userTaskId: null,
+    taskId: '',
+    userTaskId: '',
     theme: 'light',
     directions: [],
-    fetchService: '',
+    fetchService: {},
   };
 
   async componentDidMount() {
@@ -43,7 +43,7 @@ class App extends Component {
 
   async componentDidUpdate(prevProps) {
     const { email, base } = this.props;
-    let fetchService = '';
+    let fetchService = {};
     if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });

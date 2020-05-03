@@ -5,6 +5,7 @@ import HeaderTable from '../UI/headerTable';
 import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
@@ -68,6 +69,13 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
       </table>
     </div>
   );
+};
+
+MemberProgressGrid.propTypes = {
+  userId: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  onTaskClick: PropTypes.func.isRequired,
+  theme: PropTypes.string,
 };
 
 export default withTheme(MemberProgressGrid);
