@@ -28,7 +28,6 @@ describe('<TasksGrid />', () => {
   it('should render spinner at the start', () => {
     expect(wrapper.find(Spinner)).toHaveLength(1);
   });
-
   it('should render table with 5 table heads', () => {
     wrapper.find('TasksGrid').instance().setState({ loading: false });
     wrapper.update();

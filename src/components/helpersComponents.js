@@ -38,14 +38,18 @@ const getDate = (date) => {
 };
 
 async function updateMemberProgress(userId = '', taskId = '') {
-  const memberProgresses = [];
+  let memberProgresses = [];
   const userTasks = await fetchService.getAllUserTasks();
-  const curUserTasks = [];
+  let curUserTasks = [];
+  let result = '';
   if (userTasks.length) {
     if (userId) {
-      curUserTasks.push(userTasks.find((userTask) => userTask.userId === userId));
+      result = userTasks.find((userTask) => userTask.userId === userId);
     } else if (taskId) {
-      curUserTasks.push(userTasks.find((userTask) => userTask.taskId === taskId));
+      result = userTasks.find((userTask) => userTask.taskId === taskId);
+    }
+    if (result) {
+      curUserTasks = curUserTasks.concat(result);
     }
     if (curUserTasks.length) {
       const usersTaskTrack = await fetchService.getAllUserTaskTrack();
@@ -54,7 +58,7 @@ async function updateMemberProgress(userId = '', taskId = '') {
           for (const userTaskTrack of usersTaskTrack) {
             if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
               const response = await fetchService.getTask(curUserTask.taskId);
-              memberProgresses.push({ userTaskTrack, task: response || [] });
+              memberProgresses = memberProgresses.concat({ userTaskTrack, task: response || [] });
             }
           }
         }

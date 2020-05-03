@@ -14,9 +14,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -26,9 +26,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -38,9 +38,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -50,9 +50,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -62,9 +62,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -74,9 +74,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
     ],
     [
       {
@@ -86,9 +86,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -98,9 +98,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'red', value: '-' },
-      { class: 'red', value: '-' },
-      { class: 'green', value: '+' },
+      { className: 'red', value: '-' },
+      { className: 'red', value: '-' },
+      { className: 'green', value: '+' },
     ],
     [
       {
@@ -110,9 +110,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'red', value: '-' },
-      { class: 'red', value: '-' },
-      { class: 'green', value: '+' },
+      { className: 'red', value: '-' },
+      { className: 'red', value: '-' },
+      { className: 'green', value: '+' },
     ],
   ];
   return (

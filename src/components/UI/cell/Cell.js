@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const Cell = ({ className, value, id = null }) => {
+const Cell = ({ className, value, id }) => {
   return (
     <td className={className} id={id}>
       {value}
@@ -10,6 +11,12 @@ const Cell = ({ className, value, id = null }) => {
 
 Cell.defaultProps = {
   className: 'td',
+  id: null,
+};
+
+Cell.propTypes = {
+  className: PropTypes.string.isRequired,
+  id: PropTypes.string,
 };
 
 export default Cell;

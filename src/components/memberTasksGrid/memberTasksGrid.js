@@ -11,7 +11,7 @@ import Cell from '../UI/cell/Cell';
 const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, fetchService, theme, email }) => {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [onNotification, setOnNotification] = useState(true);
+  const [onNotification, setOnNotification] = useState(false);
   const [notification, setNotification] = useState({});
   const { ADMIN, MENTOR } = TABLE_ROLES;
 
@@ -41,8 +41,10 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
       const userTasks = await updateMemberTasks(userId);
       setUserTasks(userTasks);
       setLoading(false);
+      setOnNotification(false);
     };
     fetchData();
+    // eslint-disable-next-line
   }, [userId]);
 
   const onTrackClickHandler = ({ target }) => {
@@ -73,9 +75,8 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
       setUserTasks(userTasks);
       setNotification({ title: `Task state was edited` });
       setOnNotification(true);
-      setNotification({});
-      setOnNotification(false);
     }
+    setTimeout(() => setOnNotification(false), 1000);
   };
 
   const renderTBody = (userTasks) => {

@@ -2,11 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const HeaderTable = ({ arr }) => {
-  const renderItems = (headers) => {
-    return headers.map((header, index) => {
-      return <th key={header + index}>{header}</th>;
-    });
-  };
+  const renderItems = (headers) => headers.map((header, index) => <th key={header + index}>{header}</th>);
   return <tr>{renderItems(arr)}</tr>;
 };
 

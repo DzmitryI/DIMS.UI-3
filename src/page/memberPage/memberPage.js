@@ -153,7 +153,7 @@ class MemberPage extends Component {
     }
     if (member.length) {
       const [{ userId, ...values }] = member;
-      if (direction.options.length === 0 && directions.length) {
+      if (!direction.options.length && directions.length) {
         const { memberSelect } = this.state;
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });
@@ -268,6 +268,7 @@ class MemberPage extends Component {
       const control = memberInput[controlName];
       return (
         <Input
+          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -304,6 +305,7 @@ class MemberPage extends Component {
           defaultValue={defaultValue}
           label={control.label}
           name={controlName}
+          key={controlName}
           id={controlName}
           disabled={disabled}
           onChange={this.onHandlelSelect(controlName)}

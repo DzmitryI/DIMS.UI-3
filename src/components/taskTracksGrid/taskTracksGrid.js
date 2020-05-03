@@ -59,6 +59,7 @@ class TaskTracksGrid extends Component {
     const { tracks, loading, notification, onNotification } = this.state;
     const { ADMIN, MENTOR } = TABLE_ROLES;
     const { theme, email } = this.props;
+    const admin_mentor = email === ADMIN || email === MENTOR;
 
     if (loading) {
       return <Spinner />;
@@ -94,13 +95,13 @@ class TaskTracksGrid extends Component {
                           onClick={this.onChangeClick}
                           id='edit'
                           name='Edit'
-                          disabled={email === ADMIN || email === MENTOR}
+                          disabled={admin_mentor}
                         />
                         <Button
                           className='btn-delete'
                           onClick={this.onDeleteClick}
                           name='Delete'
-                          disabled={email === ADMIN || email === MENTOR}
+                          disabled={admin_mentor}
                         />
                       </>
                     }

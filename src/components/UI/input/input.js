@@ -24,6 +24,7 @@ const Input = ({
     <div className={`form-group ${result ? 'invalid' : ''}`}>
       <label htmlFor={id}>{label}</label>
       <input
+        key={id}
         type={type}
         id={id}
         value={value}

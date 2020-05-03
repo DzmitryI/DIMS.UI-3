@@ -8,19 +8,18 @@ import { connect } from 'react-redux';
 import { logout } from '../../../store/actions/auth';
 import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';
+import PropTypes from 'prop-types';
 
 const Header = (props) => {
   const { isAuthenticated, email, theme } = props;
   let links = [];
 
   const renderLinks = (links) => {
-    return links.map((link) => {
-      return (
-        <li key={link.to}>
-          <NavLink to={link.to}>{link.label}</NavLink>
-        </li>
-      );
-    });
+    return links.map((link) => (
+      <li key={link.to}>
+        <NavLink to={link.to}>{link.label}</NavLink>
+      </li>
+    ));
   };
 
   if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
@@ -43,6 +42,12 @@ const Header = (props) => {
       <ButtonLink className='btn-logout' onClick={props.logout} name='Logout' to={'/Auth'} />
     </div>
   );
+};
+
+Header.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  theme: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = ({ auth: { email } }) => {

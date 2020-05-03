@@ -258,7 +258,7 @@ class TaskPage extends Component {
       return (
         <React.Fragment key={`form-group ${index}`}>
           <Input
-            id={controlName}
+            id={controlName + index}
             type={control.type}
             value={control.value}
             valid={control.valid}

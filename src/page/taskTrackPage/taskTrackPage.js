@@ -7,6 +7,7 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
+import Spinner from '../../components/spinner';
 
 class TaskTrackPage extends Component {
   state = {
@@ -27,6 +28,7 @@ class TaskTrackPage extends Component {
     taskId: '',
     onNotification: false,
     notification: {},
+    loading: true,
   };
 
   componentDidUpdate(prevProps) {
@@ -46,6 +48,7 @@ class TaskTrackPage extends Component {
           isFormValid: true,
           taskTrackInput,
           taskId,
+          loading: false,
         });
       }
     }
@@ -83,6 +86,7 @@ class TaskTrackPage extends Component {
       taskTrack: res.objElemClear,
       isFormValid: false,
       disabled: false,
+      loading: true,
     });
     this.props.onTrackClick(taskId);
   };
@@ -116,7 +120,6 @@ class TaskTrackPage extends Component {
       const control = taskTrackInput[controlName];
       return (
         <Input
-          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -134,36 +137,43 @@ class TaskTrackPage extends Component {
 
   render() {
     const { isOpen, title, subtitle } = this.props;
-    const { taskTrack, disabled, isFormValid, notification, onNotification } = this.state;
+    const { taskTrack, disabled, isFormValid, notification, onNotification, loading } = this.state;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
         <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
-            <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
-            {this.renderInputs()}
-            <div className='form-group'>
-              <label htmlFor='trackNote'>Note</label>
-              <textarea
-                id='trackNote'
-                name='note'
-                disabled={disabled}
-                value={taskTrack.trackNote}
-                rows='7'
-                onChange={this.handleTextArea}
-              ></textarea>
-            </div>
-            <div className='form-group row'>
-              <Button
-                className='btn-add'
-                type='submit'
-                name='Save'
-                disabled={disabled || !isFormValid}
-                onClick={this.createTaskTrackHandler}
-              />
-              <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
-            </div>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
+                {this.renderInputs()}
+                <div className='form-group'>
+                  <label htmlFor='trackNote'>Note</label>
+                  <textarea
+                    key='trackNote'
+                    id='trackNote'
+                    name='note'
+                    disabled={disabled}
+                    value={taskTrack.trackNote}
+                    rows='7'
+                    onChange={this.handleTextArea}
+                  ></textarea>
+                </div>
+                <div className='form-group row'>
+                  <Button
+                    className='btn-add'
+                    type='submit'
+                    name='Save'
+                    disabled={disabled || !isFormValid}
+                    onClick={this.createTaskTrackHandler}
+                  />
+                  <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+                </div>
+              </>
+            )}
           </form>
         </div>
         {isOpen && <Backdrop />}
