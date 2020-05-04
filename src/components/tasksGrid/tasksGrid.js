@@ -31,11 +31,11 @@ class TasksGrid extends Component {
     }
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.fetchTasks();
   }
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     if (this.props.isTask !== prevProps.isTask) {
       this.fetchTasks();
     }

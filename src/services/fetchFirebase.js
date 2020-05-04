@@ -1,7 +1,4 @@
 import axios from 'axios';
-import DisplayNotification from '../components/displayNotification';
-
-const notification = new DisplayNotification();
 
 export default class FetchFirebase {
   api_base = process.env.REACT_APP_API_BASE_FIREBASE;
@@ -11,27 +8,15 @@ export default class FetchFirebase {
   };
 
   setSource = async (url, body) => {
-    try {
-      return await axios.post(`${this.api_base}${url}`, body);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+    return await axios.post(`${this.api_base}${url}`, body);
   };
 
   editSource = async (url, body) => {
-    try {
-      return await axios.put(`${this.api_base}${url}`, body);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+    return await axios.put(`${this.api_base}${url}`, body);
   };
 
   deleteSource = async (url) => {
-    // try {
     return await axios.delete(`${this.api_base}${url}`);
-    // } catch (error) {
-    // notification.notify('error', error.message);
-    // }
   };
 
   getAllMember = async () => {

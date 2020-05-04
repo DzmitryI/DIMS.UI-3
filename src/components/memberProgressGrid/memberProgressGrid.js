@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
+import ErrorIndicator from '../errorIndicator';
 import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
@@ -10,12 +11,20 @@ import PropTypes from 'prop-types';
 const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      const memberProgresses = await updateMemberProgress(userId);
-      setMemberProgresses(memberProgresses);
-      setLoading(false);
+      try {
+        const memberProgresses = await updateMemberProgress(userId);
+        setMemberProgresses(memberProgresses);
+        setLoading(false);
+      } catch ({ message }) {
+        setLoading(false);
+        setError(true);
+        setErrorMessage(message);
+      }
     };
     fetchData();
   }, [userId]);
@@ -60,13 +69,17 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
         <Link to='/MembersGrid'>back to grid</Link>
       </span>
       <h1>Member Progress Grid</h1>
-      <table border='1' className={`${theme}--table`}>
-        <caption>{title && `${title}'s progress:`}</caption>
-        <thead>
-          <HeaderTable arr={headerMemberProgressGrid} />
-        </thead>
-        <tbody>{renderTBody(memberProgresses)}</tbody>
-      </table>
+      {error ? (
+        <ErrorIndicator errorMessage={errorMessage} />
+      ) : (
+        <table border='1' className={`${theme}--table`}>
+          <caption>{title && `${title}'s progress:`}</caption>
+          <thead>
+            <HeaderTable arr={headerMemberProgressGrid} />
+          </thead>
+          <tbody>{renderTBody(memberProgresses)}</tbody>
+        </table>
+      )}
     </div>
   );
 };

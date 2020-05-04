@@ -141,6 +141,8 @@ class MemberPage extends Component {
     directions: [],
     onNotification: false,
     notification: {},
+    error: false,
+    errorMessage: '',
   };
 
   componentDidUpdate(prevProps) {
@@ -227,26 +229,34 @@ class MemberPage extends Component {
     event.preventDefault();
   };
 
-  createMemberHandler = async () => {
+  async changeMember(value) {
     const { userId, member, memberInput, directions } = this.state;
     const { fetchService, onRegisterClick } = this.props;
     let notification = '';
-    if (!userId) {
-      const response = await fetchService.setMember(member);
-      if (response) {
+    try {
+      if (value === 'edit') {
+        await fetchService.editMember(userId, member);
+        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
+      } else {
+        await fetchService.setMember(member);
         notification = { title: `New member: ${member.name} ${member.lastName} was added` };
       }
-    } else {
-      const response = await fetchService.editMember(userId, member);
-      if (response) {
-        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
-      }
+      this.setState({ onNotification: true, notification });
+      const res = clearOblectValue(memberInput, member);
+      this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
+      onRegisterClick(directions);
+    } catch ({ message }) {
+      this.setState({ onNotification: true, notification: { status: 'error', title: message } });
     }
-    this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
-    const res = clearOblectValue(memberInput, member);
-    this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
-    onRegisterClick(directions);
+  }
+
+  createMemberHandler = () => {
+    if (!this.state.userId) {
+      this.changeMember('add');
+    } else {
+      this.changeMember('edit');
+    }
   };
 
   buttonCloseClick = () => {

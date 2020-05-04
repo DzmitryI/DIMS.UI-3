@@ -80,6 +80,27 @@ async function updateMemberProgress(userId = '', taskId = '') {
   return memberProgresses;
 }
 
+const updateMemberTasks = async (userId) => {
+  let tasks = [];
+  const userTasks = await fetchService.getAllUserTasks();
+  if (userTasks.length) {
+    for (const userTask of userTasks) {
+      if (userTask.userId === userId) {
+        const responseTasks = await fetchService.getTask(userTask.taskId);
+        const responseTasksState = await fetchService.getTaskState(userTask.stateId);
+        if (responseTasks.length && responseTasksState.data) {
+          const { userTaskId, taskId, userId, stateId } = userTask;
+          const [responseTask] = responseTasks;
+          const { name, deadlineDate, startDate } = responseTask;
+          const { stateName } = responseTasksState.data;
+          tasks = tasks.concat({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
+        }
+      }
+    }
+  }
+  return tasks;
+};
+
 async function deleteAllElements(id, element) {
   const resAllUserTasks = await fetchService.getAllUserTasks();
   if (resAllUserTasks.length) {
@@ -124,5 +145,6 @@ export {
   getDate,
   SetUp,
   updateMemberProgress,
+  updateMemberTasks,
   deleteAllElements,
 };

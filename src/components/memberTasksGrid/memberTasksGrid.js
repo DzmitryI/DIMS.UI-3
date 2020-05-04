@@ -4,7 +4,8 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
-import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate } from '../helpersComponents';
+import ErrorIndicator from '../errorIndicator';
+import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate, updateMemberTasks } from '../helpersComponents';
 import { withFetchService, withRole, withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import PropTypes from 'prop-types';
@@ -14,39 +15,25 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
   const [loading, setLoading] = useState(true);
   const [onNotification, setOnNotification] = useState(false);
   const [notification, setNotification] = useState({});
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { ADMIN, MENTOR } = TABLE_ROLES;
   const role = email === ADMIN || email === MENTOR;
 
-  const updateMemberTasks = async (userId) => {
-    let tasks = [];
-    const userTasks = await fetchService.getAllUserTasks();
-    if (userTasks.length) {
-      for (const userTask of userTasks) {
-        if (userTask.userId === userId) {
-          const responseTasks = await fetchService.getTask(userTask.taskId);
-          const responseTasksState = await fetchService.getTaskState(userTask.stateId);
-          if (responseTasks.length && responseTasksState.data) {
-            const { userTaskId, taskId, userId, stateId } = userTask;
-            const [responseTask] = responseTasks;
-            const { name, deadlineDate, startDate } = responseTask;
-            const { stateName } = responseTasksState.data;
-            tasks = tasks.concat({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
-          }
-        }
-      }
-    }
-    return tasks;
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      const userTasks = await updateMemberTasks(userId);
-      setUserTasks(userTasks);
-      setLoading(false);
-      setOnNotification(false);
+      try {
+        const userTasks = await updateMemberTasks(userId);
+        setUserTasks(userTasks);
+        setLoading(false);
+        setOnNotification(false);
+      } catch ({ message }) {
+        setLoading(false);
+        setError(true);
+        setErrorMessage(message);
+      }
     };
     fetchData();
-    // eslint-disable-next-line
   }, [userId]);
 
   const onTrackClickHandler = ({ target }) => {
@@ -70,13 +57,17 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
     } else {
       taskState.stateName = 'Fail';
     }
-    const response = await fetchService.editTaskState(stateId, taskState);
-    if (response) {
+    try {
+      await fetchService.editTaskState(stateId, taskState);
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       setUserTasks(userTasks);
       setNotification({ title: `Task state was edited` });
       setOnNotification(true);
+    } catch ({ message }) {
+      setLoading(false);
+      setError(true);
+      setErrorMessage(message);
     }
     setTimeout(() => setOnNotification(false), 1000);
   };
@@ -130,13 +121,17 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
     <div className='grid-wrap'>
       {role && <Link to='/MembersGrid'>back to grid</Link>}
       <h1>Member's Tasks Manage Grid</h1>
-      <table border='1' className={`${theme}--table`}>
-        <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
-        <thead>
-          <HeaderTable arr={headerMemberTasksGrid} />
-        </thead>
-        <tbody>{renderTBody(userTasks)}</tbody>
-      </table>
+      {error ? (
+        <ErrorIndicator errorMessage={errorMessage} />
+      ) : (
+        <table border='1' className={`${theme}--table`}>
+          <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
+          <thead>
+            <HeaderTable arr={headerMemberTasksGrid} />
+          </thead>
+          <tbody>{renderTBody(userTasks)}</tbody>
+        </table>
+      )}
       {onNotification && <DisplayNotification notification={notification} />}
     </div>
   );

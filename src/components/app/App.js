@@ -260,11 +260,11 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ auth: { token, email, base } }) => {
   return {
-    isAuthenticated: !!state.auth.token,
-    email: state.auth.email,
-    base: state.auth.base,
+    isAuthenticated: !!token,
+    email,
+    base,
   };
 };
 
