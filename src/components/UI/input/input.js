@@ -47,16 +47,16 @@ Input.defaultProps = {
 
 Input.propTypes = {
   type: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  autocomlete: PropTypes.string,
-  disabled: PropTypes.bool,
-  placeholder: PropTypes.string,
+  autocomplete: PropTypes.string.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  id: PropTypes.string,
   label: PropTypes.string,
-  touched: PropTypes.bool.isRequired,
-  shouldValidation: PropTypes.bool.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string.isRequired,
+  touched: PropTypes.bool,
+  shouldValidation: PropTypes.bool,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  errorMessage: PropTypes.string,
 };
 
 export default Input;

@@ -72,9 +72,9 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
 };
 
 MemberProgressGrid.propTypes = {
-  userId: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  onTaskClick: PropTypes.func.isRequired,
+  userId: PropTypes.string,
+  title: PropTypes.string,
+  onTaskClick: PropTypes.func,
   theme: PropTypes.string,
 };
 

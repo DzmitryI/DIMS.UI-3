@@ -1,5 +1,7 @@
+import React from 'react';
 import FetchService from '../services/fetchFirebase';
 import DisplayNotification from './displayNotification';
+import { FetchServiceProvider, RoleContextProvider, ThemeContextProvider } from './context';
 
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
@@ -35,6 +37,16 @@ const TABLE_ROLES = {
 const getDate = (date) => {
   const [year, month, day] = date.split('-');
   return `${day.slice(0, 2)}.${month}.${year}`;
+};
+
+const SetUp = ({ fetchServiceValue, roleValue, ThemeValue, component }) => {
+  return (
+    <FetchServiceProvider value={fetchServiceValue}>
+      <RoleContextProvider value={roleValue}>
+        <ThemeContextProvider value={ThemeValue}>{component}</ThemeContextProvider>
+      </RoleContextProvider>
+    </FetchServiceProvider>
+  );
 };
 
 async function updateMemberProgress(userId = '', taskId = '') {
@@ -110,6 +122,7 @@ export {
   h1TaskTrackPage,
   TABLE_ROLES,
   getDate,
+  SetUp,
   updateMemberProgress,
   deleteAllElements,
 };

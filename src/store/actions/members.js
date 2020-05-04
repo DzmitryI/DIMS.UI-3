@@ -24,7 +24,7 @@ export function fetchMembers() {
 
       dispatch(fetchMembersSuccess(members, directions));
     } catch (error) {
-      dispatch(fetchMembersError());
+      dispatch(fetchMembersError(error.message));
     }
   };
 }
@@ -59,9 +59,10 @@ export function fetchMembersSuccess(members, directions) {
   };
 }
 
-export function fetchMembersError() {
+export function fetchMembersError(errorMessage) {
   return {
     type: FETCH_MEMBERS_ERROR,
+    errorMessage,
   };
 }
 

@@ -2,9 +2,8 @@ import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import TaskTracksGrid from './TaskTracksGrid';
-import FetchFirebase from '../../services/fetchFirebase';
-import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
 import { MemoryRouter } from 'react-router-dom';
+import { SetUp } from '../helpersComponents';
 
 configure({
   adapter: new Adapter(),
@@ -15,17 +14,16 @@ describe('<TaskTracksGrid/>', () => {
 
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
-    const contextRoleValue = 'mentor@mail.ru';
-    const contextFetchService = new FetchFirebase();
+    const contextRoleValue = '123@mail.ru';
+    const contextFetchService = {};
     wrapper = mount(
       <MemoryRouter>
-        <FetchServiceProvider value={contextFetchService}>
-          <RoleContextProvider value={contextRoleValue}>
-            <ThemeContextProvider value={contextThemeValue}>
-              <TaskTracksGrid />
-            </ThemeContextProvider>
-          </RoleContextProvider>
-        </FetchServiceProvider>
+        <SetUp
+          fetchServiceValue={contextFetchService}
+          roleValue={contextRoleValue}
+          ThemeValue={contextThemeValue}
+          component={<TaskTracksGrid />}
+        />
       </MemoryRouter>,
     );
   });

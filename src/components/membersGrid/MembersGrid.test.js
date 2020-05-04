@@ -14,6 +14,7 @@ describe('<MembersGrid />', () => {
   let wrapper;
   const props = {
     members: [],
+    directions: [],
   };
   const store = createStore(() => props);
 

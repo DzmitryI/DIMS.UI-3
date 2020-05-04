@@ -99,23 +99,26 @@ class MembersGrid extends Component {
   };
 
   render() {
-    const { members, directions, loading, onNotification, notification, theme, error } = this.props;
+    const { members, directions, loading, onNotification, notification, theme, error, errorMessage } = this.props;
     if (loading) {
       return <Spinner />;
-    }
-    if (error) {
-      return <ErrorIndicator />;
     }
     return (
       <div className='grid-wrap'>
         <h1>Members Manage Grid</h1>
-        <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
-        <table border='1' className={`${theme}--table`}>
-          <thead>
-            <HeaderTable arr={headerMembersGrid} />
-          </thead>
-          <tbody>{members && this.renderTBody(members, directions)}</tbody>
-        </table>
+        {error ? (
+          <ErrorIndicator errorMessage={errorMessage} />
+        ) : (
+          <>
+            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+            <table border='1' className={`${theme}--table`}>
+              <thead>
+                <HeaderTable arr={headerMembersGrid} />
+              </thead>
+              <tbody>{members && this.renderTBody(members, directions)}</tbody>
+            </table>
+          </>
+        )}
         {onNotification && <DisplayNotification notification={notification} />}
       </div>
     );
@@ -123,20 +126,25 @@ class MembersGrid extends Component {
 }
 
 MembersGrid.propTypes = {
-  members: PropTypes.array.isRequired,
-  directions: PropTypes.array.isRequired,
-  loading: PropTypes.bool.isRequired,
+  isRegister: PropTypes.bool,
+  members: PropTypes.array,
+  directions: PropTypes.array,
+  loading: PropTypes.bool,
   error: PropTypes.bool,
-  onNotification: PropTypes.bool.isRequired,
-  notification: PropTypes.object.isRequired,
+  errorMessage: PropTypes.string,
+  onNotification: PropTypes.bool,
+  notification: PropTypes.object,
 };
 
-const mapStateToProps = ({ members: { members, directions, loading, error, onNotification, notification } }) => {
+const mapStateToProps = ({
+  members: { members, directions, loading, error, errorMessage, onNotification, notification },
+}) => {
   return {
     members,
     directions,
     loading,
     error,
+    errorMessage,
     onNotification,
     notification,
   };

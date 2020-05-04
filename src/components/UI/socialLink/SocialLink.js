@@ -14,13 +14,14 @@ const SocialLink = ({ className, href, src, alt }) => {
 SocialLink.defaultProps = {
   className: 'imgMain-wrap',
   href: '#',
+  alt: 'icon',
 };
 
 SocialLink.propTypes = {
   className: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
   href: PropTypes.string.isRequired,
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
 };
 
 export default SocialLink;

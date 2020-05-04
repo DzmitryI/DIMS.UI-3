@@ -119,11 +119,11 @@ class TaskTracksGrid extends Component {
 }
 
 TaskTracksGrid.propTypes = {
-  taskId: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  fetchService: PropTypes.object.isRequired,
-  theme: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
+  taskId: PropTypes.string,
+  isOpen: PropTypes.bool,
+  fetchService: PropTypes.object,
+  theme: PropTypes.string,
+  email: PropTypes.string,
 };
 
 export default withFetchService(withRole(withTheme(TaskTracksGrid)));

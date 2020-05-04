@@ -19,10 +19,10 @@ Radio.defaultProps = {
 Radio.propTypes = {
   type: PropTypes.string.isRequired,
   className: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  checked: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
+  value: PropTypes.string,
+  checked: PropTypes.bool,
+  onClick: PropTypes.func,
   label: PropTypes.string,
 };
 
