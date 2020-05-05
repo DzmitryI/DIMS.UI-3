@@ -10,6 +10,7 @@ import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 class MembersGrid extends Component {
   async componentDidMount() {
@@ -98,35 +99,52 @@ class MembersGrid extends Component {
   };
 
   render() {
-    const { members, directions, loading, onNotification, notification, theme, error } = this.props;
+    const { members, directions, loading, onNotification, notification, theme, error, errorMessage } = this.props;
     if (loading) {
       return <Spinner />;
-    }
-    if (error) {
-      return <ErrorIndicator />;
     }
     return (
       <div className='grid-wrap'>
         <h1>Members Manage Grid</h1>
-        <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
-        <table border='1' className={`${theme}--table`}>
-          <thead>
-            <HeaderTable arr={headerMembersGrid} />
-          </thead>
-          <tbody>{this.renderTBody(members, directions)}</tbody>
-        </table>
+        {error ? (
+          <ErrorIndicator errorMessage={errorMessage} />
+        ) : (
+          <>
+            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+            <table border='1' className={`${theme}--table`}>
+              <thead>
+                <HeaderTable arr={headerMembersGrid} />
+              </thead>
+              <tbody>{members && this.renderTBody(members, directions)}</tbody>
+            </table>
+          </>
+        )}
         {onNotification && <DisplayNotification notification={notification} />}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ members: { members, directions, loading, error, onNotification, notification } }) => {
+MembersGrid.propTypes = {
+  isRegister: PropTypes.bool,
+  members: PropTypes.array,
+  directions: PropTypes.array,
+  loading: PropTypes.bool,
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string,
+  onNotification: PropTypes.bool,
+  notification: PropTypes.object,
+};
+
+const mapStateToProps = ({
+  members: { members, directions, loading, error, errorMessage, onNotification, notification },
+}) => {
   return {
     members,
     directions,
     loading,
     error,
+    errorMessage,
     onNotification,
     notification,
   };
@@ -138,4 +156,5 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
   };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));

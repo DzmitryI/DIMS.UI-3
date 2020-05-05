@@ -1,10 +1,10 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import Spinner from '../spinner';
 import MembersGrid from './MembersGrid';
 import { ThemeContextProvider } from '../context';
 import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 configure({
   adapter: new Adapter(),
@@ -12,12 +12,16 @@ configure({
 
 describe('<MembersGrid />', () => {
   let wrapper;
+  const props = {
+    members: [],
+    directions: [],
+  };
+  const store = createStore(() => props);
 
   beforeEach(() => {
-    store = mockStore({});
     const contextThemeValue = { theme: 'dark' };
     wrapper = mount(
-      <Provider>
+      <Provider store={store}>
         <ThemeContextProvider value={contextThemeValue}>
           <MembersGrid />
         </ThemeContextProvider>
@@ -25,15 +29,7 @@ describe('<MembersGrid />', () => {
     );
   });
 
-  it('should render spinner at the start', () => {
-    console.log(wrapper.debug());
-    expect(wrapper.find('Spinner')).toHaveLength(1);
+  it('should render table with 7 table heads', () => {
+    expect(wrapper.find('th')).toHaveLength(7);
   });
-
-  //TODO
-  // it('should render table with 5 table heads', () => {
-  //   wrapper.find('MembersGrid').instance().setState({ loading: false });
-  //   wrapper.update();
-  //   expect(wrapper.find('th')).toHaveLength(5);
-  // });
 });

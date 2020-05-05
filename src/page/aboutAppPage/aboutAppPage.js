@@ -3,6 +3,7 @@ import HeaderTable from '../../components/UI/headerTable';
 import { withTheme } from '../../hoc';
 import BodyTable from '../../components/UI/bodyTable/BodyTable';
 import { headerAboutPage } from '../../components/helpersComponents';
+import PropTypes from 'prop-types';
 
 const AboutAppPage = ({ theme }) => {
   const tableBody = [
@@ -14,9 +15,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -26,9 +27,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -38,9 +39,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -50,9 +51,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -62,9 +63,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -74,9 +75,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
     ],
     [
       {
@@ -86,9 +87,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'green', value: '+' },
-      { class: 'green', value: '+' },
-      { class: 'red', value: '-' },
+      { className: 'green', value: '+' },
+      { className: 'green', value: '+' },
+      { className: 'red', value: '-' },
     ],
     [
       {
@@ -98,9 +99,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'red', value: '-' },
-      { class: 'red', value: '-' },
-      { class: 'green', value: '+' },
+      { className: 'red', value: '-' },
+      { className: 'red', value: '-' },
+      { className: 'green', value: '+' },
     ],
     [
       {
@@ -110,9 +111,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { class: 'red', value: '-' },
-      { class: 'red', value: '-' },
-      { class: 'green', value: '+' },
+      { className: 'red', value: '-' },
+      { className: 'red', value: '-' },
+      { className: 'green', value: '+' },
     ],
   ];
   return (
@@ -148,6 +149,10 @@ const AboutAppPage = ({ theme }) => {
       </table>
     </div>
   );
+};
+
+AboutAppPage.propTypes = {
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(AboutAppPage);

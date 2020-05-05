@@ -8,6 +8,8 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
+import PropTypes from 'prop-types';
+import ErrorIndicator from '../../components/errorIndicator';
 
 class TaskPage extends Component {
   state = {
@@ -50,6 +52,8 @@ class TaskPage extends Component {
     userTasks: [],
     onNotification: false,
     notification: {},
+    error: false,
+    errorMessage: '',
   };
 
   taskState = {
@@ -86,11 +90,15 @@ class TaskPage extends Component {
       const { taskId, ...values } = value;
       if (task !== prevProps.task) {
         const taskInput = updateInput(this.state.taskInput, values);
-        const members = await this.updateTaskMembers(taskId);
-        if (title === h1TaskPage.get('Detail')) {
-          disabled = true;
+        try {
+          const members = await this.updateTaskMembers(taskId);
+          if (title === h1TaskPage.get('Detail')) {
+            disabled = true;
+          }
+          this.setState({ taskInput, taskId, isFormValid: true, task: values, members, disabled, loading: false });
+        } catch ({ message }) {
+          this.setState({ loading: false, error: true, errorMessage: message });
         }
-        this.setState({ taskInput, taskId, isFormValid: true, task: values, members, disabled, loading: false });
       }
     }
   }
@@ -171,12 +179,16 @@ class TaskPage extends Component {
 
   createTaskState = async () => {
     const { members, taskId } = this.state;
-    const addMembersTask = [];
+    let addMembersTask = [];
     for (const member of members) {
       if (member.checked) {
         const responseTaskState = await this.props.fetchService.setTaskState(this.taskState);
         if (responseTaskState.statusText) {
-          addMembersTask.push({ userId: member.userId, taskId, stateId: responseTaskState.data.name });
+          addMembersTask = addMembersTask.concat({
+            userId: member.userId,
+            taskId,
+            stateId: responseTaskState.data.name,
+          });
         }
       }
     }
@@ -258,7 +270,7 @@ class TaskPage extends Component {
       return (
         <React.Fragment key={`form-group ${index}`}>
           <Input
-            id={controlName}
+            id={controlName + index}
             type={control.type}
             value={control.value}
             valid={control.valid}
@@ -304,7 +316,10 @@ class TaskPage extends Component {
       isFormValid,
       onNotification,
       notification,
+      error,
+      errorMessage,
     } = this.state;
+
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
@@ -315,14 +330,20 @@ class TaskPage extends Component {
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{name}</h1>
-                <div className='form-group'>{this.renderInputs()}</div>
-                <div className='form-group'>
-                  <label htmlFor='members'>Members</label>
-                  <div id='members' className='column'>
-                    {this.renderCheckbox()}
-                  </div>
-                </div>
+                {error ? (
+                  <ErrorIndicator errorMessage={errorMessage} />
+                ) : (
+                  <>
+                    <h1 className='subtitle'>{name}</h1>
+                    <div className='form-group'>{this.renderInputs()}</div>
+                    <div className='form-group'>
+                      <label htmlFor='members'>Members</label>
+                      <div id='members' className='column'>
+                        {this.renderCheckbox()}
+                      </div>
+                    </div>
+                  </>
+                )}
                 <div className='form-group row'>
                   <Button
                     className='btn-add'
@@ -342,5 +363,12 @@ class TaskPage extends Component {
     );
   }
 }
+
+TaskPage.propTypes = {
+  task: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default withFetchService(TaskPage);

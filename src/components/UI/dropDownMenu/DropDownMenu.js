@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { withTheme } from '../../../hoc';
+import PropTypes from 'prop-types';
 
 const DropDownMenu = ({ to, theme }) => {
+  const burgerMenu = useRef(null);
   const dropdownMenuClick = () => {
-    const burgerMenu = document.querySelector('.burger-menu');
-    burgerMenu.classList.toggle('show');
+    burgerMenu.current.classList.toggle('show');
   };
 
   return (
@@ -13,7 +14,7 @@ const DropDownMenu = ({ to, theme }) => {
       <div className={`burger-line first burger-line--${theme}`}></div>
       <div className={`burger-line second burger-line--${theme}`}></div>
       <div className={`burger-line third burger-line--${theme}`}></div>
-      <nav className='burger-menu'>
+      <nav className='burger-menu' ref={burgerMenu}>
         <li>
           <NavLink to={to} className='burger-menu-item'>
             About app
@@ -22,6 +23,11 @@ const DropDownMenu = ({ to, theme }) => {
       </nav>
     </div>
   );
+};
+
+DropDownMenu.propTypes = {
+  to: PropTypes.string,
+  theme: PropTypes.string,
 };
 
 export default withTheme(DropDownMenu);

@@ -13,6 +13,7 @@ import AboutAppPage from '../../page/aboutAppPage';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
+import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
 import FetchAzure from '../../services/fetchAzure';
 import { autoLogin } from '../../store/actions/auth';
@@ -30,11 +31,13 @@ class App extends Component {
     curTask: [],
     track: {},
     userId: null,
-    taskId: null,
-    userTaskId: null,
+    taskId: '',
+    userTaskId: '',
     theme: 'light',
     directions: [],
-    fetchService: '',
+    fetchService: {},
+    onNotification: false,
+    notification: {},
   };
 
   async componentDidMount() {
@@ -43,7 +46,7 @@ class App extends Component {
 
   async componentDidUpdate(prevProps) {
     const { email, base } = this.props;
-    let fetchService = '';
+    let fetchService = {};
     if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
@@ -53,9 +56,14 @@ class App extends Component {
       } else {
         fetchService = new FetchAzure();
       }
-      const members = await fetchService.getAllMember();
-      const member = members.find((member) => member.email === email);
-      this.setState({ userId: member ? member.userId : '', fetchService });
+      try {
+        const members = await fetchService.getAllMember();
+        const member = members.find((member) => member.email === email);
+        this.setState({ userId: member ? member.userId : '', fetchService });
+      } catch ({ message }) {
+        this.setState({ onNotification: true, notification: { status: 'error', title: message } });
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+      }
     }
   }
 
@@ -130,6 +138,8 @@ class App extends Component {
       directions,
       theme,
       fetchService,
+      onNotification,
+      notification,
     } = this.state;
     const { isAuthenticated, email } = this.props;
 
@@ -189,7 +199,7 @@ class App extends Component {
                   {...props}
                   onCreateTaskClick={this.onCreateTaskClickHandler}
                   onChangeNotify={this.onChangeNotify}
-                  isOpen={isTask}
+                  isTask={isTask}
                 />
               )}
             />
@@ -244,16 +254,17 @@ class App extends Component {
             </ThemeContextProvider>
           </RoleContextProvider>
         </FetchServiceProvider>
+        {onNotification && <DisplayNotification notification={notification} />}
       </main>
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ auth: { token, email, base } }) => {
   return {
-    isAuthenticated: !!state.auth.token,
-    email: state.auth.email,
-    base: state.auth.base,
+    isAuthenticated: !!token,
+    email,
+    base,
   };
 };
 

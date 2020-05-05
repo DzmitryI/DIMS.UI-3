@@ -9,6 +9,7 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
+import PropTypes from 'prop-types';
 
 class MemberPage extends Component {
   state = {
@@ -140,6 +141,8 @@ class MemberPage extends Component {
     directions: [],
     onNotification: false,
     notification: {},
+    error: false,
+    errorMessage: '',
   };
 
   componentDidUpdate(prevProps) {
@@ -153,7 +156,7 @@ class MemberPage extends Component {
     }
     if (member.length) {
       const [{ userId, ...values }] = member;
-      if (direction.options.length === 0 && directions.length) {
+      if (!direction.options.length && directions.length) {
         const { memberSelect } = this.state;
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });
@@ -226,26 +229,34 @@ class MemberPage extends Component {
     event.preventDefault();
   };
 
-  createMemberHandler = async () => {
+  async changeMember(value) {
     const { userId, member, memberInput, directions } = this.state;
     const { fetchService, onRegisterClick } = this.props;
     let notification = '';
-    if (!userId) {
-      const response = await fetchService.setMember(member);
-      if (response) {
+    try {
+      if (value === 'edit') {
+        await fetchService.editMember(userId, member);
+        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
+      } else {
+        await fetchService.setMember(member);
         notification = { title: `New member: ${member.name} ${member.lastName} was added` };
       }
-    } else {
-      const response = await fetchService.editMember(userId, member);
-      if (response) {
-        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
-      }
+      this.setState({ onNotification: true, notification });
+      const res = clearOblectValue(memberInput, member);
+      this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
+      onRegisterClick(directions);
+    } catch ({ message }) {
+      this.setState({ onNotification: true, notification: { status: 'error', title: message } });
     }
-    this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
-    const res = clearOblectValue(memberInput, member);
-    this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
-    onRegisterClick(directions);
+  }
+
+  createMemberHandler = () => {
+    if (!this.state.userId) {
+      this.changeMember('add');
+    } else {
+      this.changeMember('edit');
+    }
   };
 
   buttonCloseClick = () => {
@@ -268,6 +279,7 @@ class MemberPage extends Component {
       const control = memberInput[controlName];
       return (
         <Input
+          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -304,6 +316,7 @@ class MemberPage extends Component {
           defaultValue={defaultValue}
           label={control.label}
           name={controlName}
+          key={controlName}
           id={controlName}
           disabled={disabled}
           onChange={this.onHandlelSelect(controlName)}
@@ -355,5 +368,14 @@ class MemberPage extends Component {
     );
   }
 }
+
+MemberPage.propTypes = {
+  member: PropTypes.array.isRequired,
+  directions: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  onRegisterClick: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
 
 export default withFetchService(MemberPage);

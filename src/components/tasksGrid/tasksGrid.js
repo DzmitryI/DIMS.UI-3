@@ -3,9 +3,11 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
+import ErrorIndicator from '../errorIndicator';
 import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../helpersComponents';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 class TasksGrid extends Component {
   state = {
@@ -13,24 +15,29 @@ class TasksGrid extends Component {
     loading: true,
     onNotification: false,
     notification: {},
+    error: false,
+    errorMessage: '',
   };
 
-  async componentDidMount() {
-    const tasks = await this.props.fetchService.getAllTask();
-    this.setState({
-      tasks,
-      loading: false,
-    });
-  }
-
-  async componentDidUpdate(prevProps) {
-    const { isOpen, fetchService } = this.props;
-    if (isOpen !== prevProps.isOpen) {
-      const tasks = await fetchService.getAllTask();
+  async fetchTasks() {
+    try {
+      const tasks = await this.props.fetchService.getAllTask();
       this.setState({
         tasks,
         loading: false,
       });
+    } catch ({ message }) {
+      this.setState({ loading: false, error: true, errorMessage: message });
+    }
+  }
+
+  componentDidMount() {
+    this.fetchTasks();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.isTask !== prevProps.isTask) {
+      this.fetchTasks();
     }
   }
 
@@ -55,14 +62,17 @@ class TasksGrid extends Component {
     const { fetchService } = this.props;
     const taskId = target.closest('tr').id;
     const { name } = this.state.tasks.find((task) => task.taskId === taskId);
-    const response = await fetchService.delTask(taskId);
-    deleteAllElements('taskId', taskId);
-    if (response) {
-      const notification = { title: `${name} was deleted!` };
-      this.setState({ onNotification: true, notification });
-      setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
-      const tasks = await fetchService.getAllTask();
-      this.setState({ tasks });
+    try {
+      const response = await fetchService.delTask(taskId);
+      deleteAllElements('taskId', taskId);
+      if (response) {
+        const notification = { title: `${name} was deleted!` };
+        this.setState({ onNotification: true, notification });
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        this.fetchTasks();
+      }
+    } catch ({ message }) {
+      this.setState({ loading: false, error: true, errorMessage: message });
     }
   };
 
@@ -89,7 +99,7 @@ class TasksGrid extends Component {
   };
 
   render() {
-    const { tasks, loading, onNotification, notification } = this.state;
+    const { tasks, loading, onNotification, notification, error, errorMessage } = this.state;
     const { theme } = this.props;
 
     if (loading) {
@@ -99,17 +109,31 @@ class TasksGrid extends Component {
     return (
       <div className='grid-wrap'>
         <h1>Tasks Manage Grid</h1>
-        <Button className='btn-register' name='Create' onClick={this.onCreateTaskClick} />
-        <table border='1' className={`${theme}--table`}>
-          <thead>
-            <HeaderTable arr={headerTasksGrid} />
-          </thead>
-          <tbody>{this.renderTBody(tasks)}</tbody>
-        </table>
+        {error ? (
+          <ErrorIndicator errorMessage={errorMessage} />
+        ) : (
+          <>
+            <Button className='btn-register' name='Create' onClick={this.onCreateTaskClick} />
+            <table border='1' className={`${theme}--table`}>
+              <thead>
+                <HeaderTable arr={headerTasksGrid} />
+              </thead>
+              <tbody>{this.renderTBody(tasks)}</tbody>
+            </table>
+          </>
+        )}
         {onNotification && <DisplayNotification notification={notification} />}
       </div>
     );
   }
 }
+
+TasksGrid.propTypes = {
+  isTask: PropTypes.bool,
+  fetchService: PropTypes.object,
+  theme: PropTypes.string,
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string,
+};
 
 export default withTheme(withFetchService(TasksGrid));

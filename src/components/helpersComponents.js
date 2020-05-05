@@ -1,5 +1,7 @@
+import React from 'react';
 import FetchService from '../services/fetchFirebase';
 import DisplayNotification from './displayNotification';
+import { FetchServiceProvider, RoleContextProvider, ThemeContextProvider } from './context';
 
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
@@ -37,15 +39,29 @@ const getDate = (date) => {
   return `${day.slice(0, 2)}.${month}.${year}`;
 };
 
+const SetUp = ({ fetchServiceValue, roleValue, ThemeValue, component }) => {
+  return (
+    <FetchServiceProvider value={fetchServiceValue}>
+      <RoleContextProvider value={roleValue}>
+        <ThemeContextProvider value={ThemeValue}>{component}</ThemeContextProvider>
+      </RoleContextProvider>
+    </FetchServiceProvider>
+  );
+};
+
 async function updateMemberProgress(userId = '', taskId = '') {
-  const memberProgresses = [];
+  let memberProgresses = [];
   const userTasks = await fetchService.getAllUserTasks();
-  const curUserTasks = [];
+  let curUserTasks = [];
+  let result = '';
   if (userTasks.length) {
     if (userId) {
-      curUserTasks.push(userTasks.find((userTask) => userTask.userId === userId));
+      result = userTasks.find((userTask) => userTask.userId === userId);
     } else if (taskId) {
-      curUserTasks.push(userTasks.find((userTask) => userTask.taskId === taskId));
+      result = userTasks.find((userTask) => userTask.taskId === taskId);
+    }
+    if (result) {
+      curUserTasks = curUserTasks.concat(result);
     }
     if (curUserTasks.length) {
       const usersTaskTrack = await fetchService.getAllUserTaskTrack();
@@ -54,7 +70,7 @@ async function updateMemberProgress(userId = '', taskId = '') {
           for (const userTaskTrack of usersTaskTrack) {
             if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
               const response = await fetchService.getTask(curUserTask.taskId);
-              memberProgresses.push({ userTaskTrack, task: response || [] });
+              memberProgresses = memberProgresses.concat({ userTaskTrack, task: response || [] });
             }
           }
         }
@@ -63,6 +79,27 @@ async function updateMemberProgress(userId = '', taskId = '') {
   }
   return memberProgresses;
 }
+
+const updateMemberTasks = async (userId) => {
+  let tasks = [];
+  const userTasks = await fetchService.getAllUserTasks();
+  if (userTasks.length) {
+    for (const userTask of userTasks) {
+      if (userTask.userId === userId) {
+        const responseTasks = await fetchService.getTask(userTask.taskId);
+        const responseTasksState = await fetchService.getTaskState(userTask.stateId);
+        if (responseTasks.length && responseTasksState.data) {
+          const { userTaskId, taskId, userId, stateId } = userTask;
+          const [responseTask] = responseTasks;
+          const { name, deadlineDate, startDate } = responseTask;
+          const { stateName } = responseTasksState.data;
+          tasks = tasks.concat({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
+        }
+      }
+    }
+  }
+  return tasks;
+};
 
 async function deleteAllElements(id, element) {
   const resAllUserTasks = await fetchService.getAllUserTasks();
@@ -106,6 +143,8 @@ export {
   h1TaskTrackPage,
   TABLE_ROLES,
   getDate,
+  SetUp,
   updateMemberProgress,
+  updateMemberTasks,
   deleteAllElements,
 };

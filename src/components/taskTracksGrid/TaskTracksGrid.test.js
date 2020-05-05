@@ -1,10 +1,9 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import Spinner from '../spinner';
 import TaskTracksGrid from './TaskTracksGrid';
-import FetchFirebase from '../../services/fetchFirebase';
-import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
+import { MemoryRouter } from 'react-router-dom';
+import { SetUp } from '../helpersComponents';
 
 configure({
   adapter: new Adapter(),
@@ -15,27 +14,27 @@ describe('<TaskTracksGrid/>', () => {
 
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
-    const contextRoleValue = null;
-    const contextFetchService = new FetchFirebase();
+    const contextRoleValue = '123@mail.ru';
+    const contextFetchService = {};
     wrapper = mount(
-      <FetchServiceProvider value={contextFetchService}>
-        <RoleContextProvider value={contextRoleValue}>
-          <ThemeContextProvider value={contextThemeValue}>
-            <TaskTracksGrid />
-          </ThemeContextProvider>
-        </RoleContextProvider>
-      </FetchServiceProvider>,
+      <MemoryRouter>
+        <SetUp
+          fetchServiceValue={contextFetchService}
+          roleValue={contextRoleValue}
+          ThemeValue={contextThemeValue}
+          component={<TaskTracksGrid />}
+        />
+      </MemoryRouter>,
     );
   });
 
   it('should render spinner at the start', () => {
-    expect(wrapper.find(Spinner)).toHaveLength(1);
+    expect(wrapper.find('Spinner')).toHaveLength(1);
   });
 
-  // it('should render table with 5 table heads', () => {
-  //   wrapper.find('TaskTracksGrid').instance().setState({ loading: false });
-  //   wrapper.update();
-  //   console.log(wrapper.debug());
-  //   expect(wrapper.find('th')).toHaveLength(5);
-  // });
+  it('should render table with 5 table heads', () => {
+    wrapper.find('TaskTracksGrid').instance().setState({ loading: false });
+    wrapper.update();
+    expect(wrapper.find('th')).toHaveLength(5);
+  });
 });

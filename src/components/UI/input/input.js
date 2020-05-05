@@ -24,6 +24,7 @@ const Input = ({
     <div className={`form-group ${result ? 'invalid' : ''}`}>
       <label htmlFor={id}>{label}</label>
       <input
+        key={id}
         type={type}
         id={id}
         value={value}
@@ -46,10 +47,16 @@ Input.defaultProps = {
 
 Input.propTypes = {
   type: PropTypes.string.isRequired,
-  autocomlete: PropTypes.string,
-  disabled: PropTypes.bool,
-  placeholder: PropTypes.string,
+  autocomplete: PropTypes.string.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  id: PropTypes.string,
   label: PropTypes.string,
+  touched: PropTypes.bool,
+  shouldValidation: PropTypes.bool,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  errorMessage: PropTypes.string,
 };
 
 export default Input;

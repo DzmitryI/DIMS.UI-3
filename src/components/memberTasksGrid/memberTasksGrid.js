@@ -4,43 +4,34 @@ import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
-import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate } from '../helpersComponents';
+import ErrorIndicator from '../errorIndicator';
+import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate, updateMemberTasks } from '../helpersComponents';
 import { withFetchService, withRole, withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
 const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, fetchService, theme, email }) => {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [onNotification, setOnNotification] = useState(true);
+  const [onNotification, setOnNotification] = useState(false);
   const [notification, setNotification] = useState({});
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { ADMIN, MENTOR } = TABLE_ROLES;
-
-  const updateMemberTasks = async (userId) => {
-    let tasks = [];
-    const userTasks = await fetchService.getAllUserTasks();
-    if (userTasks.length) {
-      for (const userTask of userTasks) {
-        if (userTask.userId === userId) {
-          const responseTasks = await fetchService.getTask(userTask.taskId);
-          const responseTasksState = await fetchService.getTaskState(userTask.stateId);
-          if (responseTasks.length && responseTasksState.data) {
-            const { userTaskId, taskId, userId, stateId } = userTask;
-            const [responseTask] = responseTasks;
-            const { name, deadlineDate, startDate } = responseTask;
-            const { stateName } = responseTasksState.data;
-            tasks = tasks.concat({ userTaskId, taskId, userId, name, stateId, deadlineDate, startDate, stateName });
-          }
-        }
-      }
-    }
-    return tasks;
-  };
+  const role = email === ADMIN || email === MENTOR;
 
   useEffect(() => {
     const fetchData = async () => {
-      const userTasks = await updateMemberTasks(userId);
-      setUserTasks(userTasks);
-      setLoading(false);
+      try {
+        const userTasks = await updateMemberTasks(userId);
+        setUserTasks(userTasks);
+        setLoading(false);
+        setOnNotification(false);
+      } catch ({ message }) {
+        setLoading(false);
+        setError(true);
+        setErrorMessage(message);
+      }
     };
     fetchData();
   }, [userId]);
@@ -66,16 +57,19 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
     } else {
       taskState.stateName = 'Fail';
     }
-    const response = await fetchService.editTaskState(stateId, taskState);
-    if (response) {
+    try {
+      await fetchService.editTaskState(stateId, taskState);
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
       setUserTasks(userTasks);
       setNotification({ title: `Task state was edited` });
       setOnNotification(true);
-      setNotification({});
-      setOnNotification(false);
+    } catch ({ message }) {
+      setLoading(false);
+      setError(true);
+      setErrorMessage(message);
     }
+    setTimeout(() => setOnNotification(false), 1000);
   };
 
   const renderTBody = (userTasks) => {
@@ -97,14 +91,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
           <Cell className={`td-${stateName}`} value={stateName} />
           <Cell
             id={name}
-            value={
-              <Button
-                className='btn-progress'
-                onClick={onTrackClickHandler}
-                name='Track'
-                disabled={email === ADMIN || email === MENTOR}
-              />
-            }
+            value={<Button className='btn-progress' onClick={onTrackClickHandler} name='Track' disabled={role} />}
           />
           <Cell
             id={stateId}
@@ -115,15 +102,9 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
                   onClick={onStateTaskClick}
                   id='success'
                   name='Success'
-                  disabled={!(email === ADMIN || email === MENTOR)}
+                  disabled={!role}
                 />
-                <Button
-                  className='btn-fail'
-                  onClick={onStateTaskClick}
-                  id='fail'
-                  name='Fail'
-                  disabled={!(email === ADMIN || email === MENTOR)}
-                />
+                <Button className='btn-fail' onClick={onStateTaskClick} id='fail' name='Fail' disabled={!role} />
               </>
             }
           />
@@ -138,18 +119,32 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
 
   return (
     <div className='grid-wrap'>
-      {(email === ADMIN || email === MENTOR) && <Link to='/MembersGrid'>back to grid</Link>}
+      {role && <Link to='/MembersGrid'>back to grid</Link>}
       <h1>Member's Tasks Manage Grid</h1>
-      <table border='1' className={`${theme}--table`}>
-        <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
-        <thead>
-          <HeaderTable arr={headerMemberTasksGrid} />
-        </thead>
-        <tbody>{renderTBody(userTasks)}</tbody>
-      </table>
+      {error ? (
+        <ErrorIndicator errorMessage={errorMessage} />
+      ) : (
+        <table border='1' className={`${theme}--table`}>
+          <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
+          <thead>
+            <HeaderTable arr={headerMemberTasksGrid} />
+          </thead>
+          <tbody>{renderTBody(userTasks)}</tbody>
+        </table>
+      )}
       {onNotification && <DisplayNotification notification={notification} />}
     </div>
   );
+};
+
+MemberTasksGrid.propTypes = {
+  userId: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  onTrackClick: PropTypes.func.isRequired,
+  onOpenTaskTracksClick: PropTypes.func.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  theme: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
 };
 
 export default withTheme(withRole(withFetchService(MemberTasksGrid)));
