@@ -1,7 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import imgMail from '../../../assets/images/mail.png';
 import imgGit from '../../../assets/images/git.png';
-import PropTypes from 'prop-types';
 import SocialLink from '../socialLink';
 import { withTheme } from '../../../hoc';
 
@@ -13,7 +13,8 @@ const Footer = ({ theme }) => {
         <SocialLink href='https://github.com/DzmitryI' src={imgGit} alt='git icon' />
       </div>
       <span>
-        <sup>&copy;</sup> 2020 Devincubator.
+        <sup>&copy;</sup>
+        2020 Devincubator.
       </span>
     </footer>
   );

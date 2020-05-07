@@ -1,7 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import imgError from '../../assets/images/error.png';
 import './errorIndicator.scss';
-import PropTypes from 'prop-types';
 
 const ErrorIndicator = ({ errorMessage }) => {
   return (
@@ -14,7 +14,7 @@ const ErrorIndicator = ({ errorMessage }) => {
 };
 
 ErrorIndicator.propTypes = {
-  errorMessage: PropTypes.string,
+  errorMessage: PropTypes.string.isRequired,
 };
 
 export default ErrorIndicator;

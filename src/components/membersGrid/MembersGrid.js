@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
@@ -10,7 +11,6 @@ import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
-import PropTypes from 'prop-types';
 
 class MembersGrid extends Component {
   async componentDidMount() {
@@ -21,13 +21,6 @@ class MembersGrid extends Component {
     if (this.props.isRegister !== prevProps.isRegister) {
       await this.props.fetchMembers();
     }
-  }
-
-  countAge(value) {
-    const curDate = new Date();
-    const birthDate = new Date(value);
-    const age = curDate.getFullYear() - birthDate.getFullYear();
-    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
   }
 
   onRegisterClick = () => {
@@ -64,6 +57,13 @@ class MembersGrid extends Component {
     const { name } = this.props.members.find((member) => member.userId === memberId);
     this.props.onProgressClick(memberId, name);
   };
+
+  countAge(value) {
+    const curDate = new Date();
+    const birthDate = new Date(value);
+    const age = curDate.getFullYear() - birthDate.getFullYear();
+    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
+  }
 
   renderTBody = (members, directions) => {
     return members.map((member, index) => {
@@ -126,14 +126,14 @@ class MembersGrid extends Component {
 }
 
 MembersGrid.propTypes = {
-  isRegister: PropTypes.bool,
-  members: PropTypes.array,
-  directions: PropTypes.array,
-  loading: PropTypes.bool,
-  error: PropTypes.bool,
-  errorMessage: PropTypes.string,
-  onNotification: PropTypes.bool,
-  notification: PropTypes.object,
+  isRegister: PropTypes.bool.isRequired,
+  members: PropTypes.array.isRequired,
+  directions: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  onNotification: PropTypes.bool.isRequired,
+  notification: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = ({

@@ -1,6 +1,6 @@
 import React from 'react';
-import { withTheme } from '../../../hoc';
 import PropTypes from 'prop-types';
+import { withTheme } from '../../../hoc';
 
 const Button = ({ type, id, name, className, onClick, disabled, theme }) => {
   id = id || name;
@@ -21,9 +21,9 @@ Button.propTypes = {
   type: PropTypes.string,
   id: PropTypes.string,
   className: PropTypes.string,
-  onClick: PropTypes.func,
+  onClick: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  theme: PropTypes.string,
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(Button);

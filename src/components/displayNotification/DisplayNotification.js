@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import { createNotify } from '../../services/helpers';
-import PropTypes from 'prop-types';
 import 'react-toastify/dist/ReactToastify.css';
 
 class DisplayNotification extends Component {
   componentDidMount() {
-    const { status = 'success', title = '' } = this.props.notification;
+    const {
+      notification: { status = 'success', title = '' },
+    } = this.props;
     this.notify(status, title);
   }
 
@@ -28,8 +30,8 @@ class DisplayNotification extends Component {
 }
 
 DisplayNotification.propTypes = {
-  status: PropTypes.string,
-  title: PropTypes.string,
+  status: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default DisplayNotification;
