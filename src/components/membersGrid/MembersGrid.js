@@ -67,7 +67,7 @@ class MembersGrid extends Component {
 
   renderTBody = (members, directions) => {
     return members.map((member, index) => {
-      const { userId, fullName, directionId, education, startDate, birthDate } = member;
+      const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
         <tr key={userId} id={userId}>
@@ -76,7 +76,7 @@ class MembersGrid extends Component {
           <Cell value={`${!!curDirect && curDirect.name}`} />
           <Cell value={`${education}`} />
           <Cell value={getDate(startDate)} />
-          <Cell value={`${this.countAge(birthDate)}`} />
+          <Cell value={(birthDate && `${this.countAge(birthDate)}`) || age} />
           <Cell
             className='td buttons-wrap'
             value={
@@ -134,6 +134,7 @@ MembersGrid.propTypes = {
   errorMessage: PropTypes.string.isRequired,
   onNotification: PropTypes.bool.isRequired,
   notification: PropTypes.object.isRequired,
+  theme: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = ({
