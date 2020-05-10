@@ -2,7 +2,8 @@
   "name": "dev-incubator-management-system",
   "version": "0.1.0",
   "engines": {
-    "node": "13.12.x"
+    "node": "13.12.x",
+    "npm": "6.13.6"
   },
   "description": "It is a system for getting tasks and tracking time.",
   "author": "Dmitriy Ivanov",
