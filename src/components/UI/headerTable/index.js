@@ -1,5 +1,3 @@
-import HeaderTable from './headerTable';
-
-import './headerTable.scss';
+import HeaderTable from './HeaderTable';
 
 export default HeaderTable;

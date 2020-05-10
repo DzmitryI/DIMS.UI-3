@@ -1,0 +1,47 @@
+$dark: rgb(0, 0, 0);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+
+.switch-btn {
+  display: inline-block;
+  position: relative;
+  width: 3.5rem;
+  height: 1.8rem;
+  border: 1px solid $dark;
+  border-radius: 1rem;
+  background-color: $dark;
+  z-index: 0;
+  cursor: pointer;
+  transition-duration: 300ms;
+  &::after {
+    content: '';
+    width: 1.6rem;
+    height: 1.6rem;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    border-radius: 50%;
+    background-color: $light;
+    z-index: 1;
+    transition-duration: 300ms;
+    box-shadow: 0 0 2px 3px $blue;
+  }
+}
+
+.switch-btn__on {
+  box-shadow: 0 0 2px 3px $light;
+  &::after {
+    left: 1.8rem;
+  }
+}
+
+.switch-btn--moon,
+.switch-btn--sun {
+  position: absolute;
+  top: 1px;
+  z-index: 0;
+}
+
+.switch-btn--sun {
+  left: 1.8rem;
+}

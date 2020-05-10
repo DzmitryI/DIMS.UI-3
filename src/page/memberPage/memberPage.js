@@ -1,154 +1,113 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
+import Spinner from '../../components/spinner';
+import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
+import { createControl, validateControl } from '../../services/helpers.js';
+import { clearOblectValue, updateInput } from '../helpersPage';
+import { h1MemberPage } from '../../components/helpersComponents';
+import { withFetchService } from '../../hoc';
+import PropTypes from 'prop-types';
 
-export default class MemberPage extends Component {
+class MemberPage extends Component {
   state = {
     isFormValid: false,
     memberInput: {
-      name: {
-        value: '',
-        type: 'text',
-        label: 'Name',
-        errorMessage: 'enter user name',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          name: true,
+      name: createControl(
+        {
+          label: 'Name',
+          errorMessage: 'enter user name',
         },
-      },
-      lastName: {
-        value: '',
-        type: 'text',
-        label: 'Last name',
-        errorMessage: 'enter user last name',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          lastName: true,
+        { required: true },
+      ),
+      lastName: createControl(
+        {
+          label: 'Last name',
+          errorMessage: 'enter user last name',
         },
-      },
-      email: {
-        value: '',
-        type: 'text',
-        label: 'Email',
-        errorMessage: 'Enter email',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          email: true,
+        { required: true },
+      ),
+      email: createControl(
+        {
+          label: 'Email',
+          errorMessage: 'enter correct email',
+          placeholder: 'xxxx@xx',
         },
-      },
-      education: {
-        value: '',
-        type: 'text',
-        label: 'Education',
-        errorMessage: 'Enter education',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          education: true,
+        { required: true, email: true },
+      ),
+      education: createControl(
+        {
+          label: 'Education',
+          errorMessage: 'enter education',
         },
-      },
-      birthDate: {
-        value: '',
-        type: 'date',
-        label: 'Bith date',
-        errorMessage: 'Enter bith date',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          birthDate: true,
+        { required: true },
+      ),
+      birthDate: createControl(
+        {
+          label: 'Bith date',
+          errorMessage: 'enter bith date',
+          type: 'date',
         },
-      },
-      universityAverageScore: {
-        value: '',
-        type: 'number',
-        label: 'University average score',
-        errorMessage: 'Enter university average score',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          universityAverageScore: true,
+        { required: true },
+      ),
+      universityAverageScore: createControl(
+        {
+          label: 'University average score',
+          errorMessage: 'enter university average score',
+          type: 'number',
         },
-      },
-      mathScore: {
-        value: '',
-        type: 'number',
-        label: 'Math score',
-        errorMessage: 'Enter math score',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          mathScore: true,
+        { required: true },
+      ),
+      mathScore: createControl(
+        {
+          label: 'Math score',
+          errorMessage: 'enter math score',
+          type: 'number',
         },
-      },
-      address: {
-        value: '',
-        type: 'text',
-        label: 'Address',
-        errorMessage: 'Enter address',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          address: true,
+        { required: true },
+      ),
+      address: createControl(
+        {
+          label: 'Address',
+          errorMessage: 'enter address',
         },
-      },
-      mobilePhone: {
-        value: '',
-        type: 'text',
-        label: 'Mobile phone',
-        errorMessage: 'Enter mobile phone',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          mobilePhone: true,
+        { required: true },
+      ),
+      mobilePhone: createControl(
+        {
+          label: 'Mobile phone',
+          errorMessage: 'enter mobile phone',
+          placeholder: '+375 xx xxxxxxx',
         },
-      },
-      skype: {
-        value: '',
-        type: 'text',
-        label: 'Skype',
-        errorMessage: 'Enter skype',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          skype: true,
+        { required: true },
+      ),
+      skype: createControl(
+        {
+          label: 'Skype',
+          errorMessage: 'enter skype',
         },
-      },
-      startDate: {
-        value: '',
-        type: 'date',
-        label: 'Start date',
-        errorMessage: 'Enter start date',
-        valid: false,
-        touched: false,
-        validation: {
-          required: true,
-          startDate: true,
+        { required: true },
+      ),
+      startDate: createControl(
+        {
+          label: 'Start date',
+          errorMessage: 'enter start date',
+          type: 'date',
         },
-      },
+        { required: true },
+      ),
     },
     memberSelect: {
       direction: {
         label: 'Direction',
+        name: 'direction',
         options: [],
       },
       sex: {
         label: 'Sex',
+        name: 'sex',
         options: [
           {
             name: 'Male',
@@ -177,71 +136,73 @@ export default class MemberPage extends Component {
       sex: 'sex1',
     },
     userId: null,
+    disabled: false,
+    loading: true,
     directions: [],
+    onNotification: false,
+    notification: {},
+    error: false,
+    errorMessage: '',
   };
 
-  fetchService = new FetchService();
-
-  validateControl(value, validation) {
-    if (!validation) {
-      return true;
-    }
-    let isValid = true;
-    if (validation.required) {
-      isValid = value.trim() !== '';
-    }
-    return isValid;
-  }
-
   componentDidUpdate(prevProps) {
-    const { member, directions } = this.props;
-
-    if (member.length > 0) {
-      const [{ userId, values }] = member;
-      if (this.state.memberSelect.direction.options.length === 0) {
-        const memberSelect = { ...this.state.memberSelect };
+    const { member, directions, title } = this.props;
+    const {
+      memberSelect: { direction, sex },
+    } = this.state;
+    let disabled = false;
+    if (title !== prevProps.title && title === h1MemberPage.get('Create')) {
+      this.setState({ loading: false });
+    }
+    if (member.length) {
+      const [{ userId, ...values }] = member;
+      if (!direction.options.length && directions.length) {
+        const { memberSelect } = this.state;
         memberSelect.direction.options = directions;
         this.setState({ memberSelect });
       }
-
-      if (this.props.member !== prevProps.member && this.props.member.length !== 0) {
-        const memberInput = { ...this.state.memberInput };
-        Object.entries(values).forEach(([key, val]) => {
-          if (memberInput[key] !== undefined) {
-            memberInput[key].value = val;
-            memberInput[key].touched = true;
-            memberInput[key].valid = true;
-          }
-        });
-
-        const memberSelect = { ...this.state.memberSelect };
+      if (member !== prevProps.member) {
+        const memberInput = updateInput(this.state.memberInput, values);
+        const { memberSelect } = this.state;
         Object.keys(memberSelect).forEach((key) => {
-          if (key === 'direction') {
+          if (key === direction.name) {
             memberSelect[key].options = directions;
-            memberSelect[key].options.forEach((el, index) => {
-              if (el.value === values.directionId) {
+            memberSelect[key].options.forEach((direction, index) => {
+              if (direction.value === values.directionId) {
                 memberSelect[key].options[index].selected = true;
               }
             });
-          } else if (key === 'sex') {
-            memberSelect[key].options.forEach((el, index) => {
-              if (el.value === values.sex) {
+          } else if (key === sex.name) {
+            memberSelect[key].options.forEach((sex, index) => {
+              if (sex.value === values.sex) {
                 memberSelect[key].options[index].selected = true;
               }
             });
           }
         });
-        this.setState({ memberInput, memberSelect, userId, isFormValid: true, member: values, directions });
+        if (title === h1MemberPage.get('Detail')) {
+          disabled = true;
+        }
+        this.setState({
+          memberInput,
+          memberSelect,
+          userId,
+          isFormValid: true,
+          member: values,
+          directions,
+          disabled,
+          loading: false,
+        });
       }
     }
   }
 
-  handleImput = ({ target: { value } }, controlName) => {
-    const memberInput = { ...this.state.memberInput };
-    const member = { ...this.state.member };
+  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  handleInput = ({ target: { value } }, controlName) => {
+    const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
-    memberInput[controlName].valid = this.validateControl(value, memberInput[controlName].validation);
+    memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
     member[controlName] = value;
     let isFormValid = true;
     Object.keys(memberInput).forEach((name) => {
@@ -250,9 +211,13 @@ export default class MemberPage extends Component {
     this.setState({ memberInput, member, isFormValid });
   };
 
+  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
   handleSelect = ({ target }) => {
-    const member = { ...this.state.member };
-    if (target.id === 'direction') {
+    const {
+      member,
+      memberSelect: { direction },
+    } = this.state;
+    if (target.id === direction.name) {
       member['directionId'] = target.options[target.selectedIndex].value;
     } else {
       member[target.id] = target.options[target.selectedIndex].value;
@@ -260,61 +225,85 @@ export default class MemberPage extends Component {
     this.setState({ member });
   };
 
-  createMemberHandler = async () => {
-    const { userId, member, directions } = this.state;
-    if (!userId) {
-      this.fetchService.setMember(member);
-    } else {
-      this.fetchService.editMember(userId, member);
+  submitHandler = (event) => {
+    event.preventDefault();
+  };
+
+  async changeMember(value) {
+    const { userId, member, memberInput, directions } = this.state;
+    const { fetchService, onRegisterClick } = this.props;
+    let notification = '';
+    try {
+      if (value === 'edit') {
+        await fetchService.editMember(userId, member);
+        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
+      } else {
+        await fetchService.setMember(member);
+        notification = { title: `New member: ${member.name} ${member.lastName} was added` };
+      }
+      this.setState({ onNotification: true, notification });
+      const res = clearOblectValue(memberInput, member);
+      this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
+      onRegisterClick(directions);
+    } catch ({ message }) {
+      this.setState({ onNotification: true, notification: { status: 'error', title: message } });
     }
-    this.setState({ member: {}, memberInput: {}, userId: '' });
-    this.props.onRegisterClick(directions);
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+  }
+
+  createMemberHandler = () => {
+    if (!this.state.userId) {
+      this.changeMember('add');
+    } else {
+      this.changeMember('edit');
+    }
   };
 
   buttonCloseClick = () => {
-    const { directions } = this.state;
-    const memberInput = { ...this.state.memberInput };
-    const member = { ...this.state.member };
-    Object.keys(memberInput).forEach((key) => {
-      if (memberInput[key] !== undefined) {
-        memberInput[key].value = '';
-        memberInput[key].touched = false;
-        memberInput[key].valid = false;
-        member[key] = '';
-      }
+    const { directions, memberInput, member } = this.state;
+    const res = clearOblectValue(memberInput, member);
+    this.setState({
+      memberInput: res.objInputClear,
+      member: res.objElemClear,
+      userId: '',
+      isFormValid: false,
+      disabled: false,
+      loading: true,
     });
-    this.setState({ memberInput, userId: '', isFormValid: false, member });
     this.props.onRegisterClick(directions);
   };
 
   renderInputs() {
-    return Object.keys(this.state.memberInput).map((controlName, index) => {
-      const control = this.state.memberInput[controlName];
+    const { disabled, memberInput } = this.state;
+    return Object.keys(memberInput).map((controlName, index) => {
+      const control = memberInput[controlName];
       return (
         <Input
           key={controlName + index}
-          id={controlName}
+          id={controlName + index}
           type={control.type}
           value={control.value}
           valid={control.valid}
           touched={control.touched}
           label={control.label}
+          disabled={disabled}
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
-          onChange={(event) => this.handleImput(event, controlName)}
+          onChange={this.onHandlelInput(controlName)}
+          placeholder={control.placeholder}
         />
       );
     });
   }
 
   renderSelect() {
-    return Object.keys(this.state.memberSelect).map((controlName) => {
-      const control = this.state.memberSelect[controlName];
+    const { memberSelect, member, disabled } = this.state;
+    return Object.keys(memberSelect).map((controlName) => {
+      const control = memberSelect[controlName];
       let defaultValue = false;
       let options = [];
       const { directions } = this.props;
-      const member = { ...this.state.member };
-      if (controlName === 'direction') {
+      if (controlName === memberSelect.direction.name) {
         defaultValue = member.directionId;
         options = directions;
       } else {
@@ -323,43 +312,70 @@ export default class MemberPage extends Component {
       }
       return (
         <Select
-          key={controlName}
           options={options}
           defaultValue={defaultValue}
           label={control.label}
           name={controlName}
+          key={controlName}
           id={controlName}
-          onChange={(event) => this.handleSelect(event, controlName)}
+          disabled={disabled}
+          onChange={this.onHandlelSelect(controlName)}
         />
       );
     });
   }
 
   render() {
-    const { name, lastName } = this.state.member;
+    const {
+      member: { name, lastName },
+      disabled,
+      loading,
+      isFormValid,
+      onNotification,
+      notification,
+    } = this.state;
     const { isOpen, title } = this.props;
+
     return (
       <>
-        <div className={!isOpen ? `member-wrap close` : `member-wrap`}>
+        {onNotification && <DisplayNotification notification={notification} />}
+        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
-          <form className='member-form'>
-            <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-            {this.renderInputs()}
-            {this.renderSelect()}
-            <div className='form-group row'>
-              <Button
-                className='btn btn-add'
-                disabled={!this.state.isFormValid}
-                type='submit'
-                onClick={this.createMemberHandler}
-                name='Save'
-              />
-              <Button className='btn btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
-            </div>
+          <form onSubmit={this.submitHandler} className='page-form'>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
+                {this.renderInputs()}
+                {this.renderSelect()}
+                <div className='form-group row'>
+                  <Button
+                    className='btn-add'
+                    disabled={disabled || !isFormValid}
+                    type='submit'
+                    onClick={this.createMemberHandler}
+                    name='Save'
+                  />
+                  <Button className='btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
+                </div>
+              </>
+            )}
           </form>
         </div>
-        {isOpen ? <Backdrop /> : null}
+        {isOpen && <Backdrop />}
       </>
     );
   }
 }
+
+MemberPage.propTypes = {
+  member: PropTypes.array.isRequired,
+  directions: PropTypes.array.isRequired,
+  title: PropTypes.string.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  onRegisterClick: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+};
+
+export default withFetchService(MemberPage);

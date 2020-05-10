@@ -1,9 +1,34 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import App from './App';
+import { configure, mount } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import App from './components/app';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
-test('renders learn react link', () => {
-  const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+configure({
+  adapter: new Adapter(),
+});
+
+describe('<App />', () => {
+  let wrapper;
+  const props = {
+    token: '123',
+    email: '123@mail.ru',
+    base: '',
+  };
+  const store = createStore(() => props);
+
+  beforeEach(() => {
+    wrapper = mount(
+      <Provider store={store}>
+        <App />
+      </Provider>,
+    );
+    console.log(wrapper.debug());
+  });
+
+  it('should render table with 7 table heads', () => {
+    // expect(wrapper.find('th')).toHaveLength(7);
+    console.log(wrapper.debug());
+  });
 });

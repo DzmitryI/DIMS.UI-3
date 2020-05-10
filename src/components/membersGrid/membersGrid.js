@@ -1,34 +1,26 @@
 import React, { Component } from 'react';
-import FetchService from '../../services/fetch-service';
+import { connect } from 'react-redux';
 import Spinner from '../spinner';
+import DisplayNotification from '../displayNotification';
+import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
+import ButtonLink from '../UI/buttonLink';
+import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
+import { withTheme } from '../../hoc';
+import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
+import Cell from '../UI/cell/Cell';
+import PropTypes from 'prop-types';
 
-export default class MembersGrid extends Component {
-  state = {
-    itemList: null,
-    members: [],
-    directions: [],
-    loading: true,
-    headerTable: ['#', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''],
-    h1MemberPage: null,
-  };
-
-  fetchService = new FetchService();
-
+class MembersGrid extends Component {
   async componentDidMount() {
-    const members = await this.fetchService.getAllMember();
-    const directions = await this.fetchService.getDirection();
-    let h1MemberPage = new Map();
-    h1MemberPage.set('Create', 'Create Member page');
-    h1MemberPage.set('Edit', 'Edit Member page');
-    h1MemberPage.set('Detail', 'Detail Member page');
-    this.setState({
-      members,
-      directions,
-      loading: false,
-      h1MemberPage,
-    });
+    await this.props.fetchMembers();
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (this.props.isRegister !== prevProps.isRegister) {
+      await this.props.fetchMembers();
+    }
   }
 
   countAge(value) {
@@ -38,76 +30,131 @@ export default class MembersGrid extends Component {
     return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
   }
 
+  onRegisterClick = () => {
+    const { directions } = this.props;
+    this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+  };
+
   onChangeClick = ({ target }) => {
-    const editMemberId = target.closest('tr').id;
-    const curMembers = this.state.members.filter((el) => el.userId === editMemberId);
-    const { directions, h1MemberPage } = this.state;
-    if (target.tagName === 'BUTTON') {
-      this.props.onRegisterClick(directions, h1MemberPage.get('Edit'), curMembers);
+    const { directions, members, onRegisterClick } = this.props;
+    const memberId = target.closest('tr').id;
+    const member = members.filter((member) => member.userId === memberId);
+    if (target.id === 'edit') {
+      onRegisterClick(directions, h1MemberPage.get('Edit'), member);
     } else {
-      this.props.onRegisterClick(directions, h1MemberPage.get('Detail'), curMembers);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), member);
     }
   };
 
   onDeleteClick = async ({ target }) => {
-    const delMemberId = target.closest('tr').id;
-    const curMembers = this.state.members;
-    this.setState({ members: curMembers.filter((el) => el.userId !== delMemberId) });
-    const getData = this.fetchService.delMember;
-    try {
-      await getData(delMemberId);
-    } catch (err) {
-      alert(err);
-    }
+    const memberId = target.closest('tr').id;
+    const { members, fetchMembersDelete, fetchMembers } = this.props;
+    await fetchMembersDelete(memberId, members);
+    await fetchMembers();
+  };
+
+  onShowClick = ({ target }) => {
+    const memberId = target.closest('tr').id;
+    const { name } = this.props.members.find((member) => member.userId === memberId);
+    this.props.onTaskClick(memberId, name);
+  };
+
+  onProgressClick = ({ target }) => {
+    const memberId = target.closest('tr').id;
+    const { name } = this.props.members.find((member) => member.userId === memberId);
+    this.props.onProgressClick(memberId, name);
+  };
+
+  renderTBody = (members, directions) => {
+    return members.map((member, index) => {
+      const { userId, fullName, directionId, education, startDate, birthDate } = member;
+      const curDirect = directions.find((direction) => direction.value === directionId);
+      return (
+        <tr key={userId} id={userId}>
+          <Cell className='td index' value={index + 1} />
+          <Cell value={<span onClick={this.onChangeClick}>{`${fullName}`}</span>} />
+          <Cell value={`${!!curDirect && curDirect.name}`} />
+          <Cell value={`${education}`} />
+          <Cell value={getDate(startDate)} />
+          <Cell value={`${this.countAge(birthDate)}`} />
+          <Cell
+            className='td buttons-wrap'
+            value={
+              <>
+                <ButtonLink
+                  className='btn-progress'
+                  onClick={this.onProgressClick}
+                  name='Progress'
+                  to={'/MemberProgressGrid'}
+                />
+                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
+                <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+              </>
+            }
+          />
+        </tr>
+      );
+    });
   };
 
   render() {
-    const { members, directions, loading, headerTable, h1MemberPage } = this.state;
-    const { onRegisterClick, onTaskClick, isOpen } = this.props;
+    const { members, directions, loading, onNotification, notification, theme, error, errorMessage } = this.props;
     if (loading) {
       return <Spinner />;
     }
     return (
-      <div className={isOpen ? `members-wrap close` : `members-wrap`}>
+      <div className='grid-wrap'>
         <h1>Members Manage Grid</h1>
-        <Button
-          className='btn btn-register'
-          onClick={() => onRegisterClick(directions, h1MemberPage.get('Create'))}
-          name='Register'
-        />
-        <table border='1'>
-          <thead>
-            <HeaderTable arr={headerTable} />
-          </thead>
-          <tbody>
-            {members.map((member, index) => {
-              const {
-                userId,
-                values: { name, lastName, directionId, education, startDate, birthDate },
-              } = member;
-              const curDirect = directions.find((el) => el.value === directionId);
-              return (
-                <tr key={userId} id={userId}>
-                  <td className='td'>{index + 1}</td>
-                  <td className='td'>
-                    <span onClick={this.onChangeClick}>{`${name} ${lastName}`}</span>
-                  </td>
-                  <td className='td'>{`${curDirect.name}`}</td>
-                  <td className='td'>{`${education}`}</td>
-                  <td className='td'>{`${startDate}`}</td>
-                  <td className='td'>{`${this.countAge(birthDate)}`}</td>
-                  <td className='td buttons-wrap'>
-                    <Button className='btn btn-progress' name='Progress' />
-                    <Button className='btn btn-tasks' onClick={() => onTaskClick(name)} name='Tasks' />
-                    <Button className='btn btn-edit' onClick={this.onChangeClick} name='Edit' />
-                    <Button className='btn btn-delete' onClick={this.onDeleteClick} name='Delete' />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {error ? (
+          <ErrorIndicator errorMessage={errorMessage} />
+        ) : (
+          <>
+            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+            <table border='1' className={`${theme}--table`}>
+              <thead>
+                <HeaderTable arr={headerMembersGrid} />
+              </thead>
+              <tbody>{members && this.renderTBody(members, directions)}</tbody>
+            </table>
+          </>
+        )}
+        {onNotification && <DisplayNotification notification={notification} />}
       </div>
     );
   }
 }
+
+MembersGrid.propTypes = {
+  isRegister: PropTypes.bool,
+  members: PropTypes.array,
+  directions: PropTypes.array,
+  loading: PropTypes.bool,
+  error: PropTypes.bool,
+  errorMessage: PropTypes.string,
+  onNotification: PropTypes.bool,
+  notification: PropTypes.object,
+};
+
+const mapStateToProps = ({
+  members: { members, directions, loading, error, errorMessage, onNotification, notification },
+}) => {
+  return {
+    members,
+    directions,
+    loading,
+    error,
+    errorMessage,
+    onNotification,
+    notification,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchMembers: () => dispatch(fetchMembers()),
+    fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));

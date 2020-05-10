@@ -1,4 +1,4 @@
-import Backdrop from './backdrop';
+import Backdrop from './Backdrop';
 
 import './backdrop.scss';
 

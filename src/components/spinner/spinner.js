@@ -1,9 +1,10 @@
 import React from 'react';
+import { withTheme } from '../../hoc';
 
-const spinner = () => {
+const Spinner = ({ theme }) => {
   return (
-    <div className='loadingio-spinner-ripple-byvqo72txar'>
-      <div className='ldio-kpdxv7w12ms'>
+    <div className={`loadingio-spinner-ripple ${theme}`}>
+      <div className='ldio'>
         <div></div>
         <div></div>
       </div>
@@ -11,4 +12,4 @@ const spinner = () => {
   );
 };
 
-export default spinner;
+export default withTheme(Spinner);

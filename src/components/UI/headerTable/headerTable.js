@@ -1,14 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const HeaderTable = ({ arr }) => {
-  const renderItems = (arr) => {
-    return arr.map((el) => {
-      return <th>{el}</th>;
-    });
-  };
+  const renderItems = (headers) => headers.map((header, index) => <th key={header + index}>{header}</th>);
+  return <tr>{renderItems(arr)}</tr>;
+};
 
-  const items = renderItems(arr);
-  return <tr>{items}</tr>;
+HeaderTable.defaultProps = {
+  arr: [],
+};
+
+HeaderTable.propTypes = {
+  arr: PropTypes.array.isRequired,
 };
 
 export default HeaderTable;

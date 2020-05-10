@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Spinner/> Snapshot Spinner component 1`] = `
+<Component>
+  <Spinner
+    theme="dark"
+  >
+    <div
+      className="loadingio-spinner-ripple dark"
+    >
+      <div
+        className="ldio"
+      >
+        <div />
+        <div />
+      </div>
+    </div>
+  </Spinner>
+</Component>
+`;

@@ -1,3 +1,5 @@
-import layout from './layout';
+import withFetchService from './withFetchService';
+import withTheme from './withTheme';
+import withRole from './withRole';
 
-export default layout;
+export { withFetchService, withTheme, withRole };
