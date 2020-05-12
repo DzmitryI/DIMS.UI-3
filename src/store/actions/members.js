@@ -22,7 +22,6 @@ export function fetchMembers() {
     try {
       const members = await fetchService.getAllMember();
       const directions = await fetchService.getDirection();
-
       dispatch(fetchMembersSuccess(members, directions));
     } catch (error) {
       dispatch(fetchMembersError(error.message));

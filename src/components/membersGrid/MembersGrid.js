@@ -58,12 +58,12 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
-  countAge(value) {
+  countAge = (value) => {
     const curDate = new Date();
     const birthDate = new Date(value);
     const age = curDate.getFullYear() - birthDate.getFullYear();
     return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
-  }
+  };
 
   renderTBody = (members, directions) => {
     return members.map((member, index) => {
@@ -133,8 +133,13 @@ MembersGrid.propTypes = {
   error: PropTypes.bool.isRequired,
   errorMessage: PropTypes.string.isRequired,
   onNotification: PropTypes.bool.isRequired,
-  notification: PropTypes.object.isRequired,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   theme: PropTypes.string.isRequired,
+  onRegisterClick: PropTypes.func.isRequired,
+  onTaskClick: PropTypes.func.isRequired,
+  onProgressClick: PropTypes.func.isRequired,
+  fetchMembersDelete: PropTypes.func.isRequired,
+  fetchMembers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({

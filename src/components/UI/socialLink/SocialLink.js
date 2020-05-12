@@ -15,13 +15,14 @@ SocialLink.defaultProps = {
   className: 'imgMain-wrap',
   href: '#',
   alt: 'icon',
+  src: '#',
 };
 
 SocialLink.propTypes = {
   className: PropTypes.string,
   alt: PropTypes.string,
   href: PropTypes.string,
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
 };
 
 export default SocialLink;

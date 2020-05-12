@@ -14,7 +14,6 @@ class TaskTracksGrid extends Component {
   state = {
     tracks: [],
     loading: true,
-    taskId: '',
     onNotification: false,
     notification: {},
     error: false,
@@ -61,7 +60,7 @@ class TaskTracksGrid extends Component {
     try {
       const { taskId } = this.props;
       const tracks = await updateMemberProgress('', taskId);
-      this.setState({ tracks, taskId, loading: false });
+      this.setState({ tracks, loading: false });
     } catch ({ message }) {
       this.setState({ loading: false, error: true, errorMessage: message });
     }
@@ -139,6 +138,7 @@ TaskTracksGrid.propTypes = {
   fetchService: PropTypes.object.isRequired,
   theme: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
+  onTrackClick: PropTypes.func.isRequired,
 };
 
 export default withFetchService(withRole(withTheme(TaskTracksGrid)));

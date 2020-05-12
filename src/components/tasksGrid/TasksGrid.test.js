@@ -16,10 +16,14 @@ describe('<TasksGrid />', () => {
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
     const contextFetchService = new FetchFirebase();
+    const props = {
+      isTask: true,
+      onCreateTaskClick() {},
+    };
     wrapper = mount(
       <ThemeContextProvider value={contextThemeValue}>
         <FetchServiceProvider value={contextFetchService}>
-          <TasksGrid />
+          <TasksGrid {...props} />
         </FetchServiceProvider>
       </ThemeContextProvider>,
     );
