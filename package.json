@@ -1,10 +1,6 @@
 {
   "name": "dev-incubator-management-system",
-  "version": "0.1.0",
-  "engines": {
-    "node": "13.12.x",
-    "npm": "6.13.6"
-  },
+  "version": "1.0.0",
   "description": "It is a system for getting tasks and tracking time.",
   "author": "Dmitriy Ivanov",
   "license": "MIT",
@@ -67,6 +63,7 @@
     "eslint-plugin-react-hooks": "^2.5.1",
     "husky": "^4.2.5",
     "prettier": "^2.0.4",
-    "pretty-quick": "^2.0.1"
+    "pretty-quick": "^2.0.1",
+    "typescript": "^3.8.3"
   }
 }
