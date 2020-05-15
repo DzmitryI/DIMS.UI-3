@@ -39,4 +39,5 @@ function updateInput(objInput, objValues) {
   });
   return objInputUpdate;
 }
+
 export { clearOblectValue, updateInput };
