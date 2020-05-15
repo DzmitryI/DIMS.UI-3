@@ -11,7 +11,7 @@
     <img alt="License: MIT" src="https://img.shields.io/github/license/DzmitryI/&#34;Dev-Incubator-Management-System&#34;" />
   </a>
 <a href='https://coveralls.io/github/Dev-incubator/DIMS.UI-3'><img src='https://coveralls.io/repos/github/Dev-incubator/DIMS.UI-3/badge.svg' alt='Coverage Status' /></a>
-  [![Build Status](https://travis-ci.com/Dev-incubator/DIMS.UI-3.svg?branch=master)](https://travis-ci.com/Dev-incubator/DIMS.UI-3)
+<a href="https://travis-ci.com/github/Dev-incubator/DIMS.UI-3"><img src="https://travis-ci.com/Dev-incubator/DIMS.UI-3.svg?branch=master" alt="Build Status"></a>
 </p>
 
 > It is a system for getting tasks and tracking time.
