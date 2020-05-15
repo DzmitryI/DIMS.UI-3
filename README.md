@@ -10,6 +10,7 @@
   <a href="https://github.com/DzmitryI/DIMS.UI-3/blob/master/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/github/license/DzmitryI/&#34;Dev-Incubator-Management-System&#34;" />
   </a>
+  [![Coverage Status](https://coveralls.io/repos/github/Dev-incubator/DIMS.UI-3/badge.svg)](https://coveralls.io/github/Dev-incubator/DIMS.UI-3)
 </p>
 
 > It is a system for getting tasks and tracking time.
