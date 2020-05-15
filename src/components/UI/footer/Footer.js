@@ -1,7 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import imgMail from '../../../assets/images/mail.png';
 import imgGit from '../../../assets/images/git.png';
-import PropTypes from 'prop-types';
 import SocialLink from '../socialLink';
 import { withTheme } from '../../../hoc';
 

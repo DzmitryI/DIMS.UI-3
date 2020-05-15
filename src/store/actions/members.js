@@ -7,7 +7,8 @@ import {
   FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
-} from '../actions/actionTypes';
+} from './actionTypes';
+
 let fetchService = '';
 
 export function fetchMembers() {

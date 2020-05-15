@@ -1,10 +1,10 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import MembersGrid from './MembersGrid';
-import { ThemeContextProvider } from '../context';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import MembersGrid from './MembersGrid';
+import { ThemeContextProvider } from '../context';
 
 configure({
   adapter: new Adapter(),

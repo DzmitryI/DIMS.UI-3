@@ -1,6 +1,6 @@
 import React from 'react';
-import { withTheme } from '../../../hoc';
 import PropTypes from 'prop-types';
+import { withTheme } from '../../../hoc';
 
 const Button = ({ type, id, name, className, onClick, disabled, theme }) => {
   id = id || name;

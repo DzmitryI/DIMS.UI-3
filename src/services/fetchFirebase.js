@@ -8,7 +8,9 @@ export default class FetchFirebase {
   };
 
   setSource = async (url, body) => {
-    return await axios.post(`${this.api_base}${url}`, body);
+    const result = await axios.post(`${this.api_base}${url}`, body);
+
+    return result;
   };
 
   editSource = async (url, body) => {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import HeaderTable from '../UI/headerTable';
@@ -8,7 +9,6 @@ import Button from '../UI/button';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, TABLE_ROLES } from '../helpersComponents';
 import { withTheme, withRole, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
-import PropTypes from 'prop-types';
 
 class TaskTracksGrid extends Component {
   state = {

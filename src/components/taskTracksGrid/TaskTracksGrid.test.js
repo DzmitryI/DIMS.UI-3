@@ -1,8 +1,8 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import TaskTracksGrid from './TaskTracksGrid';
 import { MemoryRouter } from 'react-router-dom';
+import TaskTracksGrid from './TaskTracksGrid';
 import { SetUp } from '../helpersComponents';
 
 configure({

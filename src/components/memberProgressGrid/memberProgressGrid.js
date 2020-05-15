@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
 import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
-import PropTypes from 'prop-types';
 
 const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);

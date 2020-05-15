@@ -62,7 +62,7 @@ export function autoLogin() {
 }
 
 export function logout() {
-  for (let key in localStorage) {
+  for (const key in localStorage) {
     if (!localStorage.hasOwnProperty(key)) {
       continue;
     }

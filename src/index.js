@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/app';
 import { BrowserRouter } from 'react-router-dom';
 import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import rootReducer from './store/reducers/rootReducer';
 import thunk from 'redux-thunk';
+import rootReducer from './store/reducers/rootReducer';
+import App from './components/app';
 // import * as serviceWorker from './serviceWorker';
 
 const composeEnhancers =

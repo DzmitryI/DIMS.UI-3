@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
@@ -9,7 +10,6 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
-import PropTypes from 'prop-types';
 
 class MemberPage extends Component {
   state = {
@@ -198,6 +198,7 @@ class MemberPage extends Component {
   }
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
@@ -212,13 +213,14 @@ class MemberPage extends Component {
   };
 
   onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
+
   handleSelect = ({ target }) => {
     const {
       member,
       memberSelect: { direction },
     } = this.state;
     if (target.id === direction.name) {
-      member['directionId'] = target.options[target.selectedIndex].value;
+      member.directionId = target.options[target.selectedIndex].value;
     } else {
       member[target.id] = target.options[target.selectedIndex].value;
     }

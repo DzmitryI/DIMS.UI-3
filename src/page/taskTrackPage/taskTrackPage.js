@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
 import Input from '../../components/UI/input';
@@ -8,7 +9,6 @@ import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
-import PropTypes from 'prop-types';
 
 class TaskTrackPage extends Component {
   state = {
@@ -59,6 +59,7 @@ class TaskTrackPage extends Component {
   }
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const { taskTrackInput, taskTrack } = this.state;
     taskTrackInput[controlName].value = value;
@@ -165,7 +166,7 @@ class TaskTrackPage extends Component {
                     value={taskTrack.trackNote}
                     rows='7'
                     onChange={this.handleTextArea}
-                  ></textarea>
+                  />
                 </div>
                 <div className='form-group row'>
                   <Button

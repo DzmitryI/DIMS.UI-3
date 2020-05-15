@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import ErrorIndicator from '../errorIndicator/ErrorIndicator';
@@ -10,7 +11,6 @@ import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
-import PropTypes from 'prop-types';
 
 class MembersGrid extends Component {
   async componentDidMount() {
@@ -85,9 +85,9 @@ class MembersGrid extends Component {
                   className='btn-progress'
                   onClick={this.onProgressClick}
                   name='Progress'
-                  to={'/MemberProgressGrid'}
+                  to='/MemberProgressGrid'
                 />
-                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
+                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
                 <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
                 <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
               </>

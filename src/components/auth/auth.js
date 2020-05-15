@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
 import Radio from '../UI/radio';
 import { createControl, validateControl } from '../../services/helpers.js';
 import { auth } from '../../store/actions/auth';
-import PropTypes from 'prop-types';
 
 class Auth extends PureComponent {
   state = {
@@ -53,6 +53,7 @@ class Auth extends PureComponent {
   };
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
     authInput[controlName].value = value;
@@ -127,9 +128,11 @@ const mapStateToProps = ({ auth: { onNotification, notification } }) => {
     notification,
   };
 };
+
 const mapDispatchToProps = (dispatch) => {
   return {
     auth: (email, password, base, isLogin) => dispatch(auth(email, password, base, isLogin)),
   };
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

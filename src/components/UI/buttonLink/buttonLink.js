@@ -1,7 +1,7 @@
 import React from 'react';
-import Button from '../button';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import Button from '../button';
 
 const ButtonLink = ({ name, className, onClick, to }) => {
   const result = <Link to={to}>{name}</Link>;

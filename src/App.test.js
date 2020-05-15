@@ -1,9 +1,9 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import App from './components/app';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import App from './components/app';
 
 configure({
   adapter: new Adapter(),

@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
+import PropTypes from 'prop-types';
 import { withTheme } from '../../hoc';
 import imgMoon from '../../assets/images/moon.png';
 import imgSun from '../../assets/images/sun.png';
-import PropTypes from 'prop-types';
 
 const ColorSwitch = ({ theme, onColorSwitchClickHandler }) => {
   const switchBtn = useRef(null);

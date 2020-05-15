@@ -1,14 +1,14 @@
 import React from 'react';
-import ButtonLink from '../buttonLink';
-import ColorSwitch from '../../../components/colorSwitch';
-import DropDownMenu from '../dropDownMenu';
-import { TABLE_ROLES } from '../../helpersComponents';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import ButtonLink from '../buttonLink';
+import ColorSwitch from '../../colorSwitch';
+import DropDownMenu from '../dropDownMenu';
+import { TABLE_ROLES } from '../../helpersComponents';
 import { logout } from '../../../store/actions/auth';
 import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';
-import PropTypes from 'prop-types';
 
 const Header = (props) => {
   const { isAuthenticated, email, theme } = props;
@@ -39,7 +39,7 @@ const Header = (props) => {
       <ul className='nav'>{renderLinks(links)}</ul>
       <ColorSwitch />
       <DropDownMenu to='/AboutApp' />
-      <ButtonLink className='btn-logout' onClick={props.logout} name='Logout' to={'/Auth'} />
+      <ButtonLink className='btn-logout' onClick={props.logout} name='Logout' to='/Auth' />
     </div>
   );
 };

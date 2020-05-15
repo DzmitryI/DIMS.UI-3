@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import { createNotify } from '../../services/helpers';
 import PropTypes from 'prop-types';
+import { createNotify } from '../../services/helpers';
 import 'react-toastify/dist/ReactToastify.css';
 
 class DisplayNotification extends Component {
