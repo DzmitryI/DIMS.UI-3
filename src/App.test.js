@@ -12,9 +12,11 @@ configure({
 describe('<App />', () => {
   let wrapper;
   const props = {
-    token: '123',
-    email: '123@mail.ru',
-    base: '',
+    auth: {
+      token: '123',
+      email: '123@mail.ru',
+      base: '',
+    },
   };
   const store = createStore(() => props);
 
@@ -28,7 +30,7 @@ describe('<App />', () => {
   });
 
   it('should render table with 7 table heads', () => {
-    // expect(wrapper.find('th')).toHaveLength(7);
-    console.log(wrapper.debug());
+    expect(wrapper.find('th')).toHaveLength(7);
+    // console.log(wrapper.debug());
   });
 });
