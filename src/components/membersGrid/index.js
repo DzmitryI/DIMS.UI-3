@@ -1,4 +1,3 @@
-import MembersGrid from './membersGrid';
-import './membersGrid.scss';
+import MembersGrid from './MembersGrid';
 
 export default MembersGrid;

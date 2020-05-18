@@ -1,33 +1,50 @@
+$dark: rgb(0, 0, 0);
+$red: rgb(223, 18, 18);
+$blue: rgb(57, 126, 237);
+
 .form-group {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   margin-bottom: 0.5rem;
+  & span {
+    display: block;
+    margin: 0 1rem;
+    font-size: 12px;
+    font-weight: bold;
+    color: $red;
+  }
 }
 
 label {
   display: block;
-  margin: 0 1em;
+  margin: 0 1rem;
   font-size: inherit;
   font-weight: bold;
-}
-
-.invalid label {
-  color: rgb(223, 18, 18);
+  color: $blue;
 }
 
 input {
   display: block;
   width: 100%;
-  margin: 0 1em;
+  margin: 0 1rem;
   font-size: inherit;
   outline: none;
+  border: solid 1px $dark;
+  padding-left: 3px;
+  &:disabled {
+    cursor: not-allowed;
+  }
+  &:focus {
+    border-color: $blue;
+    box-shadow: 0px 0px 1px 1px $blue;
+  }
 }
-
-span {
-  color: rgb(223, 18, 18);
-  font-size: 12px;
-  font-weight: bold;
-  display: block;
-  margin: 0 1em;
+.invalid {
+  & input {
+    border-color: $red;
+  }
+  & label {
+    color: $red;
+  }
 }

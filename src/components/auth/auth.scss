@@ -1,0 +1,26 @@
+$dark: rgb(54, 60, 72);
+$dark-light: rgba(54, 60, 72, 0.2);
+$light: rgb(255, 255, 255);
+$blue: rgb(57, 126, 237);
+
+.auth {
+  width: 90%;
+  max-width: 31rem;
+  margin: 10rem auto;
+  border: 1px solid $dark;
+  border-radius: 1rem;
+  box-shadow: 0 9px 10px 0 $dark-light;
+  & .base-wrap {
+    width: 50%;
+    height: 4.5rem;
+    margin: 10px auto;
+    padding: 0;
+    border: 1px solid $dark;
+    color: $blue;
+    font-weight: bold;
+    box-shadow: 0 9px 10px 0 $dark-light;
+    & label {
+      color: $blue;
+    }
+  }
+}

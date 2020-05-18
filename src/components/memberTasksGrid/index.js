@@ -1,5 +1,3 @@
-import MemberTasksGrid from './memberTasksGrid';
-
-import './memberTasksGrid.scss';
+import MemberTasksGrid from './MemberTasksGrid';
 
 export default MemberTasksGrid;

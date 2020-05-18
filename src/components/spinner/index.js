@@ -1,4 +1,5 @@
-import Spinner from './spinner';
+import Spinner from './Spinner';
+
 import './spinner.scss';
 
 export default Spinner;
