@@ -6,13 +6,14 @@ import SocialLink from '../socialLink';
 import { withTheme } from '../../../hoc';
 
 const Footer = ({ theme }) => {
+  const date = new Date();
   return (
     <footer className={`footer--${theme}`}>
       <div className='footer-link__wrap'>
         <SocialLink href='mailto:dmitriy.ivanou@gmail.com' src={imgMail} alt='mail icon' />
         <SocialLink href='https://github.com/DzmitryI' src={imgGit} alt='git icon' />
       </div>
-      <span>&copy; 2020 Dev Incubator</span>
+      <span>&copy; {`${date.getFullYear()}`} Dev Incubator</span>
     </footer>
   );
 };

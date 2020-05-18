@@ -7,7 +7,7 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, getDate, countAge } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
@@ -58,13 +58,6 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
-  countAge = (value) => {
-    const curDate = new Date();
-    const birthDate = new Date(value);
-    const age = curDate.getFullYear() - birthDate.getFullYear();
-    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
-  };
-
   renderTBody = (members, directions) => {
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
@@ -76,7 +69,7 @@ class MembersGrid extends Component {
           <Cell value={`${!!curDirect && curDirect.name}`} />
           <Cell value={`${education}`} />
           <Cell value={getDate(startDate)} />
-          <Cell value={(birthDate && `${this.countAge(birthDate)}`) || age} />
+          <Cell value={(birthDate && countAge(birthDate)) || age} />
           <Cell
             className='td buttons-wrap'
             value={
