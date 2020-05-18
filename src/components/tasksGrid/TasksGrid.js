@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
@@ -7,7 +8,6 @@ import ErrorIndicator from '../errorIndicator';
 import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../helpersComponents';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
-import PropTypes from 'prop-types';
 
 class TasksGrid extends Component {
   state = {
@@ -18,18 +18,6 @@ class TasksGrid extends Component {
     error: false,
     errorMessage: '',
   };
-
-  async fetchTasks() {
-    try {
-      const tasks = await this.props.fetchService.getAllTask();
-      this.setState({
-        tasks,
-        loading: false,
-      });
-    } catch ({ message }) {
-      this.setState({ loading: false, error: true, errorMessage: message });
-    }
-  }
 
   componentDidMount() {
     this.fetchTasks();
@@ -75,6 +63,18 @@ class TasksGrid extends Component {
       this.setState({ loading: false, error: true, errorMessage: message });
     }
   };
+
+  async fetchTasks() {
+    try {
+      const tasks = await this.props.fetchService.getAllTask();
+      this.setState({
+        tasks,
+        loading: false,
+      });
+    } catch ({ message }) {
+      this.setState({ loading: false, error: true, errorMessage: message });
+    }
+  }
 
   renderTBody = (tasks) => {
     return tasks.map((task, index) => {
@@ -129,11 +129,10 @@ class TasksGrid extends Component {
 }
 
 TasksGrid.propTypes = {
-  isTask: PropTypes.bool,
-  fetchService: PropTypes.object,
-  theme: PropTypes.string,
-  error: PropTypes.bool,
-  errorMessage: PropTypes.string,
+  isTask: PropTypes.bool.isRequired,
+  fetchService: PropTypes.any.isRequired,
+  theme: PropTypes.string.isRequired,
+  onCreateTaskClick: PropTypes.func.isRequired,
 };
 
 export default withTheme(withFetchService(TasksGrid));

@@ -7,7 +7,8 @@ import {
   FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
-} from '../actions/actionTypes';
+} from './actionTypes';
+
 let fetchService = '';
 
 export function fetchMembers() {
@@ -21,7 +22,6 @@ export function fetchMembers() {
     try {
       const members = await fetchService.getAllMember();
       const directions = await fetchService.getDirection();
-
       dispatch(fetchMembersSuccess(members, directions));
     } catch (error) {
       dispatch(fetchMembersError(error.message));
@@ -35,11 +35,12 @@ export function fetchMembersDelete(memberId, members) {
       const member = members.find((member) => member.userId === memberId);
       const { fullName } = member;
       await deleteAllElements('userId', memberId);
-      const response = await fetchService.delMember(memberId);
-      if (response) {
-        const notification = { status: 'success', title: `${fullName} was deleted` };
-        dispatch(fetchMembersDeleteSuccess(notification));
-        dispatch(fetchMembersDelete());
+      try {
+        await fetchService.delMember(memberId);
+        dispatch(fetchMembersDeleteSuccess({ status: 'success', title: `${fullName} was deleted` }));
+        dispatch(fetchMembersDeleteFinish());
+      } catch (error) {
+        dispatch(fetchMembersError(error.message));
       }
     }
   };

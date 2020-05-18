@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
-import { createControl, validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
-import PropTypes from 'prop-types';
 
 class MemberPage extends Component {
   state = {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
@@ -8,7 +9,6 @@ import { createControl, validateControl } from '../../services/helpers.js';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
-import PropTypes from 'prop-types';
 import ErrorIndicator from '../../components/errorIndicator';
 
 class TaskPage extends Component {
