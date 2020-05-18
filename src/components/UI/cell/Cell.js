@@ -15,7 +15,7 @@ Cell.defaultProps = {
 };
 
 Cell.propTypes = {
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   id: PropTypes.string,
 };
 

@@ -17,7 +17,7 @@ import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
 import FetchAzure from '../../services/fetchAzure';
 import { autoLogin } from '../../store/actions/auth';
-import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../../components/context';
+import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
 
 class App extends Component {
   state = {
@@ -68,7 +68,7 @@ class App extends Component {
   }
 
   onColorSwitchClickHandler = (color) => {
-    let theme = color ? 'dark' : 'light';
+    const theme = color ? 'dark' : 'light';
     this.setState({ theme });
   };
 

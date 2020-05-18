@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import HeaderTable from '../../components/UI/headerTable';
 import { withTheme } from '../../hoc';
 import BodyTable from '../../components/UI/bodyTable/BodyTable';
 import { headerAboutPage } from '../../components/helpersComponents';
-import PropTypes from 'prop-types';
 
 const AboutAppPage = ({ theme }) => {
   const tableBody = [
@@ -11,7 +11,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the <b>Member’s Manage Grid</b>
+            Watch the
+            <b>Member’s Manage Grid</b>
           </>
         ),
       },
@@ -23,7 +24,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Add, edit, and delete a member on <b>Member’s Manage Grid</b>
+            Add, edit, and delete a member on
+            <b>Member’s Manage Grid</b>
           </>
         ),
       },
@@ -35,7 +37,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the <b>Member’s Progress grid</b>
+            Watch the
+            <b>Member’s Progress grid</b>
           </>
         ),
       },
@@ -47,7 +50,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the <b>Tasks Manage Grid</b>
+            Watch the
+            <b>Tasks Manage Grid</b>
           </>
         ),
       },
@@ -59,7 +63,7 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Add, edit, and delete a <b>New task</b>
+            Add, edit, and delete a<b>New task</b>
           </>
         ),
       },
@@ -120,8 +124,9 @@ const AboutAppPage = ({ theme }) => {
     <div className='grid-wrap'>
       <h3>Hi, dear friend!</h3>
       <p>
-        We are glad to see you in the <b>'Dev Incubator Management System'</b> project or more briefly is <b>DIMS</b>!
-        From this moment, you are a member of a great development team. Happy code!
+        We are glad to see you in the
+        <b>'Dev Incubator Management System'</b> project or more briefly is <b>DIMS</b>! From this moment, you are a
+        member of a great development team. Happy code!
       </p>
       <h3>What is the DIMS?</h3>
       <p>

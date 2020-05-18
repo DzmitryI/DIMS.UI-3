@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withTheme } from '../../hoc';
 
 const Spinner = ({ theme }) => {
@@ -10,6 +11,10 @@ const Spinner = ({ theme }) => {
       </div>
     </div>
   );
+};
+
+Spinner.propTypes = {
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(Spinner);

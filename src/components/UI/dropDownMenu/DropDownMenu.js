@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
+import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { withTheme } from '../../../hoc';
-import PropTypes from 'prop-types';
 
 const DropDownMenu = ({ to, theme }) => {
   const burgerMenu = useRef(null);
@@ -26,8 +26,8 @@ const DropDownMenu = ({ to, theme }) => {
 };
 
 DropDownMenu.propTypes = {
-  to: PropTypes.string,
-  theme: PropTypes.string,
+  to: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(DropDownMenu);
