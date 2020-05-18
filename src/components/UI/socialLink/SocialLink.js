@@ -15,12 +15,13 @@ SocialLink.defaultProps = {
   className: 'imgMain-wrap',
   href: '#',
   alt: 'icon',
+  src: '#',
 };
 
 SocialLink.propTypes = {
-  className: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
-  href: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  alt: PropTypes.string,
+  href: PropTypes.string,
   src: PropTypes.string,
 };
 

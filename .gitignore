@@ -22,3 +22,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# heroku
+.firebaserc
+firebase.json
+.firebase

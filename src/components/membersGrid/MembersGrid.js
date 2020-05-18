@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner';
@@ -21,13 +22,6 @@ class MembersGrid extends Component {
     if (this.props.isRegister !== prevProps.isRegister) {
       await this.props.fetchMembers();
     }
-  }
-
-  countAge(value) {
-    const curDate = new Date();
-    const birthDate = new Date(value);
-    const age = curDate.getFullYear() - birthDate.getFullYear();
-    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
   }
 
   onRegisterClick = () => {
@@ -65,9 +59,16 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
+  countAge = (value) => {
+    const curDate = new Date();
+    const birthDate = new Date(value);
+    const age = curDate.getFullYear() - birthDate.getFullYear();
+    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
+  };
+
   renderTBody = (members, directions) => {
     return members.map((member, index) => {
-      const { userId, fullName, directionId, education, startDate, birthDate } = member;
+      const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
         <tr key={userId} id={userId}>
@@ -76,7 +77,7 @@ class MembersGrid extends Component {
           <Cell value={`${!!curDirect && curDirect.name}`} />
           <Cell value={`${education}`} />
           <Cell value={getDate(startDate)} />
-          <Cell value={`${this.countAge(birthDate)}`} />
+          <Cell value={(birthDate && `${this.countAge(birthDate)}`) || age} />
           <Cell
             className='td buttons-wrap'
             value={
@@ -126,14 +127,20 @@ class MembersGrid extends Component {
 }
 
 MembersGrid.propTypes = {
-  isRegister: PropTypes.bool,
-  members: PropTypes.array,
-  directions: PropTypes.array,
-  loading: PropTypes.bool,
-  error: PropTypes.bool,
-  errorMessage: PropTypes.string,
-  onNotification: PropTypes.bool,
-  notification: PropTypes.object,
+  isRegister: PropTypes.bool.isRequired,
+  members: PropTypes.array.isRequired,
+  directions: PropTypes.array.isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string.isRequired,
+  onNotification: PropTypes.bool.isRequired,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
+  theme: PropTypes.string.isRequired,
+  onRegisterClick: PropTypes.func.isRequired,
+  onTaskClick: PropTypes.func.isRequired,
+  onProgressClick: PropTypes.func.isRequired,
+  fetchMembersDelete: PropTypes.func.isRequired,
+  fetchMembers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({

@@ -24,8 +24,8 @@ const ColorSwitch = ({ theme, onColorSwitchClickHandler }) => {
 };
 
 ColorSwitch.propTypes = {
-  theme: PropTypes.string,
-  onColorSwitchClickHandler: PropTypes.func,
+  theme: PropTypes.string.isRequired,
+  onColorSwitchClickHandler: PropTypes.func.isRequired,
 };
 
 export default withTheme(ColorSwitch);

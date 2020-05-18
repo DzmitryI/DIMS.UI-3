@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner';
@@ -17,8 +18,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const memberProgresses = await updateMemberProgress(userId);
-        setMemberProgresses(memberProgresses);
+        setMemberProgresses(await updateMemberProgress(userId));
         setLoading(false);
       } catch ({ message }) {
         setLoading(false);
@@ -35,8 +35,8 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
     onTaskClick(h1TaskPage.get('Detail'), task);
   };
 
-  const renderTBody = (memberProgresses) => {
-    return memberProgresses.map((memberProgress, index) => {
+  const renderTBody = (progresses) => {
+    return progresses.map((memberProgress, index) => {
       const {
         userTaskTrack: { taskTrackId, trackDate, trackNote },
         task: [task],
@@ -85,10 +85,10 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
 };
 
 MemberProgressGrid.propTypes = {
-  userId: PropTypes.string,
-  title: PropTypes.string,
-  onTaskClick: PropTypes.func,
-  theme: PropTypes.string,
+  userId: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  onTaskClick: PropTypes.func.isRequired,
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(MemberProgressGrid);

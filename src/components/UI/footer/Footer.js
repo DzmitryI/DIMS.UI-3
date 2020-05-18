@@ -12,9 +12,7 @@ const Footer = ({ theme }) => {
         <SocialLink href='mailto:dmitriy.ivanou@gmail.com' src={imgMail} alt='mail icon' />
         <SocialLink href='https://github.com/DzmitryI' src={imgGit} alt='git icon' />
       </div>
-      <span>
-        <sup>&copy;</sup> 2020 Devincubator.
-      </span>
+      <span>&copy; 2020 Dev Incubator</span>
     </footer>
   );
 };
