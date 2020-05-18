@@ -1,10 +1,9 @@
 {
   "name": "dev-incubator-management-system",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "It is a system for getting tasks and tracking time.",
   "author": "Dmitriy Ivanov",
   "license": "MIT",
-  "homepage": "https://github.com/DzmitryI/DIMS.UI-3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DzmitryI/DIMS.UI-3"
