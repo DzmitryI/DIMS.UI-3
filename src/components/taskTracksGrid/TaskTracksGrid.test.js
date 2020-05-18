@@ -1,8 +1,8 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import TaskTracksGrid from './TaskTracksGrid';
 import { MemoryRouter } from 'react-router-dom';
+import TaskTracksGrid from './TaskTracksGrid';
 import { SetUp } from '../helpersComponents';
 
 configure({
@@ -16,13 +16,18 @@ describe('<TaskTracksGrid/>', () => {
     const contextThemeValue = { theme: 'dark' };
     const contextRoleValue = '123@mail.ru';
     const contextFetchService = {};
+    const props = {
+      taskId: '1',
+      isOpen: false,
+      onTrackClick() {},
+    };
     wrapper = mount(
       <MemoryRouter>
         <SetUp
           fetchServiceValue={contextFetchService}
           roleValue={contextRoleValue}
           ThemeValue={contextThemeValue}
-          component={<TaskTracksGrid />}
+          component={<TaskTracksGrid {...props} />}
         />
       </MemoryRouter>,
     );

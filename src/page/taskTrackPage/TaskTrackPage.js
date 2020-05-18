@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
 import Input from '../../components/UI/input';
@@ -8,7 +9,6 @@ import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
-import PropTypes from 'prop-types';
 
 class TaskTrackPage extends Component {
   state = {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
@@ -8,7 +9,6 @@ import ErrorIndicator from '../errorIndicator';
 import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate, updateMemberTasks } from '../helpersComponents';
 import { withFetchService, withRole, withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
-import PropTypes from 'prop-types';
 
 const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, fetchService, theme, email }) => {
   const [userTasks, setUserTasks] = useState([]);
@@ -23,8 +23,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userTasks = await updateMemberTasks(userId);
-        setUserTasks(userTasks);
+        setUserTasks(await updateMemberTasks(userId));
         setLoading(false);
         setOnNotification(false);
       } catch ({ message }) {

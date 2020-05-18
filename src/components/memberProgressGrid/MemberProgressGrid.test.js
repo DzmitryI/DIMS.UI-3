@@ -13,9 +13,14 @@ describe('<MemberProgressGrid/>', () => {
 
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
+    const props = {
+      userId: '1',
+      title: 'test',
+      onTaskClick() {},
+    };
     wrapper = mount(
       <ThemeContextProvider value={contextThemeValue}>
-        <MemberProgressGrid />
+        <MemberProgressGrid {...props} />
       </ThemeContextProvider>,
     );
   });

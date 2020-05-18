@@ -9,17 +9,17 @@ function clearOblectValue(objInput, objElem) {
       objElemClear[key] = '';
     }
   });
-  if (objElemClear['directionId']) {
-    objElemClear['directionId'] = 'direction1';
+  if (objElemClear.directionId) {
+    objElemClear.directionId = 'direction1';
   }
-  if (objElemClear['sex']) {
-    objElemClear['sex'] = 'sex1';
+  if (objElemClear.sex) {
+    objElemClear.sex = 'sex1';
   }
-  if (objElemClear['description']) {
-    objElemClear['description'] = '';
+  if (objElemClear.description) {
+    objElemClear.description = '';
   }
-  if (objElemClear['trackNote']) {
-    objElemClear['trackNote'] = '';
+  if (objElemClear.trackNote) {
+    objElemClear.trackNote = '';
   }
   const res = {
     objInputClear,
