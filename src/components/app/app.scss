@@ -69,6 +69,7 @@ table {
     & span,
     span a {
       color: $blue;
+      text-decoration: none;
     }
     & span:hover,
     span a:hover {
@@ -77,7 +78,7 @@ table {
     }
   }
   .index {
-    min-width: 20px;
+    min-width: 1.2rem;
   }
   & .td-Fail {
     color: $red;
@@ -115,7 +116,7 @@ table {
   position: relative;
   width: 90%;
   margin: 0 auto;
-  padding: 30px 0;
+  padding: 2rem 0;
   z-index: 100;
   & a {
     text-align: right;
@@ -133,7 +134,11 @@ table {
 }
 
 .row {
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
   justify-content: space-evenly;
+  margin-bottom: 0.7rem;
 }
 
 .close {

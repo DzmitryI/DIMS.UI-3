@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
-import { createControl, validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
+import 'react-datepicker/dist/react-datepicker.css';
 
 class TaskPage extends Component {
   state = {
@@ -22,28 +24,28 @@ class TaskPage extends Component {
         },
         { required: true },
       ),
-      startDate: createControl(
-        {
-          type: 'date',
-          label: 'Start',
-          errorMessage: 'Enter start date',
-        },
-        { required: true },
-      ),
-      deadlineDate: createControl(
-        {
-          type: 'date',
-          label: 'Deadline',
-          errorMessage: 'Enter deadline',
-        },
-        { required: true },
-      ),
+      // startDate: createControl(
+      //   {
+      //     type: 'date',
+      //     label: 'Start',
+      //     errorMessage: 'Enter start date',
+      //   },
+      //   { required: true },
+      // ),
+      // deadlineDate: createControl(
+      //   {
+      //     type: 'date',
+      //     label: 'Deadline',
+      //     errorMessage: 'Enter deadline',
+      //   },
+      //   { required: true },
+      // ),
     },
     task: {
       name: '',
       description: '',
-      startDate: '',
-      deadlineDate: '',
+      startDate: new Date(),
+      deadlineDate: new Date(),
     },
     taskId: null,
     loading: true,
@@ -58,24 +60,6 @@ class TaskPage extends Component {
 
   taskState = {
     stateName: 'Active',
-  };
-
-  updateTaskMembers = async (taskId) => {
-    const { fetchService } = this.props;
-    const members = await fetchService.getAllMember();
-    const userTasks = await fetchService.getAllUserTasks();
-    if (userTasks.length) {
-      userTasks.forEach((userTask) => {
-        if (userTask.taskId === taskId) {
-          const index = members.findIndex((member) => member.userId === userTask.userId);
-          if (index !== -1) {
-            members[index].checked = true;
-          }
-        }
-      });
-    }
-    this.setState({ userTasks });
-    return members;
   };
 
   async componentDidUpdate(prevProps) {
@@ -102,6 +86,24 @@ class TaskPage extends Component {
       }
     }
   }
+
+  updateTaskMembers = async (taskId) => {
+    const { fetchService } = this.props;
+    const members = await fetchService.getAllMember();
+    const userTasks = await fetchService.getAllUserTasks();
+    if (userTasks.length) {
+      userTasks.forEach((userTask) => {
+        if (userTask.taskId === taskId) {
+          const index = members.findIndex((member) => member.userId === userTask.userId);
+          if (index !== -1) {
+            members[index].checked = true;
+          }
+        }
+      });
+    }
+    this.setState({ userTasks });
+    return members;
+  };
 
   checkTaskMembers = async (taskId) => {
     const { members, userTasks, notification } = this.state;
@@ -146,6 +148,7 @@ class TaskPage extends Component {
   };
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const { taskInput, task } = this.state;
     taskInput[controlName].value = value;
@@ -171,6 +174,14 @@ class TaskPage extends Component {
       if (member.userId === target.id) member.checked = target.checked;
     });
     this.setState({ members });
+  };
+
+  onHandleChangeDate = (id) => (value) => this.handleChangeDate(value, id);
+
+  handleChangeDate = (value, id) => {
+    const { task } = this.state;
+    task[id] = value;
+    this.setState({ task });
   };
 
   submitHandler = (event) => {
@@ -245,44 +256,22 @@ class TaskPage extends Component {
   };
 
   renderInputs() {
-    const {
-      task: { description },
-      disabled,
-    } = this.state;
+    const { disabled } = this.state;
     return Object.keys(this.state.taskInput).map((controlName, index) => {
       const control = this.state.taskInput[controlName];
-      let textArea = null;
-      if (index === 0) {
-        textArea = (
-          <div className='form-group'>
-            <label htmlFor='description'>Description</label>
-            <textarea
-              id='description'
-              name='description'
-              value={description}
-              rows='7'
-              disabled={disabled}
-              onChange={this.handleTextArea}
-            ></textarea>
-          </div>
-        );
-      }
       return (
-        <React.Fragment key={`form-group ${index}`}>
-          <Input
-            id={controlName + index}
-            type={control.type}
-            value={control.value}
-            valid={control.valid}
-            touched={control.touched}
-            label={control.label}
-            disabled={disabled}
-            errorMessage={control.errorMessage}
-            shouldValidation={!!control.validation}
-            onChange={this.onHandlelInput(controlName)}
-          />
-          {textArea}
-        </React.Fragment>
+        <Input
+          id={controlName + index}
+          type={control.type}
+          value={control.value}
+          valid={control.valid}
+          touched={control.touched}
+          label={control.label}
+          disabled={disabled}
+          errorMessage={control.errorMessage}
+          shouldValidation={!!control.validation}
+          onChange={this.onHandlelInput(controlName)}
+        />
       );
     });
   }
@@ -310,7 +299,7 @@ class TaskPage extends Component {
   render() {
     const { isOpen, title } = this.props;
     const {
-      task: { name },
+      task: { name, description, startDate, deadlineDate },
       loading,
       disabled,
       isFormValid,
@@ -322,43 +311,76 @@ class TaskPage extends Component {
 
     return (
       <>
-        {onNotification && <DisplayNotification notification={notification} />}
-        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
-          <h1 className='title'>{title}</h1>
-          <form onSubmit={this.submitHandler} className='page-form'>
-            {loading ? (
-              <Spinner />
-            ) : (
-              <>
-                {error ? (
-                  <ErrorIndicator errorMessage={errorMessage} />
-                ) : (
-                  <>
-                    <h1 className='subtitle'>{name}</h1>
-                    <div className='form-group'>{this.renderInputs()}</div>
-                    <div className='form-group'>
-                      <label htmlFor='members'>Members</label>
-                      <div id='members' className='column'>
-                        {this.renderCheckbox()}
+        <React.StrictMode>
+          {onNotification && <DisplayNotification notification={notification} />}
+          <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
+            <h1 className='title'>{title}</h1>
+            <form onSubmit={this.submitHandler} className='page-form'>
+              {loading ? (
+                <Spinner />
+              ) : (
+                <>
+                  {error ? (
+                    <ErrorIndicator errorMessage={errorMessage} />
+                  ) : (
+                    <>
+                      <h1 className='subtitle'>{name}</h1>
+                      {this.renderInputs()}
+                      <div className='row'>
+                        <div className='form-group'>
+                          <label htmlFor='startDate'>Start date</label>
+                          <DatePicker
+                            selected={new Date(startDate)}
+                            id='startDate'
+                            disabled={disabled}
+                            onChange={this.onHandleChangeDate('startDate')}
+                          />
+                        </div>
+                        <div className='form-group'>
+                          <label htmlFor='deadlineDate'>Deadline</label>
+                          <DatePicker
+                            selected={new Date(deadlineDate)}
+                            id='deadlineDate'
+                            disabled={disabled}
+                            onChange={this.onHandleChangeDate('deadlineDate')}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
-                <div className='form-group row'>
-                  <Button
-                    className='btn-add'
-                    type='submit'
-                    name='Save'
-                    disabled={disabled || !isFormValid}
-                    onClick={this.createTaskHandler}
-                  />
-                  <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
-                </div>
-              </>
-            )}
-          </form>
-        </div>
-        {isOpen && <Backdrop />}
+                      <div className='form-group'>
+                        <label htmlFor='description'>Description</label>
+                        <textarea
+                          id='description'
+                          name='description'
+                          value={description}
+                          rows='7'
+                          disabled={disabled}
+                          onChange={this.handleTextArea}
+                        ></textarea>
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='members'>Members</label>
+                        <div id='members' className='column'>
+                          {this.renderCheckbox()}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <div className='form-group row'>
+                    <Button
+                      className='btn-add'
+                      type='submit'
+                      name='Save'
+                      disabled={disabled || !isFormValid}
+                      onClick={this.createTaskHandler}
+                    />
+                    <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+                  </div>
+                </>
+              )}
+            </form>
+          </div>
+          {isOpen && <Backdrop />}
+        </React.StrictMode>
       </>
     );
   }

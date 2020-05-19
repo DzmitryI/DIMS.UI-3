@@ -59,6 +59,7 @@ class TaskTrackPage extends Component {
   }
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const { taskTrackInput, taskTrack } = this.state;
     taskTrackInput[controlName].value = value;

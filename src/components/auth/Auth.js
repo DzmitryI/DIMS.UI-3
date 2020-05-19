@@ -131,24 +131,26 @@ class Auth extends PureComponent {
     const { isFormValid } = this.state;
     return (
       <>
-        {onNotification && <DisplayNotification notification={notification} />}
-        <div className='auth'>
-          <div className='auth-img'>
-            <img src={imgLogo} with='100px' height='50px' alt='logo' />
-          </div>
-          <form onSubmit={this.submitHandler}>
-            {this.renderInputs()}
-            <br />
-            {this.renderSelect()}
-            <br />
-            <div className='form-group row'>
-              <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
-              <span className='goRegister'>
-                <Link to='/Register'>register</Link>
-              </span>
+        <React.StrictMode>
+          {onNotification && <DisplayNotification notification={notification} />}
+          <div className='auth'>
+            <div className='auth-img'>
+              <img src={imgLogo} with='100px' height='50px' alt='logo' />
             </div>
-          </form>
-        </div>
+            <form onSubmit={this.submitHandler}>
+              {this.renderInputs()}
+              <br />
+              {this.renderSelect()}
+              <br />
+              <div className='form-group row'>
+                <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
+                <span className='goRegister'>
+                  <Link to='/Registration'>registration</Link>
+                </span>
+              </div>
+            </form>
+          </div>
+        </React.StrictMode>
       </>
     );
   }
