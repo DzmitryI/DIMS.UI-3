@@ -1,16 +1,15 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import Select from '../UI/select';
 import { createControl, validateControl } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
 
-class Auth extends PureComponent {
+class Registration extends PureComponent {
   state = {
     isFormValid: false,
     authInput: {
@@ -31,31 +30,15 @@ class Auth extends PureComponent {
         { required: true, minLenght: 6 },
       ),
     },
-    baseSelect: {
-      base: {
-        label: 'Base',
-        name: 'base',
-        options: [
-          {
-            name: 'Firebase',
-            value: 'firebase',
-          },
-          {
-            name: 'Azure',
-            value: 'azure',
-          },
-        ],
-      },
-    },
     base: 'firebase',
   };
 
-  loginHandler = () => {
+  registerHandler = () => {
     const {
       authInput: { email, password },
       base,
     } = this.state;
-    this.props.auth(email.value, password.value, base, true);
+    this.props.auth(email.value, password.value, base, false);
   };
 
   submitHandler = (event) => {
@@ -74,13 +57,6 @@ class Auth extends PureComponent {
       isFormValid = authInput[name].valid && isFormValid;
     });
     this.setState({ authInput, isFormValid });
-  };
-
-  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
-
-  handleSelect = ({ target }) => {
-    const base = target.options[target.selectedIndex].value;
-    this.setState({ base });
   };
 
   renderInputs() {
@@ -104,34 +80,13 @@ class Auth extends PureComponent {
     });
   }
 
-  renderSelect() {
-    const { baseSelect, base } = this.state;
-    return Object.keys(baseSelect).map((controlName) => {
-      const control = baseSelect[controlName];
-      let defaultValue = false;
-      let options = [];
-      defaultValue = base;
-      options = control.options;
-      return (
-        <Select
-          options={options}
-          defaultValue={defaultValue}
-          label={control.label}
-          name={controlName}
-          key={controlName}
-          id={controlName}
-          onChange={this.onHandlelSelect(controlName)}
-        />
-      );
-    });
-  }
-
   render() {
-    const { notification, onNotification } = this.props;
+    const { notification, onNotification, isRegistred } = this.props;
     const { isFormValid } = this.state;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
+        {isRegistred && <Redirect to='/Auth' />}
         <div className='auth'>
           <div className='auth-img'>
             <img src={imgLogo} with='100px' height='50px' alt='logo' />
@@ -139,13 +94,14 @@ class Auth extends PureComponent {
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
             <br />
-            {this.renderSelect()}
-            <br />
             <div className='form-group row'>
-              <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
-              <span className='goRegister'>
-                <Link to='/Register'>register</Link>
-              </span>
+              <Button
+                type='submit'
+                id='registration'
+                name='Registration'
+                disabled={!isFormValid}
+                onClick={this.registerHandler}
+              />
             </div>
           </form>
         </div>
@@ -154,16 +110,18 @@ class Auth extends PureComponent {
   }
 }
 
-Auth.propTypes = {
+Registration.propTypes = {
   onNotification: PropTypes.bool.isRequired,
   notification: PropTypes.object.isRequired,
+  isRegistred: PropTypes.bool.isRequired,
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ auth: { onNotification, notification } }) => {
+const mapStateToProps = ({ auth: { onNotification, notification, isRegistred } }) => {
   return {
     onNotification,
     notification,
+    isRegistred,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -171,4 +129,4 @@ const mapDispatchToProps = (dispatch) => {
     auth: (email, password, base, isLogin) => dispatch(auth(email, password, base, isLogin)),
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);

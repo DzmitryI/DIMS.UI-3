@@ -13,6 +13,7 @@ import AboutAppPage from '../../page/aboutAppPage';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
+import Registration from '../registration';
 import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
 import FetchAzure from '../../services/fetchAzure';
@@ -146,6 +147,7 @@ class App extends Component {
     let routes = (
       <Switch>
         <Route path='/Auth' exact component={Auth} />
+        <Route path='/Registration' component={Registration} />
         <Redirect to='/Auth' />
       </Switch>
     );

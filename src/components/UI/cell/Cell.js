@@ -17,6 +17,7 @@ Cell.defaultProps = {
 Cell.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
+  value: PropTypes.any,
 };
 
 export default Cell;

@@ -65,24 +65,28 @@ class MembersGrid extends Component {
       return (
         <tr key={userId} id={userId}>
           <Cell className='td index' value={index + 1} />
-          <Cell value={<span onClick={this.onChangeClick}>{`${fullName}`}</span>} />
-          <Cell value={`${!!curDirect && curDirect.name}`} />
-          <Cell value={`${education}`} />
+          <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
+          <Cell value={!!curDirect && curDirect.name} />
+          <Cell value={education} />
           <Cell value={getDate(startDate)} />
           <Cell value={(birthDate && countAge(birthDate)) || age} />
           <Cell
             className='td buttons-wrap'
             value={
               <>
-                <ButtonLink
-                  className='btn-progress'
-                  onClick={this.onProgressClick}
-                  name='Progress'
-                  to={'/MemberProgressGrid'}
-                />
-                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
-                <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                <div>
+                  <ButtonLink
+                    className='btn-progress'
+                    onClick={this.onProgressClick}
+                    name='Progress'
+                    to={'/MemberProgressGrid'}
+                  />
+                  <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
+                </div>
+                <div>
+                  <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                  <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                </div>
               </>
             }
           />

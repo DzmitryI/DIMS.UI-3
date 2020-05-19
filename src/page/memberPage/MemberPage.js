@@ -198,6 +198,7 @@ class MemberPage extends Component {
   }
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
@@ -212,13 +213,14 @@ class MemberPage extends Component {
   };
 
   onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
+
   handleSelect = ({ target }) => {
     const {
       member,
       memberSelect: { direction },
     } = this.state;
     if (target.id === direction.name) {
-      member['directionId'] = target.options[target.selectedIndex].value;
+      member.directionId = target.options[target.selectedIndex].value;
     } else {
       member[target.id] = target.options[target.selectedIndex].value;
     }
@@ -227,6 +229,28 @@ class MemberPage extends Component {
 
   submitHandler = (event) => {
     event.preventDefault();
+  };
+
+  createMemberHandler = () => {
+    if (!this.state.userId) {
+      this.changeMember('add');
+    } else {
+      this.changeMember('edit');
+    }
+  };
+
+  buttonCloseClick = () => {
+    const { directions, memberInput, member } = this.state;
+    const res = clearOblectValue(memberInput, member);
+    this.setState({
+      memberInput: res.objInputClear,
+      member: res.objElemClear,
+      userId: '',
+      isFormValid: false,
+      disabled: false,
+      loading: true,
+    });
+    this.props.onRegisterClick(directions);
   };
 
   async changeMember(value) {
@@ -250,28 +274,6 @@ class MemberPage extends Component {
     }
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
   }
-
-  createMemberHandler = () => {
-    if (!this.state.userId) {
-      this.changeMember('add');
-    } else {
-      this.changeMember('edit');
-    }
-  };
-
-  buttonCloseClick = () => {
-    const { directions, memberInput, member } = this.state;
-    const res = clearOblectValue(memberInput, member);
-    this.setState({
-      memberInput: res.objInputClear,
-      member: res.objElemClear,
-      userId: '',
-      isFormValid: false,
-      disabled: false,
-      loading: true,
-    });
-    this.props.onRegisterClick(directions);
-  };
 
   renderInputs() {
     const { disabled, memberInput } = this.state;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from './actionTypes';
+import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION, AUTH_REGISTER } from './actionTypes';
 
 export function auth(email, password, base, isLogin) {
   return async (dispatch) => {
@@ -22,9 +22,14 @@ export function auth(email, password, base, isLogin) {
       localStorage.setItem('expirationDate', expirationDate);
       localStorage.setItem('email', data.email);
       localStorage.setItem('base', base);
-      dispatch(authSuccess(data.idToken, data.email, base));
-      dispatch(autoLogout(data.expiresIn));
-      dispatch(authNotification(true, { status: 'success', title: 'Email is correct' }));
+      if (isLogin) {
+        dispatch(authSuccess(data.idToken, data.email, base));
+        dispatch(autoLogout(data.expiresIn));
+        dispatch(authNotification(true, { status: 'success', title: 'An Email and a password are correct' }));
+      } else {
+        dispatch(authNotification(true, { status: 'success', title: 'The registration was successful' }));
+        dispatch(authRegister());
+      }
     } catch (error) {
       dispatch(authNotification(true, { status: 'error', title: error.message }));
     }
@@ -79,6 +84,12 @@ export function authSuccess(token, email, base) {
     token,
     email,
     base,
+  };
+}
+
+export function authRegister() {
+  return {
+    type: AUTH_REGISTER,
   };
 }
 

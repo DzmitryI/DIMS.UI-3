@@ -24,6 +24,7 @@ Button.propTypes = {
   onClick: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   theme: PropTypes.string.isRequired,
+  name: PropTypes.any,
 };
 
 export default withTheme(Button);

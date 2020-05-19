@@ -63,12 +63,11 @@ table {
     color: $light;
   }
   & td {
-    padding: 10px 2px;
+    padding: 5px 2px;
     text-align: center;
     vertical-align: center;
     & span,
     span a {
-      text-decoration-line: underline;
       color: $blue;
     }
     & span:hover,
@@ -127,6 +126,9 @@ table {
 }
 
 .buttons-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   padding: 0;
 }
 

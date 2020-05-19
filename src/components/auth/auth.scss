@@ -10,6 +10,10 @@ $blue: rgb(57, 126, 237);
   border: 1px solid $dark;
   border-radius: 1rem;
   box-shadow: 0 9px 10px 0 $dark-light;
+  & .auth-img {
+    margin: 25px;
+    text-align: center;
+  }
   & .base-wrap {
     width: 50%;
     height: 4.5rem;
@@ -21,6 +25,19 @@ $blue: rgb(57, 126, 237);
     box-shadow: 0 9px 10px 0 $dark-light;
     & label {
       color: $blue;
+    }
+  }
+  & .goRegister {
+    width: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & a {
+      text-decoration: underline;
+      color: $blue;
+    }
+    & a:hover {
+      text-decoration: none;
     }
   }
 }
