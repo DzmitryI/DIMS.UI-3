@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import ErrorIndicator from '../errorIndicator/ErrorIndicator';
