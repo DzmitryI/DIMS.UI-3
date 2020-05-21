@@ -30,15 +30,13 @@ class Registration extends PureComponent {
         { required: true, minLenght: 6 },
       ),
     },
-    base: 'firebase',
   };
 
   registerHandler = () => {
     const {
       authInput: { email, password },
-      base,
     } = this.state;
-    this.props.auth(email.value, password.value, base, false);
+    this.props.auth(email.value, password.value, false);
   };
 
   submitHandler = (event) => {
@@ -65,7 +63,7 @@ class Registration extends PureComponent {
       const control = authInput[controlName];
       return (
         <Input
-          key={controlName + index}
+          key={controlName}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -83,10 +81,12 @@ class Registration extends PureComponent {
   render() {
     const { notification, onNotification, isRegistred } = this.props;
     const { isFormValid } = this.state;
+    if (isRegistred) {
+      return <Redirect push to='/Auth' />;
+    }
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
-        {isRegistred && <Redirect to='/Auth' />}
         <div className='auth'>
           <div className='auth-img'>
             <img src={imgLogo} with='100px' height='50px' alt='logo' />
@@ -112,7 +112,7 @@ class Registration extends PureComponent {
 
 Registration.propTypes = {
   onNotification: PropTypes.bool.isRequired,
-  notification: PropTypes.object.isRequired,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   isRegistred: PropTypes.bool.isRequired,
   auth: PropTypes.func.isRequired,
 };
@@ -126,7 +126,7 @@ const mapStateToProps = ({ auth: { onNotification, notification, isRegistred } }
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    auth: (email, password, base, isLogin) => dispatch(auth(email, password, base, isLogin)),
+    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Registration);

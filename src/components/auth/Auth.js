@@ -32,9 +32,9 @@ class Auth extends PureComponent {
       ),
     },
     baseSelect: {
-      base: {
-        label: 'Base',
-        name: 'base',
+      database: {
+        label: 'Database',
+        name: 'database',
         options: [
           {
             name: 'Firebase',
@@ -47,15 +47,15 @@ class Auth extends PureComponent {
         ],
       },
     },
-    base: 'firebase',
+    database: 'firebase',
   };
 
   loginHandler = () => {
     const {
       authInput: { email, password },
-      base,
+      database,
     } = this.state;
-    this.props.auth(email.value, password.value, base, true);
+    this.props.auth(email.value, password.value, database, true);
   };
 
   submitHandler = (event) => {
@@ -79,8 +79,8 @@ class Auth extends PureComponent {
   onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
 
   handleSelect = ({ target }) => {
-    const base = target.options[target.selectedIndex].value;
-    this.setState({ base });
+    const database = target.options[target.selectedIndex].value;
+    this.setState({ database });
   };
 
   renderInputs() {
@@ -89,7 +89,7 @@ class Auth extends PureComponent {
       const control = authInput[controlName];
       return (
         <Input
-          key={controlName + index}
+          key={controlName}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -105,12 +105,12 @@ class Auth extends PureComponent {
   }
 
   renderSelect() {
-    const { baseSelect, base } = this.state;
+    const { baseSelect, database } = this.state;
     return Object.keys(baseSelect).map((controlName) => {
       const control = baseSelect[controlName];
       let defaultValue = false;
       let options = [];
-      defaultValue = base;
+      defaultValue = database;
       options = control.options;
       return (
         <Select
@@ -131,26 +131,24 @@ class Auth extends PureComponent {
     const { isFormValid } = this.state;
     return (
       <>
-        <React.StrictMode>
-          {onNotification && <DisplayNotification notification={notification} />}
-          <div className='auth'>
-            <div className='auth-img'>
-              <img src={imgLogo} with='100px' height='50px' alt='logo' />
-            </div>
-            <form onSubmit={this.submitHandler}>
-              {this.renderInputs()}
-              <br />
-              {this.renderSelect()}
-              <br />
-              <div className='form-group row'>
-                <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
-                <span className='goRegister'>
-                  <Link to='/Registration'>registration</Link>
-                </span>
-              </div>
-            </form>
+        {onNotification && <DisplayNotification notification={notification} />}
+        <div className='auth'>
+          <div className='auth-img'>
+            <img src={imgLogo} with='100px' height='50px' alt='logo' />
           </div>
-        </React.StrictMode>
+          <form onSubmit={this.submitHandler}>
+            {this.renderInputs()}
+            <br />
+            {this.renderSelect()}
+            <br />
+            <div className='form-group row'>
+              <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
+              <span className='goRegister'>
+                <Link to='/Registration'>registration</Link>
+              </span>
+            </div>
+          </form>
+        </div>
       </>
     );
   }
@@ -158,7 +156,7 @@ class Auth extends PureComponent {
 
 Auth.propTypes = {
   onNotification: PropTypes.bool.isRequired,
-  notification: PropTypes.object.isRequired,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   auth: PropTypes.func.isRequired,
 };
 
@@ -170,7 +168,7 @@ const mapStateToProps = ({ auth: { onNotification, notification } }) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    auth: (email, password, base, isLogin) => dispatch(auth(email, password, base, isLogin)),
+    auth: (email, password, database, isLogin) => dispatch(auth(email, password, database, isLogin)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

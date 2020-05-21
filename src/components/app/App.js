@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
 import MemberProgressGrid from '../memberProgressGrid';
@@ -46,13 +47,13 @@ class App extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    const { email, base } = this.props;
+    const { email, database } = this.props;
     let fetchService = {};
     if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
-      if (base === 'firebase') {
+      if (database === 'firebase') {
         fetchService = new FetchFirebase();
       } else {
         fetchService = new FetchAzure();
@@ -62,8 +63,8 @@ class App extends Component {
         const member = members.find((member) => member.email === email);
         this.setState({ userId: member ? member.userId : '', fetchService });
       } catch ({ message }) {
-        this.setState({ onNotification: true, notification: { status: 'error', title: message } });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       }
     }
   }
@@ -262,11 +263,18 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = ({ auth: { token, email, base } }) => {
+App.propTypes = {
+  isAuthenticated: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  database: PropTypes.string.isRequired,
+  autoLogin: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = ({ auth: { token, email, database } }) => {
   return {
     isAuthenticated: !!token,
     email,
-    base,
+    database,
   };
 };
 

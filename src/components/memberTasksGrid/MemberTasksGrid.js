@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -119,7 +120,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
   return (
     <div className='grid-wrap'>
       {role && <Link to='/MembersGrid'>back to grid</Link>}
-      <h1>Member's Tasks Manage Grid</h1>
+      <h1>Member&apos;s Tasks Manage Grid</h1>
       {error ? (
         <ErrorIndicator errorMessage={errorMessage} />
       ) : (

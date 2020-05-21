@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,11 +8,12 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate, countAge } from '../helpersComponents';
-import { withTheme } from '../../hoc';
+import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
+import { withTheme, withRole } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
 
+const { ADMIN } = TABLE_ROLES;
 class MembersGrid extends Component {
   async componentDidMount() {
     await this.props.fetchMembers();
@@ -58,7 +60,7 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
-  renderTBody = (members, directions) => {
+  renderTBody = (members, directions, email) => {
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
@@ -79,14 +81,16 @@ class MembersGrid extends Component {
                     className='btn-progress'
                     onClick={this.onProgressClick}
                     name='Progress'
-                    to={'/MemberProgressGrid'}
+                    to='/MemberProgressGrid'
                   />
-                  <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
+                  <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
                 </div>
-                <div>
-                  <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                  <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
-                </div>
+                {ADMIN === email && (
+                  <div>
+                    <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                    <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                  </div>
+                )}
               </>
             }
           />
@@ -96,7 +100,17 @@ class MembersGrid extends Component {
   };
 
   render() {
-    const { members, directions, loading, onNotification, notification, theme, error, errorMessage } = this.props;
+    const {
+      members,
+      directions,
+      loading,
+      onNotification,
+      notification,
+      theme,
+      email,
+      error,
+      errorMessage,
+    } = this.props;
     if (loading) {
       return <Spinner />;
     }
@@ -107,12 +121,12 @@ class MembersGrid extends Component {
           <ErrorIndicator errorMessage={errorMessage} />
         ) : (
           <>
-            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+            {ADMIN === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
             <table border='1' className={`${theme}--table`}>
               <thead>
                 <HeaderTable arr={headerMembersGrid} />
               </thead>
-              <tbody>{members && this.renderTBody(members, directions)}</tbody>
+              <tbody>{members && this.renderTBody(members, directions, email)}</tbody>
             </table>
           </>
         )}
@@ -160,4 +174,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));
+export default connect(mapStateToProps, mapDispatchToProps)(withRole(withTheme(MembersGrid)));
