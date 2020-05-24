@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react';
 import PropTypes from 'prop-types';
 import HeaderTable from '../../components/UI/headerTable';
@@ -11,65 +12,61 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the
-            <b>Member’s Manage Grid</b>
+            Watch the <b>Member’s Manage Grid</b>
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
-      { className: 'red', value: '-' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
+      { className: 'red', value: '❌' },
     ],
     [
       {
         value: (
           <>
-            Add, edit, and delete a member on
-            <b>Member’s Manage Grid</b>
+            Add, edit, and delete a member on <b>Member’s Manage Grid</b>
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'red', value: '-' },
-      { className: 'red', value: '-' },
+      { className: 'green', value: '✔️' },
+      { className: 'red', value: '❌' },
+      { className: 'red', value: '❌' },
     ],
     [
       {
         value: (
           <>
-            Watch the
-            <b>Member’s Progress grid</b>
+            Watch the <b>Member’s Progress grid</b>
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
-      { className: 'red', value: '-' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
+      { className: 'red', value: '❌' },
     ],
     [
       {
         value: (
           <>
-            Watch the
-            <b>Tasks Manage Grid</b>
+            Watch the <b>Tasks Manage Grid</b>
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
-      { className: 'red', value: '-' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
+      { className: 'red', value: '❌' },
     ],
     [
       {
         value: (
           <>
-            Add, edit, and delete a<b>New task</b>
+            Add, edit, and delete a <b>New task</b>
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
-      { className: 'red', value: '-' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
+      { className: 'red', value: '❌' },
     ],
     [
       {
@@ -79,9 +76,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
     ],
     [
       {
@@ -91,9 +88,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { className: 'green', value: '+' },
-      { className: 'green', value: '+' },
-      { className: 'red', value: '-' },
+      { className: 'green', value: '✔️' },
+      { className: 'green', value: '✔️' },
+      { className: 'red', value: '❌' },
     ],
     [
       {
@@ -103,9 +100,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { className: 'red', value: '-' },
-      { className: 'red', value: '-' },
-      { className: 'green', value: '+' },
+      { className: 'red', value: '❌' },
+      { className: 'red', value: '❌' },
+      { className: 'green', value: '✔️' },
     ],
     [
       {
@@ -115,9 +112,9 @@ const AboutAppPage = ({ theme }) => {
           </>
         ),
       },
-      { className: 'red', value: '-' },
-      { className: 'red', value: '-' },
-      { className: 'green', value: '+' },
+      { className: 'red', value: '❌' },
+      { className: 'red', value: '❌' },
+      { className: 'green', value: '✔️' },
     ],
   ];
   return (

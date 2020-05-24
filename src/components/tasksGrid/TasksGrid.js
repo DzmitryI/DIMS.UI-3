@@ -130,7 +130,7 @@ class TasksGrid extends Component {
 
 TasksGrid.propTypes = {
   isTask: PropTypes.bool.isRequired,
-  fetchService: PropTypes.any.isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   theme: PropTypes.string.isRequired,
   onCreateTaskClick: PropTypes.func.isRequired,
 };

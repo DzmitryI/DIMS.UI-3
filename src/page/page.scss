@@ -22,6 +22,13 @@ $red: rgb(230, 30, 30);
     margin: 0 auto;
     background-color: $light;
   }
+  & .member {
+    width: 29rem;
+  }
+  & .form-group-members {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
 
 .close {

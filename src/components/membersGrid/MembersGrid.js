@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -138,8 +139,9 @@ class MembersGrid extends Component {
 
 MembersGrid.propTypes = {
   isRegister: PropTypes.bool.isRequired,
-  members: PropTypes.array.isRequired,
-  directions: PropTypes.array.isRequired,
+  members: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  email: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.bool.isRequired,
   errorMessage: PropTypes.string.isRequired,

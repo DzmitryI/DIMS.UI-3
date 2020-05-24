@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -6,7 +7,7 @@ import DisplayNotification from '../displayNotification';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
 import Button from '../UI/button';
-import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, TABLE_ROLES } from '../helpersComponents';
+import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, getDate, TABLE_ROLES } from '../helpersComponents';
 import { withTheme, withRole, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 
@@ -49,7 +50,7 @@ class TaskTracksGrid extends Component {
       await this.props.fetchService.delTaskTrack(taskTrackId);
       const notification = { title: 'Task track was deleted' };
       this.setState({ onNotification: true, notification });
-      setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+      setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       this.fetchMemberProgress();
     } catch ({ message }) {
       this.setState({ loading: false, error: true, errorMessage: message });
@@ -100,7 +101,7 @@ class TaskTracksGrid extends Component {
                     <Cell className='td index' value={index + 1} />
                     <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
                     <Cell value={trackNote} />
-                    <Cell value={trackDate} />
+                    <Cell value={getDate(trackDate)} />
                     <Cell
                       value={
                         <>
@@ -135,7 +136,7 @@ class TaskTracksGrid extends Component {
 TaskTracksGrid.propTypes = {
   taskId: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  fetchService: PropTypes.object.isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   theme: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   onTrackClick: PropTypes.func.isRequired,

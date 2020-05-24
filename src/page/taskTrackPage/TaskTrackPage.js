@@ -2,28 +2,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
-import Input from '../../components/UI/input';
 import Backdrop from '../../components/UI/backdrop';
-import { createControl, validateControl } from '../../services/helpers.js';
-import { clearOblectValue, updateInput } from '../helpersPage';
+import DatePicker from '../../components/datePicker';
+import { clearOblectValue } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
 
 class TaskTrackPage extends Component {
   state = {
-    isFormValid: false,
-    taskTrackInput: {
-      trackDate: createControl(
-        {
-          type: 'date',
-          label: 'Date',
-          errorMessage: 'Enter date',
-        },
-        { required: true },
-      ),
+    taskTrack: {
+      trackDate: new Date(),
+      trackNote: '',
     },
-    taskTrack: {},
     disabled: false,
     taskTrackId: null,
     taskId: '',
@@ -40,7 +31,6 @@ class TaskTrackPage extends Component {
     }
     if (Object.keys(track).length !== 0) {
       if (track !== prevProps.track) {
-        const taskTrackInput = updateInput(this.state.taskTrackInput, track);
         const { taskTrackId, ...taskTrack } = track;
         if (title === h1TaskTrackPage.get('Detail')) {
           disabled = true;
@@ -49,8 +39,6 @@ class TaskTrackPage extends Component {
           disabled,
           taskTrack,
           taskTrackId,
-          isFormValid: true,
-          taskTrackInput,
           taskId,
           loading: false,
         });
@@ -58,19 +46,12 @@ class TaskTrackPage extends Component {
     }
   }
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandleChangeDate = (id) => (value) => this.handleChangeDate(value, id);
 
-  handleInput = ({ target: { value } }, controlName) => {
-    const { taskTrackInput, taskTrack } = this.state;
-    taskTrackInput[controlName].value = value;
-    taskTrackInput[controlName].touched = true;
-    taskTrackInput[controlName].valid = validateControl(value, taskTrackInput[controlName].validation);
-    taskTrack[controlName] = value;
-    let isFormValid = true;
-    Object.keys(taskTrackInput).forEach((name) => {
-      isFormValid = taskTrackInput[name].valid && isFormValid;
-    });
-    this.setState({ taskTrackInput, taskTrack, isFormValid });
+  handleChangeDate = (value, id) => {
+    const { taskTrack } = this.state;
+    taskTrack[id] = value;
+    this.setState({ taskTrack });
   };
 
   handleTextArea = ({ target: { id, value } }) => {
@@ -84,12 +65,10 @@ class TaskTrackPage extends Component {
   };
 
   buttonCloseClick = () => {
-    const { taskTrack, taskTrackInput, taskId } = this.state;
-    const res = clearOblectValue(taskTrackInput, taskTrack);
+    const { taskTrack, taskId } = this.state;
+    const res = clearOblectValue({}, taskTrack);
     this.setState({
-      taskTrackInput: res.objInputClear,
       taskTrack: res.objElemClear,
-      isFormValid: false,
       disabled: false,
       loading: true,
     });
@@ -97,53 +76,37 @@ class TaskTrackPage extends Component {
   };
 
   createTaskTrackHandler = async () => {
-    const { taskTrackId, taskTrack, taskTrackInput, taskId } = this.state;
+    const { taskTrackId, taskTrack, taskId } = this.state;
     const { fetchService, userTaskId } = this.props;
     taskTrack.userTaskId = userTaskId;
     let notification = '';
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
       if (response) {
-        notification = { title: `Add new task track.` };
+        notification = { title: `✔️ Add new task track.` };
       }
     } else {
       const response = await fetchService.editTaskTrack(taskTrackId, taskTrack);
       if (response) {
-        notification = { title: `Task track was edited.` };
+        notification = { title: `✔️ Task track was edited.` };
       }
     }
     this.setState({ onNotification: true, notification });
-    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
-    const res = clearOblectValue(taskTrackInput, taskTrack);
-    this.setState({ taskTrackInput: res.objInputClear, taskTrack: res.objElemClear });
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
+    const res = clearOblectValue({}, taskTrack);
+    this.setState({ taskTrack: res.objElemClear });
     this.props.onTrackClick(taskId);
   };
 
-  renderInputs() {
-    const { taskTrackInput, disabled } = this.state;
-    return Object.keys(taskTrackInput).map((controlName, index) => {
-      const control = taskTrackInput[controlName];
-      return (
-        <Input
-          key={controlName + index}
-          id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
-          disabled={disabled}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
-          onChange={this.onHandlelInput(controlName)}
-        />
-      );
-    });
-  }
-
   render() {
     const { isOpen, title, subtitle } = this.props;
-    const { taskTrack, disabled, isFormValid, notification, onNotification, loading } = this.state;
+    const {
+      taskTrack: { trackDate, trackNote },
+      disabled,
+      notification,
+      onNotification,
+      loading,
+    } = this.state;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
@@ -155,7 +118,13 @@ class TaskTrackPage extends Component {
             ) : (
               <>
                 <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
-                {this.renderInputs()}
+                <DatePicker
+                  date={trackDate}
+                  id='date'
+                  label='Date'
+                  disabled={disabled}
+                  onChange={this.onHandleChangeDate('date')}
+                />
                 <div className='form-group'>
                   <label htmlFor='trackNote'>Note</label>
                   <textarea
@@ -163,17 +132,17 @@ class TaskTrackPage extends Component {
                     id='trackNote'
                     name='note'
                     disabled={disabled}
-                    value={taskTrack.trackNote}
+                    value={trackNote}
                     rows='7'
                     onChange={this.handleTextArea}
-                  ></textarea>
+                  />
                 </div>
                 <div className='form-group row'>
                   <Button
                     className='btn-add'
+                    disabled={disabled}
                     type='submit'
                     name='Save'
-                    disabled={disabled || !isFormValid}
                     onClick={this.createTaskTrackHandler}
                   />
                   <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
@@ -194,8 +163,9 @@ TaskTrackPage.propTypes = {
   userTaskId: PropTypes.string.isRequired,
   subtitle: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  fetchService: PropTypes.object.isRequired,
-  track: PropTypes.object.isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
+  track: PropTypes.objectOf(PropTypes.string).isRequired,
+  onTrackClick: PropTypes.func.isRequired,
 };
 
 export default withFetchService(TaskTrackPage);

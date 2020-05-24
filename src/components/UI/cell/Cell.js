@@ -17,7 +17,7 @@ Cell.defaultProps = {
 Cell.propTypes = {
   className: PropTypes.string,
   id: PropTypes.string,
-  value: PropTypes.any,
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.number]).isRequired,
 };
 
 export default Cell;

@@ -134,13 +134,33 @@ class TaskPage extends Component {
     const { taskInput, task } = this.state;
     taskInput[controlName].value = value;
     taskInput[controlName].touched = true;
-    taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
     task[controlName] = value;
     let isFormValid = true;
     Object.keys(taskInput).forEach((name) => {
       isFormValid = taskInput[name].valid && isFormValid;
     });
     this.setState({ taskInput, task, isFormValid });
+  };
+
+  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+
+  handleFinishEditing = ({ target: { value } }, controlName) => {
+    const { taskInput } = this.state;
+    taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
+    let isFormValid = true;
+    Object.keys(taskInput).forEach((name) => {
+      isFormValid = taskInput[name].valid && isFormValid;
+    });
+    this.setState({ taskInput, isFormValid });
+  };
+
+  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+
+  handleFocus = (controlName) => {
+    const { taskInput } = this.state;
+    taskInput[controlName].valid = true;
+    taskInput[controlName].touched = true;
+    this.setState({ taskInput });
   };
 
   handleTextArea = ({ target: { id, value } }) => {
@@ -189,11 +209,13 @@ class TaskPage extends Component {
 
   createTaskHandler = async () => {
     const { taskId, task, taskInput } = this.state;
-    const { fetchService } = this.props;
+    const {
+      fetchService: { setTask, setUserTask, editTask },
+    } = this.props;
     let notification = '';
     this.setState({ loading: false });
     if (!taskId) {
-      const responseTask = await fetchService.setTask(task);
+      const responseTask = await setTask(task);
       if (responseTask.statusText) {
         notification = { title: `✔️ ${task.name} was added.` };
         this.setState({ taskId: responseTask.data.name, notification });
@@ -201,14 +223,14 @@ class TaskPage extends Component {
       const addMembersTask = await this.createTaskState();
       if (addMembersTask.length) {
         for (const addMemberTask of addMembersTask) {
-          const responseUserTask = await fetchService.setUserTask(addMemberTask);
+          const responseUserTask = await setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
             notification = { title: `✔️ ${task.name} was added for user.` };
           }
         }
       }
     } else {
-      const responseTask = await fetchService.editTask(taskId, task);
+      const responseTask = await editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
         notification = { title: `✔️ ${task.name} was edited.` };
@@ -253,6 +275,8 @@ class TaskPage extends Component {
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
+          onBlur={this.onHandleFinishEditing(controlName)}
+          onFocus={this.onHandleFocus(controlName)}
         />
       );
     });
@@ -366,7 +390,7 @@ TaskPage.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
   task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
-  // fetchService: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
 export default withFetchService(TaskPage);

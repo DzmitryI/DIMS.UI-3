@@ -15,6 +15,7 @@ Button.defaultProps = {
   type: 'button',
   className: 'btn-add',
   disabled: false,
+  id: null,
 };
 
 Button.propTypes = {
@@ -24,7 +25,7 @@ Button.propTypes = {
   onClick: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   theme: PropTypes.string.isRequired,
-  name: PropTypes.any,
+  name: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
 export default withTheme(Button);

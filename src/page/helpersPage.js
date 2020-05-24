@@ -27,6 +27,9 @@ function clearOblectValue(objInput, objElem) {
   if (objElemClear.deadlineDate) {
     objElemClear.deadlineDate = new Date();
   }
+  if (objElemClear.birthDate) {
+    objElemClear.birthDate = new Date();
+  }
   const res = {
     objInputClear,
     objElemClear,

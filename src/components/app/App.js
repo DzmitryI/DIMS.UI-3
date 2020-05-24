@@ -1,3 +1,5 @@
+/* eslint-disable react/no-access-state-in-setstate */
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -266,6 +268,13 @@ class App extends Component {
 App.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   autoLogin: PropTypes.func.isRequired,
+  email: PropTypes.string,
+  database: PropTypes.string,
+};
+
+App.defaultProps = {
+  email: null,
+  database: null,
 };
 
 const mapStateToProps = ({ auth: { token, email, database } }) => {

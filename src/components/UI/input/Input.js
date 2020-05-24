@@ -20,10 +20,11 @@ const Input = ({
   errorMessage,
   disabled,
   placeholder,
+  className,
 }) => {
   const result = isInvalid(valid, touched, shouldValidation);
   return (
-    <div className={`form-group ${result ? 'invalid' : ''}`}>
+    <div className={`form-group ${className} ${result ? 'invalid' : ''}`}>
       <label htmlFor={id}>{label}</label>
       <input
         key={id}
@@ -54,16 +55,18 @@ Input.propTypes = {
   errorMessage: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.PropTypes.string.isRequired,
-  onBlur: PropTypes.func,
-  onFocus: PropTypes.func,
+  onBlur: PropTypes.func.isRequired,
+  onFocus: PropTypes.func.isRequired,
+  className: PropTypes.string,
   valid: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).isRequired,
 };
 
 Input.defaultProps = {
   type: 'text',
-  autocomplete: 'on',
+  autocomplete: 'off',
   disabled: false,
   placeholder: '',
+  className: '',
 };
 
 export default Input;

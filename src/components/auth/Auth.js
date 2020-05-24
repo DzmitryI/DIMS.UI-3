@@ -1,3 +1,4 @@
+/* eslint-disable react/no-access-state-in-setstate */
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -68,7 +69,11 @@ class Auth extends PureComponent {
     const authInput = { ...this.state.authInput };
     authInput[controlName].value = value;
     authInput[controlName].touched = true;
-    this.setState({ authInput });
+    let isFormValid = true;
+    Object.keys(authInput).forEach((name) => {
+      isFormValid = authInput[name].valid && isFormValid;
+    });
+    this.setState({ authInput, isFormValid });
   };
 
   onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);

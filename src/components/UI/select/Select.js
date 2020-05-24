@@ -25,13 +25,13 @@ Select.defaultProps = {
 };
 
 Select.propTypes = {
-  id: PropTypes.string,
-  options: PropTypes.array,
-  label: PropTypes.string,
-  name: PropTypes.string,
-  onChange: PropTypes.func,
+  id: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(PropTypes.object),
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.string.isRequired,
 };
 
 export default Select;

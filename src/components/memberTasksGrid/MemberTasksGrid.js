@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable no-shadow */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
@@ -69,7 +70,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
       setError(true);
       setErrorMessage(message);
     }
-    setTimeout(() => setOnNotification(false), 1000);
+    setTimeout(() => setOnNotification(false), 5000);
   };
 
   const renderTBody = (userTasks) => {
@@ -142,7 +143,7 @@ MemberTasksGrid.propTypes = {
   title: PropTypes.string.isRequired,
   onTrackClick: PropTypes.func.isRequired,
   onOpenTaskTracksClick: PropTypes.func.isRequired,
-  fetchService: PropTypes.object.isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   theme: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
 };

@@ -6,6 +6,7 @@ import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
+import DatePicker from '../../components/datePicker';
 import { createControl, validateControl } from '../../services/helpers';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
@@ -37,6 +38,13 @@ class MemberPage extends Component {
         },
         { required: true, email: true },
       ),
+      skype: createControl(
+        {
+          label: 'Skype',
+          errorMessage: 'enter skype',
+        },
+        { required: true },
+      ),
       education: createControl(
         {
           label: 'Education',
@@ -44,11 +52,10 @@ class MemberPage extends Component {
         },
         { required: true },
       ),
-      birthDate: createControl(
+      address: createControl(
         {
-          label: 'Bith date',
-          errorMessage: 'enter bith date',
-          type: 'date',
+          label: 'Address',
+          errorMessage: 'enter address',
         },
         { required: true },
       ),
@@ -68,33 +75,11 @@ class MemberPage extends Component {
         },
         { required: true },
       ),
-      address: createControl(
-        {
-          label: 'Address',
-          errorMessage: 'enter address',
-        },
-        { required: true },
-      ),
       mobilePhone: createControl(
         {
           label: 'Mobile phone',
           errorMessage: 'enter mobile phone',
           placeholder: '+375 xx xxxxxxx',
-        },
-        { required: true },
-      ),
-      skype: createControl(
-        {
-          label: 'Skype',
-          errorMessage: 'enter skype',
-        },
-        { required: true },
-      ),
-      startDate: createControl(
-        {
-          label: 'Start date',
-          errorMessage: 'enter start date',
-          type: 'date',
         },
         { required: true },
       ),
@@ -125,13 +110,13 @@ class MemberPage extends Component {
       lastName: '',
       email: '',
       education: '',
-      birthDate: '',
+      birthDate: new Date('01/01/2000'),
       universityAverageScore: '',
       mathScore: '',
       address: '',
       mobilePhone: '',
       skype: '',
-      startDate: '',
+      startDate: new Date(),
       directionId: 'direction1',
       sex: 'sex1',
     },
@@ -141,8 +126,6 @@ class MemberPage extends Component {
     directions: [],
     onNotification: false,
     notification: {},
-    error: false,
-    errorMessage: '',
   };
 
   componentDidUpdate(prevProps) {
@@ -203,13 +186,33 @@ class MemberPage extends Component {
     const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
-    memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
     member[controlName] = value;
     let isFormValid = true;
     Object.keys(memberInput).forEach((name) => {
       isFormValid = memberInput[name].valid && isFormValid;
     });
     this.setState({ memberInput, member, isFormValid });
+  };
+
+  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+
+  handleFinishEditing = ({ target: { value } }, controlName) => {
+    const { memberInput } = this.state;
+    memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
+    let isFormValid = true;
+    Object.keys(memberInput).forEach((name) => {
+      isFormValid = memberInput[name].valid && isFormValid;
+    });
+    this.setState({ memberInput, isFormValid });
+  };
+
+  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+
+  handleFocus = (controlName) => {
+    const { memberInput } = this.state;
+    memberInput[controlName].valid = true;
+    memberInput[controlName].touched = true;
+    this.setState({ memberInput });
   };
 
   onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
@@ -260,19 +263,19 @@ class MemberPage extends Component {
     try {
       if (value === 'edit') {
         await fetchService.editMember(userId, member);
-        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
+        notification = { title: `✔️ Member: ${member.name} ${member.lastName} was edited` };
       } else {
         await fetchService.setMember(member);
-        notification = { title: `New member: ${member.name} ${member.lastName} was added` };
+        notification = { title: `✔️ New member: ${member.name} ${member.lastName} was added` };
       }
       this.setState({ onNotification: true, notification });
       const res = clearOblectValue(memberInput, member);
       this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
       onRegisterClick(directions);
     } catch ({ message }) {
-      this.setState({ onNotification: true, notification: { status: 'error', title: message } });
+      this.setState({ onNotification: true, notification: { title: `❗️ ${message}`, status: 'error' } });
     }
-    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
   }
 
   renderInputs() {
@@ -293,6 +296,9 @@ class MemberPage extends Component {
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
           placeholder={control.placeholder}
+          className='form-group-member'
+          onBlur={this.onHandleFinishEditing(controlName)}
+          onFocus={this.onHandleFocus(controlName)}
         />
       );
     });
@@ -329,7 +335,7 @@ class MemberPage extends Component {
 
   render() {
     const {
-      member: { name, lastName },
+      member: { name, lastName, startDate, birthDate },
       disabled,
       loading,
       isFormValid,
@@ -343,14 +349,30 @@ class MemberPage extends Component {
         {onNotification && <DisplayNotification notification={notification} />}
         <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
-          <form onSubmit={this.submitHandler} className='page-form'>
+          <form onSubmit={this.submitHandler} className='page-form member'>
             {loading ? (
               <Spinner />
             ) : (
               <>
                 <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-                {this.renderInputs()}
-                {this.renderSelect()}
+                <div className='form-group-members'>{this.renderInputs()}</div>
+                <div className='row'>
+                  <DatePicker
+                    date={birthDate}
+                    id='birthDate'
+                    label='Bith date'
+                    disabled={disabled}
+                    onChange={this.onHandlelInput('birthDate')}
+                  />
+                  <DatePicker
+                    date={startDate}
+                    id='startDate'
+                    label='Start date'
+                    disabled={disabled}
+                    onChange={this.onHandlelInput('startDate')}
+                  />
+                </div>
+                <div className='row'>{this.renderSelect()}</div>
                 <div className='form-group row'>
                   <Button
                     className='btn-add'
@@ -372,10 +394,10 @@ class MemberPage extends Component {
 }
 
 MemberPage.propTypes = {
-  member: PropTypes.array.isRequired,
-  directions: PropTypes.array.isRequired,
+  member: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string.isRequired,
-  fetchService: PropTypes.object.isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onRegisterClick: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
 };
