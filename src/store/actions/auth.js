@@ -26,7 +26,6 @@ export function auth(email, password, isLogin, database = 'firebase') {
         localStorage.setItem('expirationDate', expirationDate);
         localStorage.setItem('email', email);
         localStorage.setItem('database', database);
-        dispatch(authNotification({ status: 'success', title: '✔️ An Email and a password are correct' }));
         dispatch(authSuccess(idToken, email, database));
         dispatch(autoLogout(expiresIn));
       } else {

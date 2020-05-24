@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DatePicker from 'react-datepicker';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
@@ -11,7 +10,7 @@ import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
-import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from '../../components/datePicker';
 
 class TaskPage extends Component {
   state = {
@@ -24,22 +23,6 @@ class TaskPage extends Component {
         },
         { required: true },
       ),
-      // startDate: createControl(
-      //   {
-      //     type: 'date',
-      //     label: 'Start',
-      //     errorMessage: 'Enter start date',
-      //   },
-      //   { required: true },
-      // ),
-      // deadlineDate: createControl(
-      //   {
-      //     type: 'date',
-      //     label: 'Deadline',
-      //     errorMessage: 'Enter deadline',
-      //   },
-      //   { required: true },
-      // ),
     },
     task: {
       name: '',
@@ -88,9 +71,11 @@ class TaskPage extends Component {
   }
 
   updateTaskMembers = async (taskId) => {
-    const { fetchService } = this.props;
-    const members = await fetchService.getAllMember();
-    const userTasks = await fetchService.getAllUserTasks();
+    const {
+      fetchService: { getAllMember, getAllUserTasks },
+    } = this.props;
+    const members = await getAllMember();
+    const userTasks = await getAllUserTasks();
     if (userTasks.length) {
       userTasks.forEach((userTask) => {
         if (userTask.taskId === taskId) {
@@ -116,19 +101,16 @@ class TaskPage extends Component {
         if (index !== -1 && !member.checked) {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task was deleted.`;
+            notification.title = `✔️ User's task was deleted.`;
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task state was deleted.`;
+            notification.title = `✔️ User's task state was deleted.`;
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task state was added.`;
+            notification.title = `✔️ User's task state was added.`;
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -136,12 +118,11 @@ class TaskPage extends Component {
             stateId: responseTaskState.data.name,
           });
           if (responseUserTask.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task was added.`;
+            notification.title = `✔️ User's task was added.`;
           }
         }
         this.setState({ onNotification: true, notification });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       }
     }
     return members;
@@ -214,7 +195,7 @@ class TaskPage extends Component {
     if (!taskId) {
       const responseTask = await fetchService.setTask(task);
       if (responseTask.statusText) {
-        notification = { title: `${task.name} was added.` };
+        notification = { title: `✔️ ${task.name} was added.` };
         this.setState({ taskId: responseTask.data.name, notification });
       }
       const addMembersTask = await this.createTaskState();
@@ -222,7 +203,7 @@ class TaskPage extends Component {
         for (const addMemberTask of addMembersTask) {
           const responseUserTask = await fetchService.setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
-            notification = { title: `${task.name} was added for user.` };
+            notification = { title: `✔️ ${task.name} was added for user.` };
           }
         }
       }
@@ -230,11 +211,11 @@ class TaskPage extends Component {
       const responseTask = await fetchService.editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
-        notification = { title: `${task.name} was edited.` };
+        notification = { title: `✔️ ${task.name} was edited.` };
       }
     }
     this.setState({ onNotification: true, notification });
-    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const res = clearOblectValue(taskInput, task);
     this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', members: [] });
     this.props.onCreateTaskClick();
@@ -261,6 +242,7 @@ class TaskPage extends Component {
       const control = this.state.taskInput[controlName];
       return (
         <Input
+          key={controlName + index}
           id={controlName + index}
           type={control.type}
           value={control.value}
@@ -311,86 +293,80 @@ class TaskPage extends Component {
 
     return (
       <>
-        <React.StrictMode>
-          {onNotification && <DisplayNotification notification={notification} />}
-          <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
-            <h1 className='title'>{title}</h1>
-            <form onSubmit={this.submitHandler} className='page-form'>
-              {loading ? (
-                <Spinner />
-              ) : (
-                <>
-                  {error ? (
-                    <ErrorIndicator errorMessage={errorMessage} />
-                  ) : (
-                    <>
-                      <h1 className='subtitle'>{name}</h1>
-                      {this.renderInputs()}
-                      <div className='row'>
-                        <div className='form-group'>
-                          <label htmlFor='startDate'>Start date</label>
-                          <DatePicker
-                            selected={new Date(startDate)}
-                            id='startDate'
-                            disabled={disabled}
-                            onChange={this.onHandleChangeDate('startDate')}
-                          />
-                        </div>
-                        <div className='form-group'>
-                          <label htmlFor='deadlineDate'>Deadline</label>
-                          <DatePicker
-                            selected={new Date(deadlineDate)}
-                            id='deadlineDate'
-                            disabled={disabled}
-                            onChange={this.onHandleChangeDate('deadlineDate')}
-                          />
-                        </div>
+        {onNotification && <DisplayNotification notification={notification} />}
+        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
+          <h1 className='title'>{title}</h1>
+          <form onSubmit={this.submitHandler} className='page-form'>
+            {loading ? (
+              <Spinner />
+            ) : (
+              <>
+                {error ? (
+                  <ErrorIndicator errorMessage={errorMessage} />
+                ) : (
+                  <>
+                    <h1 className='subtitle'>{name}</h1>
+                    {this.renderInputs()}
+                    <div className='row'>
+                      <DatePicker
+                        date={startDate}
+                        id='startDate'
+                        label='Start date'
+                        disabled={disabled}
+                        onChange={this.onHandleChangeDate('startDate')}
+                      />
+                      <DatePicker
+                        date={deadlineDate}
+                        id='deadlineDate'
+                        label='Deadline'
+                        disabled={disabled}
+                        onChange={this.onHandleChangeDate('deadlineDate')}
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <label htmlFor='description'>Description</label>
+                      <textarea
+                        id='description'
+                        name='description'
+                        value={description}
+                        rows='7'
+                        disabled={disabled}
+                        onChange={this.handleTextArea}
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <label htmlFor='members'>Members</label>
+                      <div id='members' className='column'>
+                        {this.renderCheckbox()}
                       </div>
-                      <div className='form-group'>
-                        <label htmlFor='description'>Description</label>
-                        <textarea
-                          id='description'
-                          name='description'
-                          value={description}
-                          rows='7'
-                          disabled={disabled}
-                          onChange={this.handleTextArea}
-                        ></textarea>
-                      </div>
-                      <div className='form-group'>
-                        <label htmlFor='members'>Members</label>
-                        <div id='members' className='column'>
-                          {this.renderCheckbox()}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                  <div className='form-group row'>
-                    <Button
-                      className='btn-add'
-                      type='submit'
-                      name='Save'
-                      disabled={disabled || !isFormValid}
-                      onClick={this.createTaskHandler}
-                    />
-                    <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
-                  </div>
-                </>
-              )}
-            </form>
-          </div>
-          {isOpen && <Backdrop />}
-        </React.StrictMode>
+                    </div>
+                  </>
+                )}
+                <div className='form-group row'>
+                  <Button
+                    className='btn-add'
+                    type='submit'
+                    name='Save'
+                    disabled={disabled || !isFormValid}
+                    onClick={this.createTaskHandler}
+                  />
+                  <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
+                </div>
+              </>
+            )}
+          </form>
+        </div>
+        {isOpen && <Backdrop />}
       </>
     );
   }
 }
 
 TaskPage.propTypes = {
-  task: PropTypes.array.isRequired,
-  title: PropTypes.string.isRequired,
-  fetchService: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
+  // fetchService: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
 };
 
 export default withFetchService(TaskPage);

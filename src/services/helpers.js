@@ -1,5 +1,6 @@
 function validateControl(value, validation) {
   let isValid = true;
+
   if (!validation) {
     return true;
   }
@@ -8,8 +9,8 @@ function validateControl(value, validation) {
   }
 
   if (validation.email) {
-    let reg = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
-    isValid = reg.exec(value);
+    const reg = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
+    isValid = !!reg.exec(value);
   }
 
   if (validation.minLenght) {

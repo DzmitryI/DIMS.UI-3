@@ -49,7 +49,7 @@ class App extends Component {
   async componentDidUpdate(prevProps) {
     const { email, database } = this.props;
     let fetchService = {};
-    if (email !== prevProps.email) {
+    if (email && email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
@@ -264,9 +264,7 @@ class App extends Component {
 }
 
 App.propTypes = {
-  isAuthenticated: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  database: PropTypes.string.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
   autoLogin: PropTypes.func.isRequired,
 };
 

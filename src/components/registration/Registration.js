@@ -24,7 +24,7 @@ class Registration extends PureComponent {
       password: createControl(
         {
           label: 'Password',
-          errorMessage: 'enter password',
+          errorMessage: 'enter password, min lenght 6 simbols',
           type: 'password',
         },
         { required: true, minLenght: 6 },
@@ -49,12 +49,28 @@ class Registration extends PureComponent {
     const authInput = { ...this.state.authInput };
     authInput[controlName].value = value;
     authInput[controlName].touched = true;
+    this.setState({ authInput });
+  };
+
+  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+
+  handleFinishEditing = ({ target: { value } }, controlName) => {
+    const authInput = { ...this.state.authInput };
     authInput[controlName].valid = validateControl(value, authInput[controlName].validation);
     let isFormValid = true;
     Object.keys(authInput).forEach((name) => {
       isFormValid = authInput[name].valid && isFormValid;
     });
     this.setState({ authInput, isFormValid });
+  };
+
+  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+
+  handleFocus = (controlName) => {
+    const authInput = { ...this.state.authInput };
+    authInput[controlName].valid = true;
+    authInput[controlName].touched = true;
+    this.setState({ authInput });
   };
 
   renderInputs() {
@@ -73,6 +89,8 @@ class Registration extends PureComponent {
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
+          onBlur={this.onHandleFinishEditing(controlName)}
+          onFocus={this.onHandleFocus(controlName)}
         />
       );
     });

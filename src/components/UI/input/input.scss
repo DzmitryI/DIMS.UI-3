@@ -9,12 +9,18 @@ $blue: rgb(57, 126, 237);
   width: 100%;
   margin-bottom: 0.7rem;
   & span {
-    width: 70%;
+    width: 80%;
     display: block;
     margin: 0 1rem;
     font-size: 12px;
     font-weight: bold;
     color: $red;
+  }
+  & .invalid-text {
+    visibility: hidden;
+  }
+  & .visibility {
+    visibility: visible;
   }
 }
 
@@ -44,11 +50,10 @@ input {
     box-shadow: 0px 0px 1px 1px $blue;
   }
 }
+
 .invalid {
   & input {
     border-color: $red;
-  }
-  & label {
-    color: $red;
+    box-shadow: 0px 0px 1px 1px $red;
   }
 }

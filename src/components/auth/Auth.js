@@ -25,10 +25,10 @@ class Auth extends PureComponent {
       password: createControl(
         {
           label: 'Password',
-          errorMessage: 'enter password',
+          errorMessage: 'enter password, min lenght 6 simbols',
           type: 'password',
         },
-        { required: true, minLenght: 6 },
+        { required: false },
       ),
     },
     baseSelect: {
@@ -55,7 +55,7 @@ class Auth extends PureComponent {
       authInput: { email, password },
       database,
     } = this.state;
-    this.props.auth(email.value, password.value, database, true);
+    this.props.auth(email.value, password.value, true, database);
   };
 
   submitHandler = (event) => {
@@ -68,12 +68,28 @@ class Auth extends PureComponent {
     const authInput = { ...this.state.authInput };
     authInput[controlName].value = value;
     authInput[controlName].touched = true;
+    this.setState({ authInput });
+  };
+
+  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+
+  handleFinishEditing = ({ target: { value } }, controlName) => {
+    const authInput = { ...this.state.authInput };
     authInput[controlName].valid = validateControl(value, authInput[controlName].validation);
     let isFormValid = true;
     Object.keys(authInput).forEach((name) => {
       isFormValid = authInput[name].valid && isFormValid;
     });
     this.setState({ authInput, isFormValid });
+  };
+
+  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+
+  handleFocus = (controlName) => {
+    const authInput = { ...this.state.authInput };
+    authInput[controlName].valid = true;
+    authInput[controlName].touched = true;
+    this.setState({ authInput });
   };
 
   onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
@@ -99,6 +115,8 @@ class Auth extends PureComponent {
           errorMessage={control.errorMessage}
           shouldValidation={!!control.validation}
           onChange={this.onHandlelInput(controlName)}
+          onBlur={this.onHandleFinishEditing(controlName)}
+          onFocus={this.onHandleFocus(controlName)}
         />
       );
     });
