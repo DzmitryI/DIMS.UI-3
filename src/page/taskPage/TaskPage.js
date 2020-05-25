@@ -5,11 +5,12 @@ import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
-import { createControl, validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
+import DatePicker from '../../components/datePicker';
 
 class TaskPage extends Component {
   state = {
@@ -22,28 +23,12 @@ class TaskPage extends Component {
         },
         { required: true },
       ),
-      startDate: createControl(
-        {
-          type: 'date',
-          label: 'Start',
-          errorMessage: 'Enter start date',
-        },
-        { required: true },
-      ),
-      deadlineDate: createControl(
-        {
-          type: 'date',
-          label: 'Deadline',
-          errorMessage: 'Enter deadline',
-        },
-        { required: true },
-      ),
     },
     task: {
       name: '',
       description: '',
-      startDate: '',
-      deadlineDate: '',
+      startDate: new Date(),
+      deadlineDate: new Date(),
     },
     taskId: null,
     loading: true,
@@ -58,24 +43,6 @@ class TaskPage extends Component {
 
   taskState = {
     stateName: 'Active',
-  };
-
-  updateTaskMembers = async (taskId) => {
-    const { fetchService } = this.props;
-    const members = await fetchService.getAllMember();
-    const userTasks = await fetchService.getAllUserTasks();
-    if (userTasks.length) {
-      userTasks.forEach((userTask) => {
-        if (userTask.taskId === taskId) {
-          const index = members.findIndex((member) => member.userId === userTask.userId);
-          if (index !== -1) {
-            members[index].checked = true;
-          }
-        }
-      });
-    }
-    this.setState({ userTasks });
-    return members;
   };
 
   async componentDidUpdate(prevProps) {
@@ -103,6 +70,26 @@ class TaskPage extends Component {
     }
   }
 
+  updateTaskMembers = async (taskId) => {
+    const {
+      fetchService: { getAllMember, getAllUserTasks },
+    } = this.props;
+    const members = await getAllMember();
+    const userTasks = await getAllUserTasks();
+    if (userTasks.length) {
+      userTasks.forEach((userTask) => {
+        if (userTask.taskId === taskId) {
+          const index = members.findIndex((member) => member.userId === userTask.userId);
+          if (index !== -1) {
+            members[index].checked = true;
+          }
+        }
+      });
+    }
+    this.setState({ userTasks });
+    return members;
+  };
+
   checkTaskMembers = async (taskId) => {
     const { members, userTasks, notification } = this.state;
     const { fetchService } = this.props;
@@ -114,19 +101,16 @@ class TaskPage extends Component {
         if (index !== -1 && !member.checked) {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task was deleted.`;
+            notification.title = `✔️ User's task was deleted.`;
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task state was deleted.`;
+            notification.title = `✔️ User's task state was deleted.`;
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task state was added.`;
+            notification.title = `✔️ User's task state was added.`;
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -134,29 +118,49 @@ class TaskPage extends Component {
             stateId: responseTaskState.data.name,
           });
           if (responseUserTask.statusText) {
-            notification.status = 'success';
-            notification.title = `User's task was added.`;
+            notification.title = `✔️ User's task was added.`;
           }
         }
         this.setState({ onNotification: true, notification });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       }
     }
     return members;
   };
 
   onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+
   handleInput = ({ target: { value } }, controlName) => {
     const { taskInput, task } = this.state;
     taskInput[controlName].value = value;
     taskInput[controlName].touched = true;
-    taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
     task[controlName] = value;
     let isFormValid = true;
     Object.keys(taskInput).forEach((name) => {
       isFormValid = taskInput[name].valid && isFormValid;
     });
     this.setState({ taskInput, task, isFormValid });
+  };
+
+  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+
+  handleFinishEditing = ({ target: { value } }, controlName) => {
+    const { taskInput } = this.state;
+    taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
+    let isFormValid = true;
+    Object.keys(taskInput).forEach((name) => {
+      isFormValid = taskInput[name].valid && isFormValid;
+    });
+    this.setState({ taskInput, isFormValid });
+  };
+
+  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+
+  handleFocus = (controlName) => {
+    const { taskInput } = this.state;
+    taskInput[controlName].valid = true;
+    taskInput[controlName].touched = true;
+    this.setState({ taskInput });
   };
 
   handleTextArea = ({ target: { id, value } }) => {
@@ -171,6 +175,14 @@ class TaskPage extends Component {
       if (member.userId === target.id) member.checked = target.checked;
     });
     this.setState({ members });
+  };
+
+  onHandleChangeDate = (id) => (value) => this.handleChangeDate(value, id);
+
+  handleChangeDate = (value, id) => {
+    const { task } = this.state;
+    task[id] = value;
+    this.setState({ task });
   };
 
   submitHandler = (event) => {
@@ -197,33 +209,35 @@ class TaskPage extends Component {
 
   createTaskHandler = async () => {
     const { taskId, task, taskInput } = this.state;
-    const { fetchService } = this.props;
+    const {
+      fetchService: { setTask, setUserTask, editTask },
+    } = this.props;
     let notification = '';
     this.setState({ loading: false });
     if (!taskId) {
-      const responseTask = await fetchService.setTask(task);
+      const responseTask = await setTask(task);
       if (responseTask.statusText) {
-        notification = { title: `${task.name} was added.` };
+        notification = { title: `✔️ ${task.name} was added.` };
         this.setState({ taskId: responseTask.data.name, notification });
       }
       const addMembersTask = await this.createTaskState();
       if (addMembersTask.length) {
         for (const addMemberTask of addMembersTask) {
-          const responseUserTask = await fetchService.setUserTask(addMemberTask);
+          const responseUserTask = await setUserTask(addMemberTask);
           if (responseUserTask.statusText) {
-            notification = { title: `${task.name} was added for user.` };
+            notification = { title: `✔️ ${task.name} was added for user.` };
           }
         }
       }
     } else {
-      const responseTask = await fetchService.editTask(taskId, task);
+      const responseTask = await editTask(taskId, task);
       this.checkTaskMembers(taskId);
       if (responseTask.statusText) {
-        notification = { title: `${task.name} was edited.` };
+        notification = { title: `✔️ ${task.name} was edited.` };
       }
     }
     this.setState({ onNotification: true, notification });
-    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const res = clearOblectValue(taskInput, task);
     this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', members: [] });
     this.props.onCreateTaskClick();
@@ -245,44 +259,25 @@ class TaskPage extends Component {
   };
 
   renderInputs() {
-    const {
-      task: { description },
-      disabled,
-    } = this.state;
+    const { disabled } = this.state;
     return Object.keys(this.state.taskInput).map((controlName, index) => {
       const control = this.state.taskInput[controlName];
-      let textArea = null;
-      if (index === 0) {
-        textArea = (
-          <div className='form-group'>
-            <label htmlFor='description'>Description</label>
-            <textarea
-              id='description'
-              name='description'
-              value={description}
-              rows='7'
-              disabled={disabled}
-              onChange={this.handleTextArea}
-            ></textarea>
-          </div>
-        );
-      }
       return (
-        <React.Fragment key={`form-group ${index}`}>
-          <Input
-            id={controlName + index}
-            type={control.type}
-            value={control.value}
-            valid={control.valid}
-            touched={control.touched}
-            label={control.label}
-            disabled={disabled}
-            errorMessage={control.errorMessage}
-            shouldValidation={!!control.validation}
-            onChange={this.onHandlelInput(controlName)}
-          />
-          {textArea}
-        </React.Fragment>
+        <Input
+          key={controlName + index}
+          id={controlName + index}
+          type={control.type}
+          value={control.value}
+          valid={control.valid}
+          touched={control.touched}
+          label={control.label}
+          disabled={disabled}
+          errorMessage={control.errorMessage}
+          shouldValidation={!!control.validation}
+          onChange={this.onHandlelInput(controlName)}
+          onBlur={this.onHandleFinishEditing(controlName)}
+          onFocus={this.onHandleFocus(controlName)}
+        />
       );
     });
   }
@@ -310,7 +305,7 @@ class TaskPage extends Component {
   render() {
     const { isOpen, title } = this.props;
     const {
-      task: { name },
+      task: { name, description, startDate, deadlineDate },
       loading,
       disabled,
       isFormValid,
@@ -335,7 +330,34 @@ class TaskPage extends Component {
                 ) : (
                   <>
                     <h1 className='subtitle'>{name}</h1>
-                    <div className='form-group'>{this.renderInputs()}</div>
+                    {this.renderInputs()}
+                    <div className='row'>
+                      <DatePicker
+                        date={startDate}
+                        id='startDate'
+                        label='Start date'
+                        disabled={disabled}
+                        onChange={this.onHandleChangeDate('startDate')}
+                      />
+                      <DatePicker
+                        date={deadlineDate}
+                        id='deadlineDate'
+                        label='Deadline'
+                        disabled={disabled}
+                        onChange={this.onHandleChangeDate('deadlineDate')}
+                      />
+                    </div>
+                    <div className='form-group'>
+                      <label htmlFor='description'>Description</label>
+                      <textarea
+                        id='description'
+                        name='description'
+                        value={description}
+                        rows='7'
+                        disabled={disabled}
+                        onChange={this.handleTextArea}
+                      />
+                    </div>
                     <div className='form-group'>
                       <label htmlFor='members'>Members</label>
                       <div id='members' className='column'>
@@ -365,10 +387,10 @@ class TaskPage extends Component {
 }
 
 TaskPage.propTypes = {
-  task: PropTypes.array.isRequired,
-  title: PropTypes.string.isRequired,
-  fetchService: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
 export default withFetchService(TaskPage);

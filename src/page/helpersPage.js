@@ -21,6 +21,15 @@ function clearOblectValue(objInput, objElem) {
   if (objElemClear.trackNote) {
     objElemClear.trackNote = '';
   }
+  if (objElemClear.startDate) {
+    objElemClear.startDate = new Date();
+  }
+  if (objElemClear.deadlineDate) {
+    objElemClear.deadlineDate = new Date();
+  }
+  if (objElemClear.birthDate) {
+    objElemClear.birthDate = new Date();
+  }
   const res = {
     objInputClear,
     objElemClear,

@@ -16,12 +16,18 @@ $red: rgb(230, 30, 30);
   left: 0;
   right: 0;
   & .page-form {
-    width: 70%;
-    max-width: 35rem;
+    width: 25rem;
     border: 1px solid $dark;
     border-radius: 5px;
     margin: 0 auto;
     background-color: $light;
+  }
+  & .member {
+    width: 29rem;
+  }
+  & .form-group-members {
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 
@@ -39,11 +45,12 @@ $red: rgb(230, 30, 30);
 
 textarea {
   display: block;
-  width: 100%;
+  width: 80%;
   margin: 0 1rem;
   font-size: inherit;
   outline: none;
   border: solid 1px $dark;
+  border-radius: 0.25rem;
   &:disabled {
     cursor: not-allowed;
   }
@@ -60,6 +67,7 @@ textarea {
 
 #members {
   margin: 0 1rem;
+  border-radius: 0.25rem;
 }
 
 .green {

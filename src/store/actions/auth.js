@@ -1,36 +1,43 @@
+/* eslint-disable no-shadow */
 import axios from 'axios';
-import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION } from './actionTypes';
+import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION, AUTH_REGISTER } from './actionTypes';
 
-export function auth(email, password, base, isLogin) {
+export function auth(email, password, isLogin, database = 'firebase') {
   return async (dispatch) => {
     const authData = {
       email,
       password,
-      base,
+      database,
       returnSecureToken: true,
     };
 
-    let url = `${process.env.REACT_APP_URL_SIGNUP}${process.env.REACT_APP_API_KEY}`;
+    const url = `${isLogin ? process.env.REACT_APP_URL_SIGNIN : process.env.REACT_APP_URL_SIGNUP}${
+      process.env.REACT_APP_API_KEY
+    }`;
 
-    if (isLogin) {
-      url = `${process.env.REACT_APP_URL_SIGNIN}${process.env.REACT_APP_API_KEY}`;
-    }
     try {
-      const { data } = await axios.post(url, authData);
-      const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000);
-      localStorage.setItem('token', data.idToken);
-      localStorage.setItem('expirationDate', expirationDate);
-      localStorage.setItem('email', data.email);
-      localStorage.setItem('base', base);
-      dispatch(authSuccess(data.idToken, data.email, base));
-      dispatch(autoLogout(data.expiresIn));
-      dispatch(authNotification(true, { status: 'success', title: 'Email is correct' }));
+      const {
+        data: { expiresIn, idToken, email },
+      } = await axios.post(url, authData);
+
+      if (isLogin) {
+        const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+        localStorage.setItem('token', idToken);
+        localStorage.setItem('expirationDate', expirationDate);
+        localStorage.setItem('email', email);
+        localStorage.setItem('database', database);
+        dispatch(authSuccess(idToken, email, database));
+        dispatch(autoLogout(expiresIn));
+      } else {
+        dispatch(authRegister());
+        dispatch(authNotification({ status: 'success', title: '✔️ The registration was successful' }));
+      }
     } catch (error) {
-      dispatch(authNotification(true, { status: 'error', title: error.message }));
+      dispatch(authNotification({ status: 'error', title: `❗️ ${error.message}` }));
     }
     setTimeout(() => {
-      dispatch(authNotification(false, {}));
-    }, 1000);
+      dispatch(authNotification({}, false));
+    }, 5000);
   };
 }
 
@@ -46,7 +53,7 @@ export function autoLogin() {
   return (dispatch) => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
-    const base = localStorage.getItem('base');
+    const database = localStorage.getItem('database');
     if (!token) {
       dispatch(logout());
     } else {
@@ -54,7 +61,7 @@ export function autoLogin() {
       if (expirationDate <= new Date()) {
         dispatch(logout());
       } else {
-        dispatch(authSuccess(token, email, base));
+        dispatch(authSuccess(token, email, database));
         dispatch(autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000));
       }
     }
@@ -62,7 +69,7 @@ export function autoLogin() {
 }
 
 export function logout() {
-  for (let key in localStorage) {
+  for (const key in localStorage) {
     if (!localStorage.hasOwnProperty(key)) {
       continue;
     }
@@ -73,16 +80,22 @@ export function logout() {
   };
 }
 
-export function authSuccess(token, email, base) {
+export function authSuccess(token, email, database) {
   return {
     type: AUTH_SUCCESS,
     token,
     email,
-    base,
+    database,
   };
 }
 
-export function authNotification(onNotification, notification) {
+export function authRegister() {
+  return {
+    type: AUTH_REGISTER,
+  };
+}
+
+export function authNotification(notification, onNotification = true) {
   return {
     type: AUTH_NOTIFICATION,
     onNotification,

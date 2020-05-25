@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-wrap-multilines */
+/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,11 +9,12 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
-import { withTheme } from '../../hoc';
+import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
+import { withTheme, withRole } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
 
+const { ADMIN } = TABLE_ROLES;
 class MembersGrid extends Component {
   async componentDidMount() {
     await this.props.fetchMembers();
@@ -58,38 +61,37 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
-  countAge = (value) => {
-    const curDate = new Date();
-    const birthDate = new Date(value);
-    const age = curDate.getFullYear() - birthDate.getFullYear();
-    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
-  };
-
-  renderTBody = (members, directions) => {
+  renderTBody = (members, directions, email) => {
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
         <tr key={userId} id={userId}>
           <Cell className='td index' value={index + 1} />
-          <Cell value={<span onClick={this.onChangeClick}>{`${fullName}`}</span>} />
-          <Cell value={`${!!curDirect && curDirect.name}`} />
-          <Cell value={`${education}`} />
+          <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
+          <Cell value={!!curDirect && curDirect.name} />
+          <Cell value={education} />
           <Cell value={getDate(startDate)} />
-          <Cell value={(birthDate && `${this.countAge(birthDate)}`) || age} />
+          <Cell value={(birthDate && countAge(birthDate)) || age} />
           <Cell
             className='td buttons-wrap'
             value={
               <>
-                <ButtonLink
-                  className='btn-progress'
-                  onClick={this.onProgressClick}
-                  name='Progress'
-                  to={'/MemberProgressGrid'}
-                />
-                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to={'/MemberTasksGrid'} />
-                <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                <div>
+                  <ButtonLink
+                    className='btn-progress'
+                    onClick={this.onProgressClick}
+                    name='Progress'
+                    to='/MemberProgressGrid'
+                  />
+                  <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
+                </div>
+                {ADMIN === email && (
+                  <div>
+                    <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                    <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                  </div>
+                )}
               </>
             }
           />
@@ -99,7 +101,17 @@ class MembersGrid extends Component {
   };
 
   render() {
-    const { members, directions, loading, onNotification, notification, theme, error, errorMessage } = this.props;
+    const {
+      members,
+      directions,
+      loading,
+      onNotification,
+      notification,
+      theme,
+      email,
+      error,
+      errorMessage,
+    } = this.props;
     if (loading) {
       return <Spinner />;
     }
@@ -110,12 +122,12 @@ class MembersGrid extends Component {
           <ErrorIndicator errorMessage={errorMessage} />
         ) : (
           <>
-            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+            {ADMIN === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
             <table border='1' className={`${theme}--table`}>
               <thead>
                 <HeaderTable arr={headerMembersGrid} />
               </thead>
-              <tbody>{members && this.renderTBody(members, directions)}</tbody>
+              <tbody>{members && this.renderTBody(members, directions, email)}</tbody>
             </table>
           </>
         )}
@@ -127,8 +139,9 @@ class MembersGrid extends Component {
 
 MembersGrid.propTypes = {
   isRegister: PropTypes.bool.isRequired,
-  members: PropTypes.array.isRequired,
-  directions: PropTypes.array.isRequired,
+  members: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  email: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.bool.isRequired,
   errorMessage: PropTypes.string.isRequired,
@@ -163,4 +176,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));
+export default connect(mapStateToProps, mapDispatchToProps)(withRole(withTheme(MembersGrid)));

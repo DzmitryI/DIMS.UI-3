@@ -1,6 +1,9 @@
+/* eslint-disable react/no-access-state-in-setstate */
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
 import MemberProgressGrid from '../memberProgressGrid';
@@ -13,6 +16,7 @@ import AboutAppPage from '../../page/aboutAppPage';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
+import Registration from '../registration';
 import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
 import FetchAzure from '../../services/fetchAzure';
@@ -45,13 +49,13 @@ class App extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    const { email, base } = this.props;
+    const { email, database } = this.props;
     let fetchService = {};
-    if (email !== prevProps.email) {
+    if (email && email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
-      if (base === 'firebase') {
+      if (database === 'firebase') {
         fetchService = new FetchFirebase();
       } else {
         fetchService = new FetchAzure();
@@ -61,8 +65,8 @@ class App extends Component {
         const member = members.find((member) => member.email === email);
         this.setState({ userId: member ? member.userId : '', fetchService });
       } catch ({ message }) {
-        this.setState({ onNotification: true, notification: { status: 'error', title: message } });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       }
     }
   }
@@ -146,6 +150,7 @@ class App extends Component {
     let routes = (
       <Switch>
         <Route path='/Auth' exact component={Auth} />
+        <Route path='/Registration' component={Registration} />
         <Redirect to='/Auth' />
       </Switch>
     );
@@ -260,11 +265,23 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = ({ auth: { token, email, base } }) => {
+App.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  autoLogin: PropTypes.func.isRequired,
+  email: PropTypes.string,
+  database: PropTypes.string,
+};
+
+App.defaultProps = {
+  email: null,
+  database: null,
+};
+
+const mapStateToProps = ({ auth: { token, email, database } }) => {
   return {
     isAuthenticated: !!token,
     email,
-    base,
+    database,
   };
 };
 

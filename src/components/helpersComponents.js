@@ -49,6 +49,13 @@ const SetUp = ({ fetchServiceValue, roleValue, ThemeValue, component }) => {
   );
 };
 
+const countAge = (value) => {
+  const curDate = new Date();
+  const birthDate = new Date(value);
+  const age = curDate.getFullYear() - birthDate.getFullYear();
+  return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
+};
+
 async function updateMemberProgress(userId = '', taskId = '') {
   let memberProgresses = [];
   const userTasks = await fetchService.getAllUserTasks();
@@ -144,6 +151,7 @@ export {
   TABLE_ROLES,
   getDate,
   SetUp,
+  countAge,
   updateMemberProgress,
   updateMemberTasks,
   deleteAllElements,

@@ -14,11 +14,13 @@ let fetchService = '';
 export function fetchMembers() {
   return async (dispatch) => {
     dispatch(fetchMembersStart());
-    if (localStorage.getItem('base') === 'firebase') {
+
+    if (localStorage.getItem('database') === 'firebase') {
       fetchService = new FetchFirabase();
     } else {
       fetchService = new FetchAzure();
     }
+
     try {
       const members = await fetchService.getAllMember();
       const directions = await fetchService.getDirection();

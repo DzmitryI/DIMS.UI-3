@@ -1,5 +1,6 @@
 function validateControl(value, validation) {
   let isValid = true;
+
   if (!validation) {
     return true;
   }
@@ -8,8 +9,8 @@ function validateControl(value, validation) {
   }
 
   if (validation.email) {
-    let reg = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
-    isValid = reg.exec(value);
+    const reg = /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/;
+    isValid = !!reg.exec(value);
   }
 
   if (validation.minLenght) {
@@ -31,11 +32,12 @@ function createControl(config, validation) {
 function createNotify() {
   return {
     position: 'top-right',
-    autoClose: 2000,
+    autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
-    pauseOnHover: false,
+    pauseOnHover: true,
     draggable: true,
+    rtl: false,
   };
 }
 
