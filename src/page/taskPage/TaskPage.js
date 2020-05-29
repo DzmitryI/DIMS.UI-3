@@ -128,7 +128,9 @@ class TaskPage extends Component {
     return members;
   };
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandlelInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const { taskInput, task } = this.state;
@@ -142,7 +144,9 @@ class TaskPage extends Component {
     this.setState({ taskInput, task, isFormValid });
   };
 
-  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
 
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const { taskInput } = this.state;
@@ -154,7 +158,9 @@ class TaskPage extends Component {
     this.setState({ taskInput, isFormValid });
   };
 
-  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
 
   handleFocus = (controlName) => {
     const { taskInput } = this.state;
@@ -177,7 +183,9 @@ class TaskPage extends Component {
     this.setState({ members });
   };
 
-  onHandleChangeDate = (id) => (value) => this.handleChangeDate(value, id);
+  onHandleChangeDate = (id) => (value) => {
+    this.handleChangeDate(value, id);
+  };
 
   handleChangeDate = (value, id) => {
     const { task } = this.state;
@@ -214,29 +222,33 @@ class TaskPage extends Component {
     } = this.props;
     let notification = '';
     this.setState({ loading: false });
-    if (!taskId) {
-      const responseTask = await setTask(task);
-      if (responseTask.statusText) {
-        notification = { title: `✔️ ${task.name} was added.` };
-        this.setState({ taskId: responseTask.data.name, notification });
-      }
-      const addMembersTask = await this.createTaskState();
-      if (addMembersTask.length) {
-        for (const addMemberTask of addMembersTask) {
-          const responseUserTask = await setUserTask(addMemberTask);
-          if (responseUserTask.statusText) {
-            notification = { title: `✔️ ${task.name} was added for user.` };
+    try {
+      if (!taskId) {
+        const responseTask = await setTask(task);
+        if (responseTask.statusText) {
+          notification = { title: `✔️ ${task.name} was added.` };
+          this.setState({ taskId: responseTask.data.name, notification });
+        }
+        const addMembersTask = await this.createTaskState();
+        if (addMembersTask.length) {
+          for (const addMemberTask of addMembersTask) {
+            const responseUserTask = await setUserTask(addMemberTask);
+            if (responseUserTask.statusText) {
+              notification = { title: `✔️ ${task.name} was added for user.` };
+            }
           }
         }
+      } else {
+        const responseTask = await editTask(taskId, task);
+        this.checkTaskMembers(taskId);
+        if (responseTask.statusText) {
+          notification = { title: `✔️ ${task.name} was edited.` };
+        }
       }
-    } else {
-      const responseTask = await editTask(taskId, task);
-      this.checkTaskMembers(taskId);
-      if (responseTask.statusText) {
-        notification = { title: `✔️ ${task.name} was edited.` };
-      }
+      this.setState({ onNotification: true, notification });
+    } catch ({ message }) {
+      this.setState({ onNotification: true, notification: { title: `❗️ ${message}`, status: 'error' } });
     }
-    this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const res = clearOblectValue(taskInput, task);
     this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', members: [] });
@@ -261,19 +273,19 @@ class TaskPage extends Component {
   renderInputs() {
     const { disabled } = this.state;
     return Object.keys(this.state.taskInput).map((controlName, index) => {
-      const control = this.state.taskInput[controlName];
+      const { type, value, touched, valid, label, errorMessage, validation } = this.state.taskInput[controlName];
       return (
         <Input
           key={controlName + index}
           id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
+          type={type}
+          value={value}
+          valid={valid}
+          touched={touched}
+          label={label}
           disabled={disabled}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
+          errorMessage={errorMessage}
+          shouldValidation={!!validation}
           onChange={this.onHandlelInput(controlName)}
           onBlur={this.onHandleFinishEditing(controlName)}
           onFocus={this.onHandleFocus(controlName)}

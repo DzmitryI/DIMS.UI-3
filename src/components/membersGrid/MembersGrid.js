@@ -14,7 +14,7 @@ import { withTheme, withRole } from '../../hoc';
 import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
 
-const { ADMIN } = TABLE_ROLES;
+const { isAdmin } = TABLE_ROLES;
 class MembersGrid extends Component {
   async componentDidMount() {
     await this.props.fetchMembers();
@@ -86,7 +86,7 @@ class MembersGrid extends Component {
                   />
                   <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
                 </div>
-                {ADMIN === email && (
+                {isAdmin === email && (
                   <div>
                     <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
                     <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
@@ -122,7 +122,7 @@ class MembersGrid extends Component {
           <ErrorIndicator errorMessage={errorMessage} />
         ) : (
           <>
-            {ADMIN === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
+            {isAdmin === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
             <table border='1' className={`${theme}--table`}>
               <thead>
                 <HeaderTable arr={headerMembersGrid} />

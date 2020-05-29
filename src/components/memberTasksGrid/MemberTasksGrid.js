@@ -19,8 +19,8 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
   const [notification, setNotification] = useState({});
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { ADMIN, MENTOR } = TABLE_ROLES;
-  const role = email === ADMIN || email === MENTOR;
+  const { isAdmin, isMentor } = TABLE_ROLES;
+  const role = email === isAdmin || email === isMentor;
 
   useEffect(() => {
     const fetchData = async () => {

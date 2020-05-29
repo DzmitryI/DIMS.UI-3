@@ -30,8 +30,8 @@ const h1TaskTrackPage = new Map([
 ]);
 
 const TABLE_ROLES = {
-  ADMIN: 'admin@mail.ru',
-  MENTOR: 'mentor@mail.ru',
+  isAdmin: 'admin@mail.ru',
+  isMentor: 'mentor@mail.ru',
 };
 
 const getDate = (date) => {

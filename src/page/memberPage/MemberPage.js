@@ -180,7 +180,9 @@ class MemberPage extends Component {
     }
   }
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandlelInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const { memberInput, member } = this.state;
@@ -194,7 +196,9 @@ class MemberPage extends Component {
     this.setState({ memberInput, member, isFormValid });
   };
 
-  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
 
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const { memberInput } = this.state;
@@ -206,7 +210,9 @@ class MemberPage extends Component {
     this.setState({ memberInput, isFormValid });
   };
 
-  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
 
   handleFocus = (controlName) => {
     const { memberInput } = this.state;
@@ -215,7 +221,19 @@ class MemberPage extends Component {
     this.setState({ memberInput });
   };
 
-  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
+  onHandleChangeDate = (id) => (value) => {
+    this.handleChangeDate(value, id);
+  };
+
+  handleChangeDate = (value, id) => {
+    const { member } = this.state;
+    member[id] = value;
+    this.setState({ member });
+  };
+
+  onHandlelSelect = (controlName) => (event) => {
+    this.handleSelect(event, controlName);
+  };
 
   handleSelect = ({ target }) => {
     const {
@@ -281,21 +299,21 @@ class MemberPage extends Component {
   renderInputs() {
     const { disabled, memberInput } = this.state;
     return Object.keys(memberInput).map((controlName, index) => {
-      const control = memberInput[controlName];
+      const { type, value, touched, valid, label, errorMessage, validation, placeholder } = memberInput[controlName];
       return (
         <Input
           key={controlName + index}
           id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
+          type={type}
+          value={value}
+          valid={valid}
+          touched={touched}
+          label={label}
           disabled={disabled}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
+          errorMessage={errorMessage}
+          shouldValidation={!!validation}
           onChange={this.onHandlelInput(controlName)}
-          placeholder={control.placeholder}
+          placeholder={placeholder}
           className='form-group-member'
           onBlur={this.onHandleFinishEditing(controlName)}
           onFocus={this.onHandleFocus(controlName)}
@@ -362,14 +380,14 @@ class MemberPage extends Component {
                     id='birthDate'
                     label='Bith date'
                     disabled={disabled}
-                    onChange={this.onHandlelInput('birthDate')}
+                    onChange={this.onHandleChangeDate('birthDate')}
                   />
                   <DatePicker
                     date={startDate}
                     id='startDate'
                     label='Start date'
                     disabled={disabled}
-                    onChange={this.onHandlelInput('startDate')}
+                    onChange={this.onHandleChangeDate('startDate')}
                   />
                 </div>
                 <div className='row'>{this.renderSelect()}</div>

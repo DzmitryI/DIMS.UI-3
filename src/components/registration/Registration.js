@@ -44,7 +44,9 @@ class Registration extends PureComponent {
     event.preventDefault();
   };
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandlelInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
@@ -57,7 +59,9 @@ class Registration extends PureComponent {
     this.setState({ authInput, isFormValid });
   };
 
-  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
 
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
@@ -69,7 +73,9 @@ class Registration extends PureComponent {
     this.setState({ authInput, isFormValid });
   };
 
-  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
 
   handleFocus = (controlName) => {
     const authInput = { ...this.state.authInput };
@@ -81,18 +87,18 @@ class Registration extends PureComponent {
   renderInputs() {
     const { authInput } = this.state;
     return Object.keys(authInput).map((controlName, index) => {
-      const control = authInput[controlName];
+      const { type, value, touched, valid, label, errorMessage, validation } = authInput[controlName];
       return (
         <Input
           key={controlName}
           id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
+          type={type}
+          value={value}
+          valid={valid}
+          touched={touched}
+          label={label}
+          errorMessage={errorMessage}
+          shouldValidation={!!validation}
           onChange={this.onHandlelInput(controlName)}
           onBlur={this.onHandleFinishEditing(controlName)}
           onFocus={this.onHandleFocus(controlName)}

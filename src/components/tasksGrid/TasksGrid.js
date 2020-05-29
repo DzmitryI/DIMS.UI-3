@@ -8,6 +8,7 @@ import ErrorIndicator from '../errorIndicator';
 import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../helpersComponents';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import Row from '../UI/row/Row';
 
 class TasksGrid extends Component {
   state = {
@@ -80,20 +81,26 @@ class TasksGrid extends Component {
     return tasks.map((task, index) => {
       const { taskId, name, startDate, deadlineDate } = task;
       return (
-        <tr key={task.taskId} id={taskId}>
-          <Cell className='td index' value={index + 1} />
-          <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
-          <Cell value={getDate(startDate)} />
-          <Cell value={getDate(deadlineDate)} />
-          <Cell
-            value={
-              <>
-                <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
-                <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
-              </>
-            }
-          />
-        </tr>
+        <Row
+          key={task.taskId}
+          id={taskId}
+          value={
+            <>
+              <Cell className='td index' value={index + 1} />
+              <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
+              <Cell value={getDate(startDate)} />
+              <Cell value={getDate(deadlineDate)} />
+              <Cell
+                value={
+                  <>
+                    <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
+                    <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
+                  </>
+                }
+              />
+            </>
+          }
+        />
       );
     });
   };

@@ -46,7 +46,9 @@ class TaskTrackPage extends Component {
     }
   }
 
-  onHandleChangeDate = (id) => (value) => this.handleChangeDate(value, id);
+  onHandleChangeDate = (id) => (value) => {
+    this.handleChangeDate(value, id);
+  };
 
   handleChangeDate = (value, id) => {
     const { taskTrack } = this.state;

@@ -1,5 +1,4 @@
 import FetchFirabase from '../../services/fetchFirebase';
-import FetchAzure from '../../services/fetchAzure';
 import { deleteAllElements } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
@@ -9,17 +8,11 @@ import {
   FETCH_MEMBERS_DELETE_FINISH,
 } from './actionTypes';
 
-let fetchService = '';
+let fetchService = new FetchFirabase();
 
 export function fetchMembers() {
   return async (dispatch) => {
     dispatch(fetchMembersStart());
-
-    if (localStorage.getItem('database') === 'firebase') {
-      fetchService = new FetchFirabase();
-    } else {
-      fetchService = new FetchAzure();
-    }
 
     try {
       const members = await fetchService.getAllMember();

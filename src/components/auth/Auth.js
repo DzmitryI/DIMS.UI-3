@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import Select from '../UI/select';
 import { createControl, validateControl } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
@@ -32,38 +31,22 @@ class Auth extends PureComponent {
         { required: false },
       ),
     },
-    baseSelect: {
-      database: {
-        label: 'Database',
-        name: 'database',
-        options: [
-          {
-            name: 'Firebase',
-            value: 'firebase',
-          },
-          {
-            name: 'Azure',
-            value: 'azure',
-          },
-        ],
-      },
-    },
-    database: 'firebase',
   };
 
   loginHandler = () => {
     const {
       authInput: { email, password },
-      database,
     } = this.state;
-    this.props.auth(email.value, password.value, true, database);
+    this.props.auth(email.value, password.value, true);
   };
 
   submitHandler = (event) => {
     event.preventDefault();
   };
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandlelInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
@@ -76,7 +59,9 @@ class Auth extends PureComponent {
     this.setState({ authInput, isFormValid });
   };
 
-  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
 
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
@@ -88,7 +73,9 @@ class Auth extends PureComponent {
     this.setState({ authInput, isFormValid });
   };
 
-  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
 
   handleFocus = (controlName) => {
     const authInput = { ...this.state.authInput };
@@ -97,53 +84,24 @@ class Auth extends PureComponent {
     this.setState({ authInput });
   };
 
-  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
-
-  handleSelect = ({ target }) => {
-    const database = target.options[target.selectedIndex].value;
-    this.setState({ database });
-  };
-
   renderInputs() {
     const { authInput } = this.state;
     return Object.keys(authInput).map((controlName, index) => {
-      const control = authInput[controlName];
+      const { type, value, touched, valid, label, errorMessage, validation } = authInput[controlName];
       return (
         <Input
           key={controlName}
           id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
+          type={type}
+          value={value}
+          valid={valid}
+          touched={touched}
+          label={label}
+          errorMessage={errorMessage}
+          shouldValidation={!!validation}
           onChange={this.onHandlelInput(controlName)}
           onBlur={this.onHandleFinishEditing(controlName)}
           onFocus={this.onHandleFocus(controlName)}
-        />
-      );
-    });
-  }
-
-  renderSelect() {
-    const { baseSelect, database } = this.state;
-    return Object.keys(baseSelect).map((controlName) => {
-      const control = baseSelect[controlName];
-      let defaultValue = false;
-      let options = [];
-      defaultValue = database;
-      options = control.options;
-      return (
-        <Select
-          options={options}
-          defaultValue={defaultValue}
-          label={control.label}
-          name={controlName}
-          key={controlName}
-          id={controlName}
-          onChange={this.onHandlelSelect(controlName)}
         />
       );
     });
@@ -161,8 +119,6 @@ class Auth extends PureComponent {
           </div>
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
-            <br />
-            {this.renderSelect()}
             <br />
             <div className='form-group row'>
               <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
@@ -191,7 +147,7 @@ const mapStateToProps = ({ auth: { onNotification, notification } }) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
-    auth: (email, password, database, isLogin) => dispatch(auth(email, password, database, isLogin)),
+    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);
