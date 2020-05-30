@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withTheme } from '../../hoc';
 import imgMoon from '../../assets/images/moon.png';
 import imgSun from '../../assets/images/sun.png';
+import ImageComponent from '../imageComponent/ImageComponent';
 
 const ColorSwitch = ({ theme, onColorSwitchClickHandler }) => {
   const switchBtn = useRef(null);
@@ -13,12 +14,8 @@ const ColorSwitch = ({ theme, onColorSwitchClickHandler }) => {
 
   return (
     <div className={`switch-btn ${theme === 'dark' && 'switch-btn__on'}`} onClick={clickSwitch} ref={switchBtn}>
-      <div className='switch-btn--moon'>
-        <img src={imgMoon} width='28px' alt='img moon' />
-      </div>
-      <div className='switch-btn--sun'>
-        <img src={imgSun} width='28px' alt='img sun' />
-      </div>
+      <ImageComponent className='switch-btn--moon' src={imgMoon} width='28px' alt='img moon' />
+      <ImageComponent className='switch-btn--sun' src={imgSun} width='28px' alt='img sun' />
     </div>
   );
 };

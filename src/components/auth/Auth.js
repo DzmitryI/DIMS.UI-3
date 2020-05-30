@@ -9,6 +9,7 @@ import Button from '../UI/button';
 import { createControl, validateControl } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
+import ImageComponent from '../imageComponent/ImageComponent';
 
 class Auth extends PureComponent {
   state = {
@@ -114,9 +115,7 @@ class Auth extends PureComponent {
       <>
         {onNotification && <DisplayNotification notification={notification} />}
         <div className='auth'>
-          <div className='auth-img'>
-            <img src={imgLogo} with='100px' height='50px' alt='logo' />
-          </div>
+          <ImageComponent className='auth-img' src={imgLogo} alt='logo' />
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
             <br />
