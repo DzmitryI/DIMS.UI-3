@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import update from 'immutability-helper';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import HeaderTable from '../UI/headerTable';
@@ -10,6 +11,7 @@ import Button from '../UI/button';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, getDate, TABLE_ROLES } from '../helpersComponents';
 import { withTheme, withRole, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import Row from '../UI/row/Row';
 
 class TaskTracksGrid extends Component {
   state = {
@@ -28,6 +30,7 @@ class TaskTracksGrid extends Component {
   componentDidUpdate(prevProps) {
     const { isOpen } = this.props;
     if (isOpen !== prevProps.isOpen) {
+      this.setState({ loading: true });
       this.fetchMemberProgress();
     }
   }
@@ -57,6 +60,19 @@ class TaskTracksGrid extends Component {
     }
   };
 
+  moveRow = (dragIndex, hoverIndex) => {
+    const { tracks } = this.state;
+    const dragRow = tracks[dragIndex];
+    this.setState({
+      tracks: update(tracks, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragRow],
+        ],
+      }),
+    });
+  };
+
   async fetchMemberProgress() {
     try {
       const { taskId } = this.props;
@@ -70,8 +86,8 @@ class TaskTracksGrid extends Component {
   render() {
     const { tracks, loading, notification, onNotification, error, errorMessage } = this.state;
     const { theme, email } = this.props;
-    const { ADMIN, MENTOR } = TABLE_ROLES;
-    const adminMentor = email === ADMIN || email === MENTOR;
+    const { isAdmin, isMentor } = TABLE_ROLES;
+    const adminMentor = email === isAdmin || email === isMentor;
 
     if (loading) {
       return <Spinner />;
@@ -97,31 +113,39 @@ class TaskTracksGrid extends Component {
                 } = track;
                 const { name } = task;
                 return (
-                  <tr key={taskTrackId} id={taskTrackId}>
-                    <Cell className='td index' value={index + 1} />
-                    <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
-                    <Cell value={trackNote} />
-                    <Cell value={getDate(trackDate)} />
-                    <Cell
-                      value={
-                        <>
-                          <Button
-                            className='btn-edit'
-                            onClick={this.onChangeClick}
-                            id='edit'
-                            name='Edit'
-                            disabled={adminMentor}
-                          />
-                          <Button
-                            className='btn-delete'
-                            onClick={this.onDeleteClick}
-                            name='Delete'
-                            disabled={adminMentor}
-                          />
-                        </>
-                      }
-                    />
-                  </tr>
+                  <Row
+                    key={taskTrackId}
+                    id={taskTrackId}
+                    index={index}
+                    moveRow={this.moveRow}
+                    value={
+                      <>
+                        <Cell className='td index' value={index + 1} />
+                        <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
+                        <Cell value={trackNote} />
+                        <Cell value={getDate(trackDate)} />
+                        <Cell
+                          value={
+                            <>
+                              <Button
+                                className='btn-edit'
+                                onClick={this.onChangeClick}
+                                id='edit'
+                                name='Edit'
+                                disabled={adminMentor}
+                              />
+                              <Button
+                                className='btn-delete'
+                                onClick={this.onDeleteClick}
+                                name='Delete'
+                                disabled={adminMentor}
+                              />
+                            </>
+                          }
+                        />
+                      </>
+                    }
+                  />
                 );
               })}
             </tbody>

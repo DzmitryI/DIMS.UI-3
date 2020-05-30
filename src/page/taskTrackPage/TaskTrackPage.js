@@ -96,7 +96,7 @@ class TaskTrackPage extends Component {
     this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const res = clearOblectValue({}, taskTrack);
-    this.setState({ taskTrack: res.objElemClear });
+    this.setState({ taskTrack: res.objElemClear, taskTrackId: null });
     this.props.onTrackClick(taskId);
   };
 
@@ -125,7 +125,7 @@ class TaskTrackPage extends Component {
                   id='date'
                   label='Date'
                   disabled={disabled}
-                  onChange={this.onHandleChangeDate('date')}
+                  onChange={this.onHandleChangeDate('trackDate')}
                 />
                 <div className='form-group'>
                   <label htmlFor='trackNote'>Note</label>

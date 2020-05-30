@@ -2,6 +2,7 @@
 /* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
@@ -11,8 +12,9 @@ import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
 import { withTheme, withRole } from '../../hoc';
-import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
+import { fetchMembers, fetchMembersSuccess, fetchMembersDelete } from '../../store/actions/members';
 import Cell from '../UI/cell/Cell';
+import Row from '../UI/row/Row';
 
 const { isAdmin } = TABLE_ROLES;
 class MembersGrid extends Component {
@@ -61,41 +63,62 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
+  moveRow = (dragIndex, hoverIndex) => {
+    let { members } = this.props;
+    const { directions, fetchMembersSuccess } = this.props;
+    const dragRow = members[dragIndex];
+    members = update(members, {
+      $splice: [
+        [dragIndex, 1],
+        [hoverIndex, 0, dragRow],
+      ],
+    });
+    fetchMembersSuccess(members, directions);
+  };
+
   renderTBody = (members, directions, email) => {
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
-        <tr key={userId} id={userId}>
-          <Cell className='td index' value={index + 1} />
-          <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
-          <Cell value={!!curDirect && curDirect.name} />
-          <Cell value={education} />
-          <Cell value={getDate(startDate)} />
-          <Cell value={(birthDate && countAge(birthDate)) || age} />
-          <Cell
-            className='td buttons-wrap'
-            value={
-              <>
-                <div>
-                  <ButtonLink
-                    className='btn-progress'
-                    onClick={this.onProgressClick}
-                    name='Progress'
-                    to='/MemberProgressGrid'
-                  />
-                  <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
-                </div>
-                {isAdmin === email && (
-                  <div>
-                    <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                    <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
-                  </div>
-                )}
-              </>
-            }
-          />
-        </tr>
+        <Row
+          key={userId}
+          id={userId}
+          index={index}
+          moveRow={this.moveRow}
+          value={
+            <>
+              <Cell className='td index' value={index + 1} />
+              <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
+              <Cell value={!!curDirect && curDirect.name} />
+              <Cell value={education} />
+              <Cell value={getDate(startDate)} />
+              <Cell value={(birthDate && countAge(birthDate)) || age} />
+              <Cell
+                className='td buttons-wrap'
+                value={
+                  <>
+                    <div>
+                      <ButtonLink
+                        className='btn-progress'
+                        onClick={this.onProgressClick}
+                        name='Progress'
+                        to='/MemberProgressGrid'
+                      />
+                      <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
+                    </div>
+                    {isAdmin === email && (
+                      <div>
+                        <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                        <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                      </div>
+                    )}
+                  </>
+                }
+              />
+            </>
+          }
+        />
       );
     });
   };
@@ -153,6 +176,7 @@ MembersGrid.propTypes = {
   onProgressClick: PropTypes.func.isRequired,
   fetchMembersDelete: PropTypes.func.isRequired,
   fetchMembers: PropTypes.func.isRequired,
+  fetchMembersSuccess: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
@@ -173,6 +197,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchMembers: () => dispatch(fetchMembers()),
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
+    fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
   };
 };
 

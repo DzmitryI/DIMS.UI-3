@@ -8,7 +8,7 @@ import {
   FETCH_MEMBERS_DELETE_FINISH,
 } from './actionTypes';
 
-let fetchService = new FetchFirabase();
+const fetchService = new FetchFirabase();
 
 export function fetchMembers() {
   return async (dispatch) => {

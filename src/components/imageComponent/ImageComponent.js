@@ -17,7 +17,7 @@ ImageComponent.defaultProps = {
 ImageComponent.propTypes = {
   className: PropTypes.string.isRequired,
   src: PropTypes.string.isRequired,
-  wigth: PropTypes.string,
+  width: PropTypes.string,
   alt: PropTypes.string,
 };
 

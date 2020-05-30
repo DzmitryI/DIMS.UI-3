@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
@@ -57,12 +58,25 @@ class TasksGrid extends Component {
       if (response) {
         const notification = { title: `${name} was deleted!` };
         this.setState({ onNotification: true, notification });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
         this.fetchTasks();
       }
     } catch ({ message }) {
       this.setState({ loading: false, error: true, errorMessage: message });
     }
+  };
+
+  moveRow = (dragIndex, hoverIndex) => {
+    const { tasks } = this.state;
+    const dragRow = tasks[dragIndex];
+    this.setState({
+      tasks: update(tasks, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragRow],
+        ],
+      }),
+    });
   };
 
   async fetchTasks() {
@@ -84,6 +98,8 @@ class TasksGrid extends Component {
         <Row
           key={task.taskId}
           id={taskId}
+          index={index}
+          moveRow={this.moveRow}
           value={
             <>
               <Cell className='td index' value={index + 1} />
