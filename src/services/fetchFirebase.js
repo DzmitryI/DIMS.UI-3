@@ -59,6 +59,7 @@ export default class FetchFirebase {
     const response = await this.getSource(`/Task/${id}.json`);
     let tasks = [];
     if (response && response.data) {
+      response.data.taskId = id;
       tasks = tasks.concat(response.data);
     }
     return tasks;

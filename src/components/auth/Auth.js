@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
-import { createControl, validateControl } from '../../services/helpers';
+import { createControl, validateControl, fillControl } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
 import ImageComponent from '../imageComponent/ImageComponent';
@@ -79,9 +79,8 @@ class Auth extends PureComponent {
   };
 
   handleFocus = (controlName) => {
-    const authInput = { ...this.state.authInput };
-    authInput[controlName].valid = true;
-    authInput[controlName].touched = true;
+    let authInput = { ...this.state.authInput };
+    authInput = fillControl(authInput, controlName);
     this.setState({ authInput });
   };
 

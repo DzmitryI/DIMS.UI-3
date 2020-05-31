@@ -28,6 +28,11 @@ function createControl(config, validation) {
     value: '',
   };
 }
+function fillControl(input, controlName) {
+  input[controlName].valid = true;
+  input[controlName].touched = true;
+  return input;
+}
 
 function createNotify() {
   return {
@@ -41,4 +46,4 @@ function createNotify() {
   };
 }
 
-export { validateControl, createControl, createNotify };
+export { validateControl, createControl, createNotify, fillControl };

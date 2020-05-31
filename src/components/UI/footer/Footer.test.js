@@ -16,7 +16,6 @@ describe('<Footer/>', () => {
         <Footer />
       </ThemeContextProvider>,
     );
-    console.log(wrapper.debug());
     expect(wrapper.find('span')).toHaveLength(1);
   });
 });

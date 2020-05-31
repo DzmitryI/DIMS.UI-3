@@ -9,7 +9,9 @@ configure({
 
 describe('<Select />', () => {
   it('render Select element', () => {
-    const wrapper = shallow(<Select />);
+    const wrapper = shallow(
+      <Select label='Direction' name='direction' id='direction' defaultValue='false' onChange={() => {}} />,
+    );
     expect(wrapper.find('.form-group').length).toEqual(1);
     wrapper.setProps({
       options: [

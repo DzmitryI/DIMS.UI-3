@@ -6,30 +6,21 @@ function clearOblectValue(objInput, objElem) {
       objInputClear[key].value = '';
       objInputClear[key].touched = false;
       objInputClear[key].valid = false;
+    }
+  });
+  Object.keys(objElemClear).forEach((key) => {
+    console.log(objElemClear[key]);
+    if (key === 'directionId') {
+      objElemClear[key] = 'direction1';
+    } else if (key === 'sex') {
+      objElemClear[key] = 'sex1';
+    } else if (['startDate', 'deadlineDate', 'birthDate'].includes(key)) {
+      objElemClear[key] = new Date();
+    } else {
       objElemClear[key] = '';
     }
   });
-  if (objElemClear.directionId) {
-    objElemClear.directionId = 'direction1';
-  }
-  if (objElemClear.sex) {
-    objElemClear.sex = 'sex1';
-  }
-  if (objElemClear.description) {
-    objElemClear.description = '';
-  }
-  if (objElemClear.trackNote) {
-    objElemClear.trackNote = '';
-  }
-  if (objElemClear.startDate) {
-    objElemClear.startDate = new Date();
-  }
-  if (objElemClear.deadlineDate) {
-    objElemClear.deadlineDate = new Date();
-  }
-  if (objElemClear.birthDate) {
-    objElemClear.birthDate = new Date();
-  }
+
   const res = {
     objInputClear,
     objElemClear,

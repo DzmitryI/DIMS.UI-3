@@ -7,7 +7,7 @@ import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import DatePicker from '../../components/datePicker';
-import { createControl, validateControl } from '../../services/helpers';
+import { createControl, validateControl, fillControl } from '../../services/helpers';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
@@ -215,9 +215,8 @@ class MemberPage extends Component {
   };
 
   handleFocus = (controlName) => {
-    const { memberInput } = this.state;
-    memberInput[controlName].valid = true;
-    memberInput[controlName].touched = true;
+    let { memberInput } = this.state;
+    memberInput = fillControl(memberInput, controlName);
     this.setState({ memberInput });
   };
 
@@ -353,7 +352,7 @@ class MemberPage extends Component {
 
   render() {
     const {
-      member: { name, lastName, startDate, birthDate },
+      member: { startDate, birthDate },
       disabled,
       loading,
       isFormValid,
@@ -372,7 +371,6 @@ class MemberPage extends Component {
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
                 <div className='form-group-members'>{this.renderInputs()}</div>
                 <div className='row'>
                   <DatePicker

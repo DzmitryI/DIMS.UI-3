@@ -5,7 +5,7 @@ import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
-import { createControl, validateControl } from '../../services/helpers';
+import { createControl, validateControl, fillControl } from '../../services/helpers';
 import { clearOblectValue, updateInput } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
@@ -102,15 +102,18 @@ class TaskPage extends Component {
           const responseUserTask = await fetchService.delUserTask(userTasks[index].userTaskId);
           if (responseUserTask.statusText) {
             notification.title = `✔️ User's task was deleted.`;
+            this.setState({ onNotification: true, notification });
           }
           const responseTaskState = await fetchService.delTaskState(userTasks[index].stateId);
           if (responseTaskState.statusText) {
             notification.title = `✔️ User's task state was deleted.`;
+            this.setState({ onNotification: true, notification });
           }
         } else if (index === -1 && member.checked) {
           const responseTaskState = await fetchService.setTaskState(this.taskState);
           if (responseTaskState.statusText) {
             notification.title = `✔️ User's task state was added.`;
+            this.setState({ onNotification: true, notification });
           }
           const responseUserTask = await fetchService.setUserTask({
             userId: member.userId,
@@ -119,10 +122,9 @@ class TaskPage extends Component {
           });
           if (responseUserTask.statusText) {
             notification.title = `✔️ User's task was added.`;
+            this.setState({ onNotification: true, notification });
           }
         }
-        this.setState({ onNotification: true, notification });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       }
     }
     return members;
@@ -163,9 +165,8 @@ class TaskPage extends Component {
   };
 
   handleFocus = (controlName) => {
-    const { taskInput } = this.state;
-    taskInput[controlName].valid = true;
-    taskInput[controlName].touched = true;
+    let { taskInput } = this.state;
+    taskInput = fillControl(taskInput, controlName);
     this.setState({ taskInput });
   };
 
@@ -227,7 +228,7 @@ class TaskPage extends Component {
         const responseTask = await setTask(task);
         if (responseTask.statusText) {
           notification = { title: `✔️ ${task.name} was added.` };
-          this.setState({ taskId: responseTask.data.name, notification });
+          this.setState({ taskId: responseTask.data.name, notification, onNotification: true });
         }
         const addMembersTask = await this.createTaskState();
         if (addMembersTask.length) {
@@ -235,6 +236,7 @@ class TaskPage extends Component {
             const responseUserTask = await setUserTask(addMemberTask);
             if (responseUserTask.statusText) {
               notification = { title: `✔️ ${task.name} was added for user.` };
+              this.setState({ onNotification: true, notification });
             }
           }
         }
@@ -243,9 +245,9 @@ class TaskPage extends Component {
         this.checkTaskMembers(taskId);
         if (responseTask.statusText) {
           notification = { title: `✔️ ${task.name} was edited.` };
+          this.setState({ onNotification: true, notification });
         }
       }
-      this.setState({ onNotification: true, notification });
     } catch ({ message }) {
       this.setState({ onNotification: true, notification: { title: `❗️ ${message}`, status: 'error' } });
     }
@@ -296,19 +298,19 @@ class TaskPage extends Component {
 
   renderCheckbox = () => {
     const { members, disabled } = this.state;
-    return members.map((member) => {
+    return members.map(({ userId, checked, fullName }) => {
       return (
-        <label key={member.userId}>
+        <label key={userId}>
           <input
             type='checkbox'
             className='checkbox'
-            id={member.userId}
-            value={member.userId}
+            id={userId}
+            value={userId}
             onClick={this.handleCheckbox}
-            defaultChecked={member.checked}
+            defaultChecked={checked}
             disabled={disabled}
           />
-          {member.fullName}
+          {fullName}
         </label>
       );
     });
@@ -317,7 +319,7 @@ class TaskPage extends Component {
   render() {
     const { isOpen, title } = this.props;
     const {
-      task: { name, description, startDate, deadlineDate },
+      task: { description, startDate, deadlineDate },
       loading,
       disabled,
       isFormValid,
@@ -341,7 +343,6 @@ class TaskPage extends Component {
                   <ErrorIndicator errorMessage={errorMessage} />
                 ) : (
                   <>
-                    <h1 className='subtitle'>{name}</h1>
                     {this.renderInputs()}
                     <div className='row'>
                       <DatePicker

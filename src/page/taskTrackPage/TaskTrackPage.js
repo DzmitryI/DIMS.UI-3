@@ -101,7 +101,7 @@ class TaskTrackPage extends Component {
   };
 
   render() {
-    const { isOpen, title, subtitle } = this.props;
+    const { isOpen, title } = this.props;
     const {
       taskTrack: { trackDate, trackNote },
       disabled,
@@ -119,7 +119,6 @@ class TaskTrackPage extends Component {
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
                 <DatePicker
                   date={trackDate}
                   id='date'
@@ -163,7 +162,6 @@ TaskTrackPage.propTypes = {
   title: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
   userTaskId: PropTypes.string.isRequired,
-  subtitle: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   track: PropTypes.objectOf(PropTypes.string).isRequired,

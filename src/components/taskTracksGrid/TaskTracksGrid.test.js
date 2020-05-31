@@ -13,7 +13,7 @@ describe('<TaskTracksGrid/>', () => {
   let wrapper;
 
   beforeEach(() => {
-    const contextThemeValue = { theme: 'dark' };
+    const contextThemeValue = 'dark';
     const contextRoleValue = '123@mail.ru';
     const contextFetchService = {};
     const props = {
