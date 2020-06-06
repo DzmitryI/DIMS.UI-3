@@ -28,6 +28,15 @@ function createControl(config, validation) {
     value: '',
   };
 }
+
+function formValid(inputs) {
+  let isFormValid = true;
+  Object.keys(inputs).forEach((name) => {
+    isFormValid = inputs[name].valid && isFormValid;
+  });
+  return isFormValid;
+}
+
 function fillControl(input, controlName) {
   input[controlName].valid = true;
   input[controlName].touched = true;
@@ -46,4 +55,4 @@ function createNotify() {
   };
 }
 
-export { validateControl, createControl, createNotify, fillControl };
+export { validateControl, createControl, createNotify, fillControl, formValid };

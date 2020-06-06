@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import DisplayNotification from '../displayNotification';
-import Input from '../UI/input';
 import Button from '../UI/button';
-import { createControl, validateControl, fillControl } from '../../services/helpers';
+import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
 import ImageComponent from '../imageComponent/ImageComponent';
+import { renderInputs } from '../../page/helpersPage';
 
 class Registration extends PureComponent {
   state = {
@@ -53,11 +53,7 @@ class Registration extends PureComponent {
     const authInput = { ...this.state.authInput };
     authInput[controlName].value = value;
     authInput[controlName].touched = true;
-    let isFormValid = true;
-    Object.keys(authInput).forEach((name) => {
-      isFormValid = authInput[name].valid && isFormValid;
-    });
-    this.setState({ authInput, isFormValid });
+    this.setState({ authInput, isFormValid: formValid(authInput) });
   };
 
   onHandleFinishEditing = (controlName) => (event) => {
@@ -67,11 +63,7 @@ class Registration extends PureComponent {
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
     authInput[controlName].valid = validateControl(value, authInput[controlName].validation);
-    let isFormValid = true;
-    Object.keys(authInput).forEach((name) => {
-      isFormValid = authInput[name].valid && isFormValid;
-    });
-    this.setState({ authInput, isFormValid });
+    this.setState({ authInput, isFormValid: formValid(authInput) });
   };
 
   onHandleFocus = (controlName) => () => {
@@ -84,32 +76,9 @@ class Registration extends PureComponent {
     this.setState({ authInput });
   };
 
-  renderInputs() {
-    const { authInput } = this.state;
-    return Object.keys(authInput).map((controlName, index) => {
-      const { type, value, touched, valid, label, errorMessage, validation } = authInput[controlName];
-      return (
-        <Input
-          key={controlName}
-          id={controlName + index}
-          type={type}
-          value={value}
-          valid={valid}
-          touched={touched}
-          label={label}
-          errorMessage={errorMessage}
-          shouldValidation={!!validation}
-          onChange={this.onHandlelInput(controlName)}
-          onBlur={this.onHandleFinishEditing(controlName)}
-          onFocus={this.onHandleFocus(controlName)}
-        />
-      );
-    });
-  }
-
   render() {
     const { notification, onNotification, isRegistred } = this.props;
-    const { isFormValid } = this.state;
+    const { isFormValid, authInput, disabled } = this.state;
     if (isRegistred) {
       return <Redirect push to='/Auth' />;
     }
@@ -119,7 +88,7 @@ class Registration extends PureComponent {
         <div className='auth'>
           <ImageComponent className='auth-img' src={imgLogo} alt='logo' />
           <form onSubmit={this.submitHandler}>
-            {this.renderInputs()}
+            {renderInputs(authInput, disabled, this.onHandlelInput, this.onHandleFinishEditing, this.onHandleFocus)}
             <br />
             <div className='form-group row'>
               <Button
@@ -139,12 +108,12 @@ class Registration extends PureComponent {
 
 Registration.propTypes = {
   onNotification: PropTypes.bool.isRequired,
-  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   isRegistred: PropTypes.bool.isRequired,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ auth: { onNotification, notification, isRegistred } }) => {
+const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => {
   return {
     onNotification,
     notification,

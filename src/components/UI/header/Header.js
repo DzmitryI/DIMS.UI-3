@@ -52,7 +52,7 @@ Header.propTypes = {
   logout: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ auth: { email } }) => {
+const mapStateToProps = ({ authData: { email } }) => {
   return {
     email,
   };

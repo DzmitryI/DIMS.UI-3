@@ -1,3 +1,6 @@
+import React from 'react';
+import Input from '../components/UI/input';
+
 function clearOblectValue(objInput, objElem) {
   const objInputClear = { ...objInput };
   const objElemClear = { ...objElem };
@@ -9,7 +12,6 @@ function clearOblectValue(objInput, objElem) {
     }
   });
   Object.keys(objElemClear).forEach((key) => {
-    console.log(objElemClear[key]);
     if (key === 'directionId') {
       objElemClear[key] = 'direction1';
     } else if (key === 'sex') {
@@ -39,4 +41,30 @@ function updateInput(objInput, objValues) {
   });
   return objInputUpdate;
 }
-export { clearOblectValue, updateInput };
+
+function renderInputs(inputs, disabled, onChange, onBlur, onFocus, className = '') {
+  return Object.keys(inputs).map((controlName) => {
+    const { type, value, touched, valid, label, errorMessage, validation, placeholder } = inputs[controlName];
+    return (
+      <Input
+        key={controlName}
+        id={controlName}
+        type={type}
+        value={value}
+        valid={valid}
+        touched={touched}
+        label={label}
+        disabled={disabled}
+        errorMessage={errorMessage}
+        shouldValidation={!!validation}
+        onChange={onChange(controlName)}
+        placeholder={placeholder}
+        className={className}
+        onBlur={onBlur(controlName)}
+        onFocus={onFocus(controlName)}
+      />
+    );
+  });
+}
+
+export { clearOblectValue, updateInput, renderInputs };

@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
-import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import DatePicker from '../../components/datePicker';
-import { createControl, validateControl, fillControl } from '../../services/helpers';
-import { clearOblectValue, updateInput } from '../helpersPage';
+import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
+import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 
@@ -189,11 +188,7 @@ class MemberPage extends Component {
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
     member[controlName] = value;
-    let isFormValid = true;
-    Object.keys(memberInput).forEach((name) => {
-      isFormValid = memberInput[name].valid && isFormValid;
-    });
-    this.setState({ memberInput, member, isFormValid });
+    this.setState({ memberInput, member, isFormValid: formValid(memberInput) });
   };
 
   onHandleFinishEditing = (controlName) => (event) => {
@@ -203,11 +198,7 @@ class MemberPage extends Component {
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const { memberInput } = this.state;
     memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
-    let isFormValid = true;
-    Object.keys(memberInput).forEach((name) => {
-      isFormValid = memberInput[name].valid && isFormValid;
-    });
-    this.setState({ memberInput, isFormValid });
+    this.setState({ memberInput, isFormValid: formValid(memberInput) });
   };
 
   onHandleFocus = (controlName) => () => {
@@ -295,32 +286,6 @@ class MemberPage extends Component {
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
   }
 
-  renderInputs() {
-    const { disabled, memberInput } = this.state;
-    return Object.keys(memberInput).map((controlName, index) => {
-      const { type, value, touched, valid, label, errorMessage, validation, placeholder } = memberInput[controlName];
-      return (
-        <Input
-          key={controlName + index}
-          id={controlName + index}
-          type={type}
-          value={value}
-          valid={valid}
-          touched={touched}
-          label={label}
-          disabled={disabled}
-          errorMessage={errorMessage}
-          shouldValidation={!!validation}
-          onChange={this.onHandlelInput(controlName)}
-          placeholder={placeholder}
-          className='form-group-member'
-          onBlur={this.onHandleFinishEditing(controlName)}
-          onFocus={this.onHandleFocus(controlName)}
-        />
-      );
-    });
-  }
-
   renderSelect() {
     const { memberSelect, member, disabled } = this.state;
     return Object.keys(memberSelect).map((controlName) => {
@@ -358,6 +323,7 @@ class MemberPage extends Component {
       isFormValid,
       onNotification,
       notification,
+      memberInput,
     } = this.state;
     const { isOpen, title } = this.props;
 
@@ -371,7 +337,16 @@ class MemberPage extends Component {
               <Spinner />
             ) : (
               <>
-                <div className='form-group-members'>{this.renderInputs()}</div>
+                <div className='form-group-members'>
+                  {renderInputs(
+                    memberInput,
+                    disabled,
+                    this.onHandlelInput,
+                    this.onHandleFinishEditing,
+                    this.onHandleFocus,
+                    'form-group-member',
+                  )}
+                </div>
                 <div className='row'>
                   <DatePicker
                     date={birthDate}

@@ -26,7 +26,7 @@ describe('<TaskTracksGrid/>', () => {
         <SetUp
           fetchServiceValue={contextFetchService}
           roleValue={contextRoleValue}
-          ThemeValue={contextThemeValue}
+          themeValue={contextThemeValue}
           component={<TaskTracksGrid {...props} />}
         />
       </MemoryRouter>,

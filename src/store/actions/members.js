@@ -27,7 +27,7 @@ export function fetchMembers() {
 export function fetchMembersDelete(memberId, members) {
   return async (dispatch) => {
     if (members) {
-      const member = members.find((member) => member.userId === memberId);
+      const member = members.find((curMember) => curMember.userId === memberId);
       const { fullName } = member;
       await deleteAllElements('userId', memberId);
       try {

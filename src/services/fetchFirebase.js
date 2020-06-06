@@ -83,13 +83,6 @@ export default class FetchFirebase {
     return userTasks;
   };
 
-  getUserTask = async (id) => {
-    const response = await this.getSource(`/UserTask/${id}.json`);
-    if (response && response.data) {
-      return response.data;
-    }
-  };
-
   getTaskState = async (id) => {
     const response = await this.getSource(`/TaskState/${id}.json`);
     return response;

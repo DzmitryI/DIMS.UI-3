@@ -127,16 +127,18 @@ class TaskTrackPage extends Component {
                   onChange={this.onHandleChangeDate('trackDate')}
                 />
                 <div className='form-group'>
-                  <label htmlFor='trackNote'>Note</label>
-                  <textarea
-                    key='trackNote'
-                    id='trackNote'
-                    name='note'
-                    disabled={disabled}
-                    value={trackNote}
-                    rows='7'
-                    onChange={this.handleTextArea}
-                  />
+                  <label htmlFor='trackNote'>
+                    <textarea
+                      key='trackNote'
+                      id='trackNote'
+                      name='note'
+                      disabled={disabled}
+                      value={trackNote}
+                      rows='7'
+                      onChange={this.handleTextArea}
+                    />
+                    Note
+                  </label>
                 </div>
                 <div className='form-group row'>
                   <Button

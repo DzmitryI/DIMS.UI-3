@@ -49,14 +49,14 @@ class App extends Component {
 
   async componentDidUpdate(prevProps) {
     const { email } = this.props;
-    let fetchService = new FetchFirebase();
-    if (email && email !== prevProps.email) {
+    const fetchService = new FetchFirebase();
+    if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
       try {
         const members = await fetchService.getAllMember();
-        const member = members.find((member) => member.email === email);
+        const member = members.find((curMember) => curMember.email === email);
         this.setState({ userId: member ? member.userId : '', fetchService });
       } catch ({ message }) {
         this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
@@ -269,7 +269,7 @@ App.defaultProps = {
   email: null,
 };
 
-const mapStateToProps = ({ auth: { token, email } }) => {
+const mapStateToProps = ({ authData: { token, email } }) => {
   return {
     isAuthenticated: !!token,
     email,

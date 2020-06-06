@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
-import Input from '../../components/UI/input';
 import Button from '../../components/UI/button';
-import { createControl, validateControl, fillControl } from '../../services/helpers';
-import { clearOblectValue, updateInput } from '../helpersPage';
+import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
+import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
@@ -139,11 +138,7 @@ class TaskPage extends Component {
     taskInput[controlName].value = value;
     taskInput[controlName].touched = true;
     task[controlName] = value;
-    let isFormValid = true;
-    Object.keys(taskInput).forEach((name) => {
-      isFormValid = taskInput[name].valid && isFormValid;
-    });
-    this.setState({ taskInput, task, isFormValid });
+    this.setState({ taskInput, task, isFormValid: formValid(taskInput) });
   };
 
   onHandleFinishEditing = (controlName) => (event) => {
@@ -153,11 +148,7 @@ class TaskPage extends Component {
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const { taskInput } = this.state;
     taskInput[controlName].valid = validateControl(value, taskInput[controlName].validation);
-    let isFormValid = true;
-    Object.keys(taskInput).forEach((name) => {
-      isFormValid = taskInput[name].valid && isFormValid;
-    });
-    this.setState({ taskInput, isFormValid });
+    this.setState({ taskInput, isFormValid: formValid(taskInput) });
   };
 
   onHandleFocus = (controlName) => () => {
@@ -179,7 +170,9 @@ class TaskPage extends Component {
   handleCheckbox = ({ target }) => {
     const { members } = this.state;
     Object.values(members).forEach((member) => {
-      if (member.userId === target.id) member.checked = target.checked;
+      if (member.userId === target.id) {
+        member.checked = target.checked;
+      }
     });
     this.setState({ members });
   };
@@ -252,17 +245,17 @@ class TaskPage extends Component {
       this.setState({ onNotification: true, notification: { title: `❗️ ${message}`, status: 'error' } });
     }
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
-    const res = clearOblectValue(taskInput, task);
-    this.setState({ taskInput: res.objInputClear, task: res.objElemClear, taskId: '', members: [] });
+    const { objInputClear, objElemClear } = clearOblectValue(taskInput, task);
+    this.setState({ taskInput: objInputClear, task: objElemClear, taskId: '', members: [] });
     this.props.onCreateTaskClick();
   };
 
   buttonCloseClick = () => {
     const { task, taskInput } = this.state;
-    const res = clearOblectValue(taskInput, task);
+    const { objInputClear, objElemClear } = clearOblectValue(taskInput, task);
     this.setState({
-      taskInput: res.objInputClear,
-      task: res.objElemClear,
+      taskInput: objInputClear,
+      task: objElemClear,
       taskId: '',
       isFormValid: false,
       loading: true,
@@ -272,35 +265,11 @@ class TaskPage extends Component {
     this.props.onCreateTaskClick();
   };
 
-  renderInputs() {
-    const { disabled } = this.state;
-    return Object.keys(this.state.taskInput).map((controlName, index) => {
-      const { type, value, touched, valid, label, errorMessage, validation } = this.state.taskInput[controlName];
-      return (
-        <Input
-          key={controlName + index}
-          id={controlName + index}
-          type={type}
-          value={value}
-          valid={valid}
-          touched={touched}
-          label={label}
-          disabled={disabled}
-          errorMessage={errorMessage}
-          shouldValidation={!!validation}
-          onChange={this.onHandlelInput(controlName)}
-          onBlur={this.onHandleFinishEditing(controlName)}
-          onFocus={this.onHandleFocus(controlName)}
-        />
-      );
-    });
-  }
-
   renderCheckbox = () => {
     const { members, disabled } = this.state;
     return members.map(({ userId, checked, fullName }) => {
       return (
-        <label key={userId}>
+        <label key={userId} htmlFor={userId}>
           <input
             type='checkbox'
             className='checkbox'
@@ -327,6 +296,7 @@ class TaskPage extends Component {
       notification,
       error,
       errorMessage,
+      taskInput,
     } = this.state;
 
     return (
@@ -343,7 +313,13 @@ class TaskPage extends Component {
                   <ErrorIndicator errorMessage={errorMessage} />
                 ) : (
                   <>
-                    {this.renderInputs()}
+                    {renderInputs(
+                      taskInput,
+                      disabled,
+                      this.onHandlelInput,
+                      this.onHandleFinishEditing,
+                      this.onHandleFocus,
+                    )}
                     <div className='row'>
                       <DatePicker
                         date={startDate}
@@ -361,21 +337,25 @@ class TaskPage extends Component {
                       />
                     </div>
                     <div className='form-group'>
-                      <label htmlFor='description'>Description</label>
-                      <textarea
-                        id='description'
-                        name='description'
-                        value={description}
-                        rows='7'
-                        disabled={disabled}
-                        onChange={this.handleTextArea}
-                      />
+                      <label htmlFor='description'>
+                        <textarea
+                          id='description'
+                          name='description'
+                          value={description}
+                          rows='7'
+                          disabled={disabled}
+                          onChange={this.handleTextArea}
+                        />
+                        Description
+                      </label>
                     </div>
                     <div className='form-group'>
-                      <label htmlFor='members'>Members</label>
-                      <div id='members' className='column'>
-                        {this.renderCheckbox()}
-                      </div>
+                      <label htmlFor='members'>
+                        <div id='members' className='column'>
+                          {this.renderCheckbox()}
+                        </div>
+                        Members
+                      </label>
                     </div>
                   </>
                 )}
@@ -404,6 +384,7 @@ TaskPage.propTypes = {
   title: PropTypes.string.isRequired,
   task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
+  onCreateTaskClick: PropTypes.func.isRequired,
 };
 
 export default withFetchService(TaskPage);

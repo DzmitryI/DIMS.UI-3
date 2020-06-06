@@ -40,11 +40,11 @@ const getDate = (date) => {
   return `${day.slice(0, 2)}.${month}.${year}`;
 };
 
-const SetUp = ({ fetchServiceValue, roleValue, ThemeValue, component }) => {
+const SetUp = ({ fetchServiceValue, roleValue, themeValue, component }) => {
   return (
     <FetchServiceProvider value={fetchServiceValue}>
       <RoleContextProvider value={roleValue}>
-        <ThemeContextProvider value={ThemeValue}>{component}</ThemeContextProvider>
+        <ThemeContextProvider value={themeValue}>{component}</ThemeContextProvider>
       </RoleContextProvider>
     </FetchServiceProvider>
   );
@@ -142,7 +142,7 @@ async function deleteAllElements(id, element) {
 SetUp.propTypes = {
   fetchServiceValue: PropTypes.oneOfType([PropTypes.object]).isRequired,
   roleValue: PropTypes.string.isRequired,
-  ThemeValue: PropTypes.string.isRequired,
+  themeValue: PropTypes.string.isRequired,
   component: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 

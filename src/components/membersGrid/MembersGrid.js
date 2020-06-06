@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-wrap-multilines */
-/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
@@ -36,7 +34,7 @@ class MembersGrid extends Component {
   onChangeClick = ({ target }) => {
     const { directions, members, onRegisterClick } = this.props;
     const memberId = target.closest('tr').id;
-    const member = members.filter((member) => member.userId === memberId);
+    const member = members.filter((curMember) => curMember.userId === memberId);
     if (target.id === 'edit') {
       onRegisterClick(directions, h1MemberPage.get('Edit'), member);
     } else {
