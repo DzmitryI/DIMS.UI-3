@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
@@ -37,7 +38,7 @@ class TasksGrid extends Component {
 
   onChangeClick = ({ target }) => {
     const taskId = target.closest('tr').id;
-    const task = this.state.tasks.filter((task) => task.taskId === taskId);
+    const task = this.state.tasks.filter((curTask) => curTask.taskId === taskId);
     if (target.id === 'edit') {
       this.props.onCreateTaskClick(h1TaskPage.get('Edit'), task);
     } else {

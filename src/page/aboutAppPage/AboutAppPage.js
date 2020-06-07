@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import HeaderTable from '../../components/UI/headerTable';
 import { withTheme } from '../../hoc';
-import BodyTable from '../../components/UI/bodyTable/BodyTable';
+import BodyTable from '../../components/UI/bodyTable';
 import { headerAboutPage } from '../../components/helpersComponents';
 
 const AboutAppPage = ({ theme }) => {

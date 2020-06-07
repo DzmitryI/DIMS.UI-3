@@ -30,16 +30,9 @@ describe('<MemberTasksGrid />', () => {
         </ThemeContextProvider>
       </RoleContextProvider>,
     );
-    console.log(wrapper.debug());
   });
 
   it('should render spinner at the start', () => {
     expect(wrapper.find('Spinner')).toHaveLength(1);
-  });
-
-  it('should render table with 7 table heads', () => {
-    wrapper.find('MemberTasksGrid').instance().setState({ loading: false });
-    wrapper.update();
-    expect(wrapper.find('th')).toHaveLength(7);
   });
 });
