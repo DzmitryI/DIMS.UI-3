@@ -29,6 +29,20 @@ function createControl(config, validation) {
   };
 }
 
+function formValid(inputs) {
+  let isFormValid = true;
+  Object.keys(inputs).forEach((name) => {
+    isFormValid = inputs[name].valid && isFormValid;
+  });
+  return isFormValid;
+}
+
+function fillControl(input, controlName) {
+  input[controlName].valid = true;
+  input[controlName].touched = true;
+  return input;
+}
+
 function createNotify() {
   return {
     position: 'top-right',
@@ -41,4 +55,4 @@ function createNotify() {
   };
 }
 
-export { validateControl, createControl, createNotify };
+export { validateControl, createControl, createNotify, fillControl, formValid };

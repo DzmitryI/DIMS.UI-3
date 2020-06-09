@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FetchService from '../services/fetchFirebase';
 import DisplayNotification from './displayNotification';
 import { FetchServiceProvider, RoleContextProvider, ThemeContextProvider } from './context';
@@ -30,8 +31,8 @@ const h1TaskTrackPage = new Map([
 ]);
 
 const TABLE_ROLES = {
-  ADMIN: 'admin@mail.ru',
-  MENTOR: 'mentor@mail.ru',
+  isAdmin: 'admin@mail.ru',
+  isMentor: 'mentor@mail.ru',
 };
 
 const getDate = (date) => {
@@ -39,11 +40,11 @@ const getDate = (date) => {
   return `${day.slice(0, 2)}.${month}.${year}`;
 };
 
-const SetUp = ({ fetchServiceValue, roleValue, ThemeValue, component }) => {
+const SetUp = ({ fetchServiceValue, roleValue, themeValue, component }) => {
   return (
     <FetchServiceProvider value={fetchServiceValue}>
       <RoleContextProvider value={roleValue}>
-        <ThemeContextProvider value={ThemeValue}>{component}</ThemeContextProvider>
+        <ThemeContextProvider value={themeValue}>{component}</ThemeContextProvider>
       </RoleContextProvider>
     </FetchServiceProvider>
   );
@@ -63,12 +64,12 @@ async function updateMemberProgress(userId = '', taskId = '') {
   let result = '';
   if (userTasks.length) {
     if (userId) {
-      result = userTasks.find((userTask) => userTask.userId === userId);
+      result = userTasks.filter((userTask) => userTask.userId === userId);
     } else if (taskId) {
-      result = userTasks.find((userTask) => userTask.taskId === taskId);
+      result = userTasks.filter((userTask) => userTask.taskId === taskId);
     }
-    if (result) {
-      curUserTasks = curUserTasks.concat(result);
+    if (result.length) {
+      curUserTasks = curUserTasks.concat(...result);
     }
     if (curUserTasks.length) {
       const usersTaskTrack = await fetchService.getAllUserTaskTrack();
@@ -137,6 +138,13 @@ async function deleteAllElements(id, element) {
     }
   }
 }
+
+SetUp.propTypes = {
+  fetchServiceValue: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  roleValue: PropTypes.string.isRequired,
+  themeValue: PropTypes.string.isRequired,
+  component: PropTypes.objectOf(PropTypes.object).isRequired,
+};
 
 export {
   headerTasksGrid,

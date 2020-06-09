@@ -1,12 +1,15 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import update from 'immutability-helper';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
 import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import Row from '../UI/row/Row';
 
 const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
@@ -34,6 +37,18 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
     onTaskClick(h1TaskPage.get('Detail'), task);
   };
 
+  const moveRow = (dragIndex, hoverIndex) => {
+    const dragRow = memberProgresses[dragIndex];
+    setMemberProgresses(
+      update(memberProgresses, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragRow],
+        ],
+      }),
+    );
+  };
+
   const renderTBody = (progresses) => {
     return progresses.map((memberProgress, index) => {
       const {
@@ -42,18 +57,26 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
       } = memberProgress;
       const { name } = task;
       return (
-        <tr key={taskTrackId} id={taskTrackId}>
-          <Cell className='td index' value={index + 1} />
-          <Cell
-            value={
-              <span onClick={onShowClick} id={taskTrackId}>
-                {name}
-              </span>
-            }
-          />
-          <Cell value={trackNote} />
-          <Cell value={getDate(trackDate)} />
-        </tr>
+        <Row
+          key={taskTrackId}
+          id={taskTrackId}
+          index={index}
+          moveRow={moveRow}
+          value={
+            <>
+              <Cell className='td index' value={index + 1} />
+              <Cell
+                value={
+                  <span onClick={onShowClick} id={taskTrackId}>
+                    {name}
+                  </span>
+                }
+              />
+              <Cell value={trackNote} />
+              <Cell value={getDate(trackDate)} />
+            </>
+          }
+        />
       );
     });
   };

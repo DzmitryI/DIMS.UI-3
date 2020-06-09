@@ -3,7 +3,6 @@ import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION, AUTH_REGISTER } from '../
 const initialState = {
   token: null,
   email: null,
-  database: null,
   isRegistred: false,
   onNotification: false,
   notification: {},
@@ -11,7 +10,7 @@ const initialState = {
 
 export default function authReducer(
   state = initialState,
-  { type, token, email, database, onNotification, notification },
+  { type, token = null, email = null, onNotification, notification },
 ) {
   switch (type) {
     case AUTH_SUCCESS:
@@ -19,22 +18,19 @@ export default function authReducer(
         ...state,
         token,
         email,
-        database,
       };
     case AUTH_REGISTER:
       return {
         ...state,
-        token: null,
-        email: null,
-        database: null,
+        token,
+        email,
         isRegistred: true,
       };
     case AUTH_LOGOUT:
       return {
         ...state,
-        token: null,
-        email: null,
-        database: null,
+        token,
+        email,
         isRegistred: false,
       };
     case AUTH_NOTIFICATION:

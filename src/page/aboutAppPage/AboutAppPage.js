@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import HeaderTable from '../../components/UI/headerTable';
 import { withTheme } from '../../hoc';
-import BodyTable from '../../components/UI/bodyTable/BodyTable';
+import BodyTable from '../../components/UI/bodyTable';
 import { headerAboutPage } from '../../components/helpersComponents';
 
 const AboutAppPage = ({ theme }) => {
@@ -122,8 +122,8 @@ const AboutAppPage = ({ theme }) => {
       <h3>Hi, dear friend!</h3>
       <p>
         We are glad to see you in the
-        <b>'Dev Incubator Management System'</b> project or more briefly is <b>DIMS</b>! From this moment, you are a
-        member of a great development team. Happy code!
+        <b> &apos;Dev Incubator Management System&apos;</b> project or more briefly is <b>DIMS</b>! From this moment,
+        you are a member of a great development team. Happy code!
       </p>
       <h3>What is the DIMS?</h3>
       <p>
@@ -137,7 +137,7 @@ const AboutAppPage = ({ theme }) => {
           The second one is the <b>Mentor</b>.
         </li>
         <li>
-          The lat one is the <b>Member</b>. It's just like you.
+          The lat one is the <b>Member</b>. It&apos;s just like you.
         </li>
       </ul>
       <h3>What can the roles do?</h3>

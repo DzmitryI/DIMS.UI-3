@@ -11,7 +11,7 @@ HeaderTable.defaultProps = {
 };
 
 HeaderTable.propTypes = {
-  arr: PropTypes.array,
+  arr: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
 export default HeaderTable;

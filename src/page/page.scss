@@ -17,6 +17,7 @@ $red: rgb(230, 30, 30);
   right: 0;
   & .page-form {
     width: 25rem;
+    padding-top: 2rem;
     border: 1px solid $dark;
     border-radius: 5px;
     margin: 0 auto;
@@ -36,7 +37,7 @@ $red: rgb(230, 30, 30);
 }
 
 .column {
-  width: 12.5rem;
+  width: 16.5rem;
   height: 6.3rem;
   overflow: auto;
   border: solid 1px $dark;

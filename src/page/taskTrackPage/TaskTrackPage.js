@@ -46,7 +46,9 @@ class TaskTrackPage extends Component {
     }
   }
 
-  onHandleChangeDate = (id) => (value) => this.handleChangeDate(value, id);
+  onHandleChangeDate = (id) => (value) => {
+    this.handleChangeDate(value, id);
+  };
 
   handleChangeDate = (value, id) => {
     const { taskTrack } = this.state;
@@ -94,12 +96,12 @@ class TaskTrackPage extends Component {
     this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const res = clearOblectValue({}, taskTrack);
-    this.setState({ taskTrack: res.objElemClear });
+    this.setState({ taskTrack: res.objElemClear, taskTrackId: null });
     this.props.onTrackClick(taskId);
   };
 
   render() {
-    const { isOpen, title, subtitle } = this.props;
+    const { isOpen, title } = this.props;
     const {
       taskTrack: { trackDate, trackNote },
       disabled,
@@ -117,25 +119,26 @@ class TaskTrackPage extends Component {
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{`Task Track - ${subtitle}`}</h1>
                 <DatePicker
                   date={trackDate}
                   id='date'
                   label='Date'
                   disabled={disabled}
-                  onChange={this.onHandleChangeDate('date')}
+                  onChange={this.onHandleChangeDate('trackDate')}
                 />
                 <div className='form-group'>
-                  <label htmlFor='trackNote'>Note</label>
-                  <textarea
-                    key='trackNote'
-                    id='trackNote'
-                    name='note'
-                    disabled={disabled}
-                    value={trackNote}
-                    rows='7'
-                    onChange={this.handleTextArea}
-                  />
+                  <label htmlFor='trackNote'>
+                    <textarea
+                      key='trackNote'
+                      id='trackNote'
+                      name='note'
+                      disabled={disabled}
+                      value={trackNote}
+                      rows='7'
+                      onChange={this.handleTextArea}
+                    />
+                    Note
+                  </label>
                 </div>
                 <div className='form-group row'>
                   <Button
@@ -161,7 +164,6 @@ TaskTrackPage.propTypes = {
   title: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
   userTaskId: PropTypes.string.isRequired,
-  subtitle: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   track: PropTypes.objectOf(PropTypes.string).isRequired,

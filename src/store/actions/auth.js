@@ -2,12 +2,11 @@
 import axios from 'axios';
 import { AUTH_SUCCESS, AUTH_LOGOUT, AUTH_NOTIFICATION, AUTH_REGISTER } from './actionTypes';
 
-export function auth(email, password, isLogin, database = 'firebase') {
+export function auth(email, password, isLogin) {
   return async (dispatch) => {
     const authData = {
       email,
       password,
-      database,
       returnSecureToken: true,
     };
 
@@ -25,8 +24,7 @@ export function auth(email, password, isLogin, database = 'firebase') {
         localStorage.setItem('token', idToken);
         localStorage.setItem('expirationDate', expirationDate);
         localStorage.setItem('email', email);
-        localStorage.setItem('database', database);
-        dispatch(authSuccess(idToken, email, database));
+        dispatch(authSuccess(idToken, email));
         dispatch(autoLogout(expiresIn));
       } else {
         dispatch(authRegister());
@@ -53,7 +51,6 @@ export function autoLogin() {
   return (dispatch) => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
-    const database = localStorage.getItem('database');
     if (!token) {
       dispatch(logout());
     } else {
@@ -61,7 +58,7 @@ export function autoLogin() {
       if (expirationDate <= new Date()) {
         dispatch(logout());
       } else {
-        dispatch(authSuccess(token, email, database));
+        dispatch(authSuccess(token, email));
         dispatch(autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000));
       }
     }
@@ -80,12 +77,11 @@ export function logout() {
   };
 }
 
-export function authSuccess(token, email, database) {
+export function authSuccess(token, email) {
   return {
     type: AUTH_SUCCESS,
     token,
     email,
-    database,
   };
 }
 

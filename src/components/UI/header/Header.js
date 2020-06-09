@@ -12,6 +12,7 @@ import imgMain from '../../../assets/images/main.png';
 
 const Header = (props) => {
   const { isAuthenticated, email, theme, logout } = props;
+  const { isAdmin, isMentor } = TABLE_ROLES;
   let arrLinks = [];
 
   const renderLinks = (links) => {
@@ -22,7 +23,7 @@ const Header = (props) => {
     ));
   };
 
-  if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
+  if (isAuthenticated && (email === isAdmin || email === isMentor)) {
     arrLinks = arrLinks.concat({ to: '/MembersGrid', label: 'Members Grid' });
     arrLinks = arrLinks.concat({ to: '/TasksGrid', label: 'Tasks Grid' });
   } else if (isAuthenticated) {
@@ -51,7 +52,7 @@ Header.propTypes = {
   logout: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ auth: { email } }) => {
+const mapStateToProps = ({ authData: { email } }) => {
   return {
     email,
   };

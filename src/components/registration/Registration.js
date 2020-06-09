@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import DisplayNotification from '../displayNotification';
-import Input from '../UI/input';
 import Button from '../UI/button';
-import { createControl, validateControl } from '../../services/helpers';
+import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
+import ImageComponent from '../imageComponent/ImageComponent';
+import { renderInputs } from '../../page/helpersPage';
 
 class Registration extends PureComponent {
   state = {
@@ -44,66 +45,40 @@ class Registration extends PureComponent {
     event.preventDefault();
   };
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandlelInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
     authInput[controlName].value = value;
     authInput[controlName].touched = true;
-    let isFormValid = true;
-    Object.keys(authInput).forEach((name) => {
-      isFormValid = authInput[name].valid && isFormValid;
-    });
-    this.setState({ authInput, isFormValid });
+    this.setState({ authInput, isFormValid: formValid(authInput) });
   };
 
-  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
 
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const authInput = { ...this.state.authInput };
     authInput[controlName].valid = validateControl(value, authInput[controlName].validation);
-    let isFormValid = true;
-    Object.keys(authInput).forEach((name) => {
-      isFormValid = authInput[name].valid && isFormValid;
-    });
-    this.setState({ authInput, isFormValid });
+    this.setState({ authInput, isFormValid: formValid(authInput) });
   };
 
-  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
 
   handleFocus = (controlName) => {
-    const authInput = { ...this.state.authInput };
-    authInput[controlName].valid = true;
-    authInput[controlName].touched = true;
+    let authInput = { ...this.state.authInput };
+    authInput = fillControl(authInput, controlName);
     this.setState({ authInput });
   };
 
-  renderInputs() {
-    const { authInput } = this.state;
-    return Object.keys(authInput).map((controlName, index) => {
-      const control = authInput[controlName];
-      return (
-        <Input
-          key={controlName}
-          id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
-          onChange={this.onHandlelInput(controlName)}
-          onBlur={this.onHandleFinishEditing(controlName)}
-          onFocus={this.onHandleFocus(controlName)}
-        />
-      );
-    });
-  }
-
   render() {
     const { notification, onNotification, isRegistred } = this.props;
-    const { isFormValid } = this.state;
+    const { isFormValid, authInput, disabled } = this.state;
     if (isRegistred) {
       return <Redirect push to='/Auth' />;
     }
@@ -111,11 +86,9 @@ class Registration extends PureComponent {
       <>
         {onNotification && <DisplayNotification notification={notification} />}
         <div className='auth'>
-          <div className='auth-img'>
-            <img src={imgLogo} with='100px' height='50px' alt='logo' />
-          </div>
+          <ImageComponent className='auth-img' src={imgLogo} alt='logo' />
           <form onSubmit={this.submitHandler}>
-            {this.renderInputs()}
+            {renderInputs(authInput, disabled, this.onHandlelInput, this.onHandleFinishEditing, this.onHandleFocus)}
             <br />
             <div className='form-group row'>
               <Button
@@ -135,12 +108,12 @@ class Registration extends PureComponent {
 
 Registration.propTypes = {
   onNotification: PropTypes.bool.isRequired,
-  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   isRegistred: PropTypes.bool.isRequired,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ auth: { onNotification, notification, isRegistred } }) => {
+const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => {
   return {
     onNotification,
     notification,

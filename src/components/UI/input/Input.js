@@ -37,6 +37,7 @@ const Input = ({
         autoComplete={autocomplete}
         onBlur={onBlur}
         onFocus={onFocus}
+        min='0'
       />
       <span className={`invalid-text ${result ? 'visibility' : ''}`}>{errorMessage}</span>
     </div>

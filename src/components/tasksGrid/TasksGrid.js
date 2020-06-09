@@ -1,5 +1,7 @@
+/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
@@ -8,6 +10,7 @@ import ErrorIndicator from '../errorIndicator';
 import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../helpersComponents';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
+import Row from '../UI/row/Row';
 
 class TasksGrid extends Component {
   state = {
@@ -35,7 +38,7 @@ class TasksGrid extends Component {
 
   onChangeClick = ({ target }) => {
     const taskId = target.closest('tr').id;
-    const task = this.state.tasks.filter((task) => task.taskId === taskId);
+    const task = this.state.tasks.filter((curTask) => curTask.taskId === taskId);
     if (target.id === 'edit') {
       this.props.onCreateTaskClick(h1TaskPage.get('Edit'), task);
     } else {
@@ -56,12 +59,25 @@ class TasksGrid extends Component {
       if (response) {
         const notification = { title: `${name} was deleted!` };
         this.setState({ onNotification: true, notification });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
         this.fetchTasks();
       }
     } catch ({ message }) {
       this.setState({ loading: false, error: true, errorMessage: message });
     }
+  };
+
+  moveRow = (dragIndex, hoverIndex) => {
+    const { tasks } = this.state;
+    const dragRow = tasks[dragIndex];
+    this.setState({
+      tasks: update(tasks, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, dragRow],
+        ],
+      }),
+    });
   };
 
   async fetchTasks() {
@@ -80,20 +96,28 @@ class TasksGrid extends Component {
     return tasks.map((task, index) => {
       const { taskId, name, startDate, deadlineDate } = task;
       return (
-        <tr key={task.taskId} id={taskId}>
-          <Cell className='td index' value={index + 1} />
-          <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
-          <Cell value={getDate(startDate)} />
-          <Cell value={getDate(deadlineDate)} />
-          <Cell
-            value={
-              <>
-                <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
-                <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
-              </>
-            }
-          />
-        </tr>
+        <Row
+          key={task.taskId}
+          id={taskId}
+          index={index}
+          moveRow={this.moveRow}
+          value={
+            <>
+              <Cell className='td index' value={index + 1} />
+              <Cell value={<span onClick={this.onChangeClick}>{name}</span>} />
+              <Cell value={getDate(startDate)} />
+              <Cell value={getDate(deadlineDate)} />
+              <Cell
+                value={
+                  <>
+                    <Button className='btn-edit' id='edit' name='Edit' onClick={this.onChangeClick} />
+                    <Button className='btn-delete' name='Delete' onClick={this.onDeleteClick} />
+                  </>
+                }
+              />
+            </>
+          }
+        />
       );
     });
   };

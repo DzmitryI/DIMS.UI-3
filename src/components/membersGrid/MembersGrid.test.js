@@ -4,7 +4,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import MembersGrid from './MembersGrid';
-import { ThemeContextProvider } from '../context';
+import { ThemeContextProvider, RoleContextProvider } from '../context';
 
 configure({
   adapter: new Adapter(),
@@ -29,6 +29,7 @@ describe('<MembersGrid />', () => {
 
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
+    const contextRoleValue = 'email@mail.ru';
     const params = {
       isRegister: true,
       onRegisterClick() {},
@@ -39,9 +40,11 @@ describe('<MembersGrid />', () => {
     };
     wrapper = mount(
       <Provider store={store}>
-        <ThemeContextProvider value={contextThemeValue}>
-          <MembersGrid {...params} />
-        </ThemeContextProvider>
+        <RoleContextProvider value={contextRoleValue}>
+          <ThemeContextProvider value={contextThemeValue}>
+            <MembersGrid {...params} />
+          </ThemeContextProvider>
+        </RoleContextProvider>
       </Provider>,
     );
   });

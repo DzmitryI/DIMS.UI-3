@@ -59,6 +59,7 @@ export default class FetchFirebase {
     const response = await this.getSource(`/Task/${id}.json`);
     let tasks = [];
     if (response && response.data) {
+      response.data.taskId = id;
       tasks = tasks.concat(response.data);
     }
     return tasks;
@@ -80,13 +81,6 @@ export default class FetchFirebase {
       });
     }
     return userTasks;
-  };
-
-  getUserTask = async (id) => {
-    const response = await this.getSource(`/UserTask/${id}.json`);
-    if (response && response.data) {
-      return response.data;
-    }
   };
 
   getTaskState = async (id) => {

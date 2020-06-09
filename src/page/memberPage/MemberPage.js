@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
-import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import DatePicker from '../../components/datePicker';
-import { createControl, validateControl } from '../../services/helpers';
-import { clearOblectValue, updateInput } from '../helpersPage';
+import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
+import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 
@@ -180,42 +179,51 @@ class MemberPage extends Component {
     }
   }
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandlelInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
     member[controlName] = value;
-    let isFormValid = true;
-    Object.keys(memberInput).forEach((name) => {
-      isFormValid = memberInput[name].valid && isFormValid;
-    });
-    this.setState({ memberInput, member, isFormValid });
+    this.setState({ memberInput, member, isFormValid: formValid(memberInput) });
   };
 
-  onHandleFinishEditing = (controlName) => (event) => this.handleFinishEditing(event, controlName);
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
 
   handleFinishEditing = ({ target: { value } }, controlName) => {
     const { memberInput } = this.state;
     memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
-    let isFormValid = true;
-    Object.keys(memberInput).forEach((name) => {
-      isFormValid = memberInput[name].valid && isFormValid;
-    });
-    this.setState({ memberInput, isFormValid });
+    this.setState({ memberInput, isFormValid: formValid(memberInput) });
   };
 
-  onHandleFocus = (controlName) => () => this.handleFocus(controlName);
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
 
   handleFocus = (controlName) => {
-    const { memberInput } = this.state;
-    memberInput[controlName].valid = true;
-    memberInput[controlName].touched = true;
+    let { memberInput } = this.state;
+    memberInput = fillControl(memberInput, controlName);
     this.setState({ memberInput });
   };
 
-  onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
+  onHandleChangeDate = (id) => (value) => {
+    this.handleChangeDate(value, id);
+  };
+
+  handleChangeDate = (value, id) => {
+    const { member } = this.state;
+    member[id] = value;
+    this.setState({ member });
+  };
+
+  onHandlelSelect = (controlName) => (event) => {
+    this.handleSelect(event, controlName);
+  };
 
   handleSelect = ({ target }) => {
     const {
@@ -278,32 +286,6 @@ class MemberPage extends Component {
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
   }
 
-  renderInputs() {
-    const { disabled, memberInput } = this.state;
-    return Object.keys(memberInput).map((controlName, index) => {
-      const control = memberInput[controlName];
-      return (
-        <Input
-          key={controlName + index}
-          id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
-          disabled={disabled}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
-          onChange={this.onHandlelInput(controlName)}
-          placeholder={control.placeholder}
-          className='form-group-member'
-          onBlur={this.onHandleFinishEditing(controlName)}
-          onFocus={this.onHandleFocus(controlName)}
-        />
-      );
-    });
-  }
-
   renderSelect() {
     const { memberSelect, member, disabled } = this.state;
     return Object.keys(memberSelect).map((controlName) => {
@@ -335,12 +317,13 @@ class MemberPage extends Component {
 
   render() {
     const {
-      member: { name, lastName, startDate, birthDate },
+      member: { startDate, birthDate },
       disabled,
       loading,
       isFormValid,
       onNotification,
       notification,
+      memberInput,
     } = this.state;
     const { isOpen, title } = this.props;
 
@@ -354,22 +337,30 @@ class MemberPage extends Component {
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-                <div className='form-group-members'>{this.renderInputs()}</div>
+                <div className='form-group-members'>
+                  {renderInputs(
+                    memberInput,
+                    disabled,
+                    this.onHandlelInput,
+                    this.onHandleFinishEditing,
+                    this.onHandleFocus,
+                    'form-group-member',
+                  )}
+                </div>
                 <div className='row'>
                   <DatePicker
                     date={birthDate}
                     id='birthDate'
                     label='Bith date'
                     disabled={disabled}
-                    onChange={this.onHandlelInput('birthDate')}
+                    onChange={this.onHandleChangeDate('birthDate')}
                   />
                   <DatePicker
                     date={startDate}
                     id='startDate'
                     label='Start date'
                     disabled={disabled}
-                    onChange={this.onHandlelInput('startDate')}
+                    onChange={this.onHandleChangeDate('startDate')}
                   />
                 </div>
                 <div className='row'>{this.renderSelect()}</div>

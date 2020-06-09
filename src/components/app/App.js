@@ -19,7 +19,6 @@ import Auth from '../auth';
 import Registration from '../registration';
 import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
-import FetchAzure from '../../services/fetchAzure';
 import { autoLogin } from '../../store/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
 
@@ -49,20 +48,15 @@ class App extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    const { email, database } = this.props;
-    let fetchService = {};
-    if (email && email !== prevProps.email) {
+    const { email } = this.props;
+    const fetchService = new FetchFirebase();
+    if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
-      if (database === 'firebase') {
-        fetchService = new FetchFirebase();
-      } else {
-        fetchService = new FetchAzure();
-      }
       try {
         const members = await fetchService.getAllMember();
-        const member = members.find((member) => member.email === email);
+        const member = members.find((curMember) => curMember.email === email);
         this.setState({ userId: member ? member.userId : '', fetchService });
       } catch ({ message }) {
         this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
@@ -269,19 +263,16 @@ App.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   autoLogin: PropTypes.func.isRequired,
   email: PropTypes.string,
-  database: PropTypes.string,
 };
 
 App.defaultProps = {
   email: null,
-  database: null,
 };
 
-const mapStateToProps = ({ auth: { token, email, database } }) => {
+const mapStateToProps = ({ authData: { token, email } }) => {
   return {
     isAuthenticated: !!token,
     email,
-    database,
   };
 };
 
