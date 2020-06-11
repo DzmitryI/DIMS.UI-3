@@ -11,7 +11,7 @@ HeaderTable.defaultProps = {
 };
 
 HeaderTable.propTypes = {
-  arr: PropTypes.array.isRequired,
+  arr: PropTypes.array,
 };
 
 export default HeaderTable;

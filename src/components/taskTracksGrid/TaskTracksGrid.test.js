@@ -16,13 +16,18 @@ describe('<TaskTracksGrid/>', () => {
     const contextThemeValue = { theme: 'dark' };
     const contextRoleValue = '123@mail.ru';
     const contextFetchService = {};
+    const props = {
+      taskId: '1',
+      isOpen: false,
+      onTrackClick() {},
+    };
     wrapper = mount(
       <MemoryRouter>
         <SetUp
           fetchServiceValue={contextFetchService}
           roleValue={contextRoleValue}
           ThemeValue={contextThemeValue}
-          component={<TaskTracksGrid />}
+          component={<TaskTracksGrid {...props} />}
         />
       </MemoryRouter>,
     );

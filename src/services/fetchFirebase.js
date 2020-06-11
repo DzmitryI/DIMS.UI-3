@@ -1,24 +1,23 @@
 import axios from 'axios';
 
 export default class FetchFirebase {
-  api_base = process.env.REACT_APP_API_BASE_FIREBASE;
+  apiBase = process.env.REACT_APP_API_BASE_FIREBASE;
 
-  getSource = async (url) => {
-    return await axios.get(`${this.api_base}${url}`);
+  getSource = (url) => {
+    return axios.get(`${this.apiBase}${url}`);
   };
 
-  setSource = async (url, body) => {
-    const result = await axios.post(`${this.api_base}${url}`, body);
 
-    return result;
+  setSource = (url, body) => {
+    return axios.post(`${this.apiBase}${url}`, body);
   };
 
-  editSource = async (url, body) => {
-    return await axios.put(`${this.api_base}${url}`, body);
+  editSource = (url, body) => {
+    return axios.put(`${this.apiBase}${url}`, body);
   };
 
-  deleteSource = async (url) => {
-    return await axios.delete(`${this.api_base}${url}`);
+  deleteSource = (url) => {
+    return axios.delete(`${this.apiBase}${url}`);
   };
 
   getAllMember = async () => {
@@ -129,59 +128,59 @@ export default class FetchFirebase {
     return direction;
   };
 
-  setMember = async (body) => {
-    return await this.setSource(`/UserProfile.json`, body);
+  setMember = (body) => {
+    return this.setSource(`/UserProfile.json`, body);
   };
 
-  setTask = async (body) => {
-    return await this.setSource(`/Task.json`, body);
+  setTask = (body) => {
+    return this.setSource(`/Task.json`, body);
   };
 
-  setUserTask = async (body) => {
-    return await this.setSource(`/UserTask.json`, body);
+  setUserTask = (body) => {
+    return this.setSource(`/UserTask.json`, body);
   };
 
-  setTaskState = async (body) => {
-    return await this.setSource(`/TaskState.json`, body);
+  setTaskState = (body) => {
+    return this.setSource(`/TaskState.json`, body);
   };
 
-  setTaskTrack = async (body) => {
-    return await this.setSource(`/TaskTrack.json`, body);
+  setTaskTrack = (body) => {
+    return this.setSource(`/TaskTrack.json`, body);
   };
 
-  editMember = async (memberId, body) => {
-    return await this.editSource(`/UserProfile/${memberId}.json`, body);
+  editMember = (memberId, body) => {
+    return this.editSource(`/UserProfile/${memberId}.json`, body);
   };
 
-  editTask = async (taskId, body) => {
-    return await this.editSource(`/Task/${taskId}.json`, body);
+  editTask = (taskId, body) => {
+    return this.editSource(`/Task/${taskId}.json`, body);
   };
 
-  editTaskTrack = async (taskTrackId, body) => {
-    return await this.editSource(`/TaskTrack/${taskTrackId}.json`, body);
+  editTaskTrack = (taskTrackId, body) => {
+    return this.editSource(`/TaskTrack/${taskTrackId}.json`, body);
   };
 
-  editTaskState = async (taskId, body) => {
-    return await this.editSource(`/TaskState/${taskId}.json`, body);
+  editTaskState = (taskId, body) => {
+    return this.editSource(`/TaskState/${taskId}.json`, body);
   };
 
-  delMember = async (memberId) => {
-    return await this.deleteSource(`/UserProfile/${memberId}.json`);
+  delMember = (memberId) => {
+    return this.deleteSource(`/UserProfile/${memberId}.json`);
   };
 
-  delTask = async (taskId) => {
-    return await this.deleteSource(`/Task/${taskId}.json`);
+  delTask = (taskId) => {
+    return this.deleteSource(`/Task/${taskId}.json`);
   };
 
-  delUserTask = async (userTaskId) => {
-    return await this.deleteSource(`/UserTask/${userTaskId}.json`);
+  delUserTask = (userTaskId) => {
+    return this.deleteSource(`/UserTask/${userTaskId}.json`);
   };
 
-  delTaskTrack = async (taskTrackId) => {
-    return await this.deleteSource(`/TaskTrack/${taskTrackId}.json`);
+  delTaskTrack = (taskTrackId) => {
+    return this.deleteSource(`/TaskTrack/${taskTrackId}.json`);
   };
 
-  delTaskState = async (taskStateId) => {
-    return await this.deleteSource(`/TaskState/${taskStateId}.json`);
+  delTaskState = (taskStateId) => {
+    return this.deleteSource(`/TaskState/${taskStateId}.json`);
   };
 }

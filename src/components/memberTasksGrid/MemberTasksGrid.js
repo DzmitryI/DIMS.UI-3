@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
@@ -23,8 +23,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userTasks = await updateMemberTasks(userId);
-        setUserTasks(userTasks);
+        setUserTasks(await updateMemberTasks(userId));
         setLoading(false);
         setOnNotification(false);
       } catch ({ message }) {

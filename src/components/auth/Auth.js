@@ -5,8 +5,9 @@ import DisplayNotification from '../displayNotification';
 import Input from '../UI/input';
 import Button from '../UI/button';
 import Radio from '../UI/radio';
-import { createControl, validateControl } from '../../services/helpers.js';
+import { createControl, validateControl } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
+import imgLogo from '../../assets/images/logo.png';
 
 class Auth extends PureComponent {
   state = {
@@ -98,7 +99,8 @@ class Auth extends PureComponent {
       <>
         {onNotification && <DisplayNotification notification={notification} />}
         <div className='auth'>
-          <h1>Authorization</h1>
+          {/* <h1>Authorization</h1> */}
+          <img src={imgLogo} with='100px' height='35px' alt='logo' />
           <form onSubmit={this.submitHandler}>
             {this.renderInputs()}
             <fieldset className='base-wrap'>
@@ -120,6 +122,7 @@ class Auth extends PureComponent {
 Auth.propTypes = {
   onNotification: PropTypes.bool.isRequired,
   notification: PropTypes.object.isRequired,
+  auth: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ auth: { onNotification, notification } }) => {

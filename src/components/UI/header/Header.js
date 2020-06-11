@@ -1,7 +1,7 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import ButtonLink from '../buttonLink';
 import ColorSwitch from '../../colorSwitch';
 import DropDownMenu from '../dropDownMenu';
@@ -11,8 +11,8 @@ import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';
 
 const Header = (props) => {
-  const { isAuthenticated, email, theme } = props;
-  let links = [];
+  const { isAuthenticated, email, theme, logout } = props;
+  let arrLinks = [];
 
   const renderLinks = (links) => {
     return links.map((link) => (
@@ -23,10 +23,10 @@ const Header = (props) => {
   };
 
   if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
-    links = links.concat({ to: '/MembersGrid', label: 'Members Grid' });
-    links = links.concat({ to: '/TasksGrid', label: 'Tasks Grid' });
+    arrLinks = arrLinks.concat({ to: '/MembersGrid', label: 'Members Grid' });
+    arrLinks = arrLinks.concat({ to: '/TasksGrid', label: 'Tasks Grid' });
   } else if (isAuthenticated) {
-    links = [].concat({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
+    arrLinks = [].concat({ to: '/MemberTasksGrid', label: 'Member Tasks Grid' });
   }
 
   return (
@@ -36,10 +36,10 @@ const Header = (props) => {
           <img src={imgMain} alt='img home' />
         </NavLink>
       </div>
-      <ul className='nav'>{renderLinks(links)}</ul>
+      <ul className='nav'>{renderLinks(arrLinks)}</ul>
       <ColorSwitch />
       <DropDownMenu to='/AboutApp' />
-      <ButtonLink className='btn-logout' onClick={props.logout} name='Logout' to='/Auth' />
+      <ButtonLink className='btn-logout' onClick={logout} name='Logout' to='/Auth' />
     </div>
   );
 };
@@ -48,6 +48,7 @@ Header.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   theme: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
+  logout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ auth: { email } }) => {

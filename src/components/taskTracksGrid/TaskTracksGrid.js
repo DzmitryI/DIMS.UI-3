@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
 import HeaderTable from '../UI/headerTable';
@@ -14,22 +14,11 @@ class TaskTracksGrid extends Component {
   state = {
     tracks: [],
     loading: true,
-    taskId: '',
     onNotification: false,
     notification: {},
     error: false,
     errorMessage: '',
   };
-
-  async fetchMemberProgress() {
-    try {
-      const { taskId } = this.props;
-      const tracks = await updateMemberProgress('', taskId);
-      this.setState({ tracks, taskId, loading: false });
-    } catch ({ message }) {
-      this.setState({ loading: false, error: true, errorMessage: message });
-    }
-  }
 
   componentDidMount() {
     this.fetchMemberProgress();
@@ -67,11 +56,21 @@ class TaskTracksGrid extends Component {
     }
   };
 
+  async fetchMemberProgress() {
+    try {
+      const { taskId } = this.props;
+      const tracks = await updateMemberProgress('', taskId);
+      this.setState({ tracks, loading: false });
+    } catch ({ message }) {
+      this.setState({ loading: false, error: true, errorMessage: message });
+    }
+  }
+
   render() {
     const { tracks, loading, notification, onNotification, error, errorMessage } = this.state;
     const { theme, email } = this.props;
     const { ADMIN, MENTOR } = TABLE_ROLES;
-    const admin_mentor = email === ADMIN || email === MENTOR;
+    const adminMentor = email === ADMIN || email === MENTOR;
 
     if (loading) {
       return <Spinner />;
@@ -110,13 +109,13 @@ class TaskTracksGrid extends Component {
                             onClick={this.onChangeClick}
                             id='edit'
                             name='Edit'
-                            disabled={admin_mentor}
+                            disabled={adminMentor}
                           />
                           <Button
                             className='btn-delete'
                             onClick={this.onDeleteClick}
                             name='Delete'
-                            disabled={admin_mentor}
+                            disabled={adminMentor}
                           />
                         </>
                       }
@@ -134,11 +133,12 @@ class TaskTracksGrid extends Component {
 }
 
 TaskTracksGrid.propTypes = {
-  taskId: PropTypes.string,
-  isOpen: PropTypes.bool,
-  fetchService: PropTypes.object,
-  theme: PropTypes.string,
-  email: PropTypes.string,
+  taskId: PropTypes.string.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  fetchService: PropTypes.object.isRequired,
+  theme: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  onTrackClick: PropTypes.func.isRequired,
 };
 
 export default withFetchService(withRole(withTheme(TaskTracksGrid)));

@@ -11,7 +11,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the <b>Member’s Manage Grid</b>
+            Watch the
+            <b>Member’s Manage Grid</b>
           </>
         ),
       },
@@ -23,7 +24,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Add, edit, and delete a member on <b>Member’s Manage Grid</b>
+            Add, edit, and delete a member on
+            <b>Member’s Manage Grid</b>
           </>
         ),
       },
@@ -35,7 +37,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the <b>Member’s Progress grid</b>
+            Watch the
+            <b>Member’s Progress grid</b>
           </>
         ),
       },
@@ -47,7 +50,8 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Watch the <b>Tasks Manage Grid</b>
+            Watch the
+            <b>Tasks Manage Grid</b>
           </>
         ),
       },
@@ -59,7 +63,7 @@ const AboutAppPage = ({ theme }) => {
       {
         value: (
           <>
-            Add, edit, and delete a <b>New task</b>
+            Add, edit, and delete a<b>New task</b>
           </>
         ),
       },
@@ -124,10 +128,12 @@ of the current Task
     <div className='grid-wrap'>
       <h3>Hi, dear friend!</h3>
       <p>
-        We are glad to see you in the <b>'Dev Incubator Management System'</b> project or more briefly is <b>DIMS</b>
-!
-        From this moment, you are a member of a great development team. Happy code!
-</p>
+
+        We are glad to see you in the
+        <b>'Dev Incubator Management System'</b> project or more briefly is <b>DIMS</b>! From this moment, you are a
+        member of a great development team. Happy code!
+      </p>
+
       <h3>What is the DIMS?</h3>
       <p>
         In the few words, it is a system for getting tasks and tracking time. There are several user roles in the DIMS:

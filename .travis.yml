@@ -7,7 +7,7 @@ cache:
    - node_modules
 branches:
   - master
-otifications:
+notifications:
   email:
     recipients:
       - hincubator@gmail.com

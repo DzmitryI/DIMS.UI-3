@@ -1,7 +1,4 @@
 import axios from 'axios';
-import DisplayNotification from '../components/displayNotification';
-
-const notification = new DisplayNotification();
 
 const renderBody = (values) => {
   return {
@@ -22,38 +19,22 @@ const renderBody = (values) => {
   };
 };
 export default class FetchAzure {
-  api_base = process.env.REACT_APP_API_BASE_AZURE;
+  apiBase = process.env.REACT_APP_API_BASE_AZURE;
 
-  getSource = async (url) => {
-    try {
-      return await axios.get(`${this.api_base}${url}`);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+  getSource = (url) => {
+    return axios.get(`${this.apiBase}${url}`);
   };
 
-  setSource = async (url, body) => {
-    try {
-      return await axios.post(`${this.api_base}${url}`, body);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+  setSource = (url, body) => {
+    return axios.post(`${this.apiBase}${url}`, body);
   };
 
-  editSource = async (url, body) => {
-    try {
-      return await axios.put(`${this.api_base}${url}`, body);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+  editSource = (url, body) => {
+    return axios.put(`${this.apiBase}${url}`, body);
   };
 
-  deleteSource = async (url) => {
-    try {
-      return await axios.delete(`${this.api_base}${url}`);
-    } catch (error) {
-      notification.notify('error', error.message);
-    }
+  deleteSource = (url) => {
+    return axios.delete(`${this.apiBase}${url}`);
   };
 
   getAllMember = async () => {
@@ -75,7 +56,7 @@ export default class FetchAzure {
           skype: values.Skype,
           startDate: values.StartDate,
           sex: values.Sex,
-          direction: values.Direction,
+          directionId: values.Direction,
           fullName: `${values.FullName}`,
           checked: false,
           name,
@@ -87,29 +68,33 @@ export default class FetchAzure {
   };
 
   getDirection = async () => {
-    const response = await this.getSource(`/Direction.json`);
+    const response = await this.getSource(`/api/profiles`);
     let direction = [];
+    const directionSet = new Set();
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
-        const [value, { name }] = key;
-        direction = direction.concat({
-          value,
-          name,
-        });
+        const [, values] = key;
+        directionSet.add(values.Direction);
       });
     }
+    directionSet.forEach((value) => {
+      direction = direction.concat({
+        value,
+        name: value,
+      });
+    });
     return direction;
   };
 
-  setMember = async (body) => {
-    return await this.setSource(`/api/create`, renderBody(body));
+  setMember = (body) => {
+    return this.setSource(`/api/create`, renderBody(body));
   };
 
-  editMember = async (memberId, body) => {
-    return await this.editSource(`/api/profile/edit/${memberId}`, renderBody(body, memberId));
+  editMember = (memberId, body) => {
+    return this.editSource(`/api/profile/edit/${memberId}`, renderBody(body, memberId));
   };
 
-  delMember = async (memberId) => {
-    return await this.deleteSource(`/api/profile/delete/${memberId}`);
+  delMember = (memberId) => {
+    return this.deleteSource(`/api/profile/delete/${memberId}`);
   };
 }

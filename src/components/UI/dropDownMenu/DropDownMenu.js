@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
 import { withTheme } from '../../../hoc';
 
 const DropDownMenu = ({ to, theme }) => {
@@ -26,8 +26,8 @@ const DropDownMenu = ({ to, theme }) => {
 };
 
 DropDownMenu.propTypes = {
-  to: PropTypes.string,
-  theme: PropTypes.string,
+  to: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
 };
 
 export default withTheme(DropDownMenu);

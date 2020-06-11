@@ -11,7 +11,7 @@ configure({
 describe('<ColorSwitch />', () => {
   let wrapper;
   beforeEach(() => {
-    const contextThemeValue = { theme: 'dark' };
+    const contextThemeValue = { theme: 'dark', onColorSwitchClickHandler() {} };
     wrapper = mount(
       <ThemeContextProvider value={contextThemeValue}>
         <ColorSwitch />

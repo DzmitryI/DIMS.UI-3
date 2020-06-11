@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import Button from '../button';
 
 const ButtonLink = ({ name, className, onClick, to }) => {
@@ -9,9 +9,9 @@ const ButtonLink = ({ name, className, onClick, to }) => {
 };
 
 ButtonLink.propTypes = {
-  className: PropTypes.string,
-  onClick: PropTypes.func,
-  to: PropTypes.string,
+  className: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  to: PropTypes.string.isRequired,
 };
 
 export default ButtonLink;

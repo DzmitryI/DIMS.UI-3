@@ -46,10 +46,10 @@ Input.defaultProps = {
 };
 
 Input.propTypes = {
-  type: PropTypes.string.isRequired,
-  autocomplete: PropTypes.string.isRequired,
-  disabled: PropTypes.bool.isRequired,
-  placeholder: PropTypes.string.isRequired,
+  type: PropTypes.string,
+  autocomplete: PropTypes.string,
+  disabled: PropTypes.bool,
+  placeholder: PropTypes.string,
   id: PropTypes.string,
   label: PropTypes.string,
   touched: PropTypes.bool,

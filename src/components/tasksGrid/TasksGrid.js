@@ -19,18 +19,6 @@ class TasksGrid extends Component {
     errorMessage: '',
   };
 
-  async fetchTasks() {
-    try {
-      const tasks = await this.props.fetchService.getAllTask();
-      this.setState({
-        tasks,
-        loading: false,
-      });
-    } catch ({ message }) {
-      this.setState({ loading: false, error: true, errorMessage: message });
-    }
-  }
-
   componentDidMount() {
     this.fetchTasks();
   }
@@ -75,6 +63,18 @@ class TasksGrid extends Component {
       this.setState({ loading: false, error: true, errorMessage: message });
     }
   };
+
+  async fetchTasks() {
+    try {
+      const tasks = await this.props.fetchService.getAllTask();
+      this.setState({
+        tasks,
+        loading: false,
+      });
+    } catch ({ message }) {
+      this.setState({ loading: false, error: true, errorMessage: message });
+    }
+  }
 
   renderTBody = (tasks) => {
     return tasks.map((task, index) => {
@@ -129,11 +129,10 @@ class TasksGrid extends Component {
 }
 
 TasksGrid.propTypes = {
-  isTask: PropTypes.bool,
-  fetchService: PropTypes.object,
-  theme: PropTypes.string,
-  error: PropTypes.bool,
-  errorMessage: PropTypes.string,
+  isTask: PropTypes.bool.isRequired,
+  fetchService: PropTypes.any.isRequired,
+  theme: PropTypes.string.isRequired,
+  onCreateTaskClick: PropTypes.func.isRequired,
 };
 
 export default withTheme(withFetchService(TasksGrid));
