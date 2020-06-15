@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';

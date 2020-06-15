@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
@@ -11,8 +12,8 @@ import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
 import { withTheme, withRole } from '../../hoc';
 import { fetchMembers, fetchMembersSuccess, fetchMembersDelete } from '../../store/actions/members';
-import Cell from '../UI/cell/Cell';
-import Row from '../UI/row/Row';
+import Cell from '../UI/cell';
+import Row from '../UI/row';
 
 const { isAdmin } = TABLE_ROLES;
 class MembersGrid extends Component {
