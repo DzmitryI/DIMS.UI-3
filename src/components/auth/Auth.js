@@ -13,7 +13,7 @@ import ImageComponent from '../imageComponent/ImageComponent';
 import imgLogo from '../../assets/images/logo.png';
 import imgGoogle from '../../assets/images/auth_service_google.svg';
 import imgGithub from '../../assets/images/auth_service_github.svg';
-import imgFacebook from '../../assets/images/auth_service_facebook.svg';
+import imgTwitter from '../../assets/images/auth_service_twitter.svg';
 import ButtonValue from '../UI/buttonValue/ButtonValue';
 
 class Auth extends PureComponent {
@@ -108,8 +108,8 @@ class Auth extends PureComponent {
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
-                id='facebook'
-                name={<ButtonValue src={imgFacebook} name={'Facebook'} />}
+                id='twitter'
+                name={<ButtonValue src={imgTwitter} name={'Twitter'} />}
                 onClick={this.loginHandlerWithGoogle}
               />
             </div>

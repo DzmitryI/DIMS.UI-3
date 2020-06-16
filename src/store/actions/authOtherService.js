@@ -1,6 +1,7 @@
 import { AUTH_LOGOUT, AUTH_SUCCESS, AUTH_NOTIFICATION } from './actionTypes';
 import { config } from '../../services/helpers';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 firebase.initializeApp(config);
 
 export function authOtherService(service) {
@@ -12,8 +13,8 @@ export function authOtherService(service) {
     } else if (service === 'github') {
       provider = new firebase.auth.GithubAuthProvider();
       provider.addScope('repo');
-    } else if (service === 'facebook') {
-      provider = new firebase.auth.FacebookAuthProvider();
+    } else if (service === 'twitter') {
+      provider = new firebase.auth.TwitterAuthProvider();
     }
     firebase
       .auth()
