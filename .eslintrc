@@ -12,6 +12,15 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/state-in-constructor": [false],
     "react/destructuring-assignment": [false],
+    "react/jsx-wrap-multilines": ["error", {
+      "declaration": "parens-new-line",
+      "assignment": "parens-new-line",
+      "return": "parens-new-line",
+      "arrow": "parens-new-line",
+      "condition": "parens-new-line",
+      "logical": "ignore",
+      "prop": "ignore"
+    }],
     "no-console": "off",
     "no-use-before-define": 0,
     "no-param-reassign": 1

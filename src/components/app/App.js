@@ -1,5 +1,3 @@
-/* eslint-disable react/no-access-state-in-setstate */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -57,7 +55,7 @@ class App extends Component {
       try {
         const members = await fetchService.getAllMember();
         const member = members.find((curMember) => curMember.email === email);
-        this.setState({ userId: member ? member.userId : '', fetchService });
+        this.setState({ userId: member ? member.userId : '', fetchService, title: member ? member.name : '' });
       } catch ({ message }) {
         this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
         setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
@@ -71,8 +69,9 @@ class App extends Component {
   };
 
   onRegisterClickHandler = (directions, title = '', member = []) => {
+    const { isRegister } = this.state;
     this.setState({
-      isRegister: !this.state.isRegister,
+      isRegister: !isRegister,
       directions,
       title,
       curMember: member,
@@ -80,24 +79,27 @@ class App extends Component {
   };
 
   onCreateTaskClickHandler = (title = '', task = []) => {
+    const { isTask } = this.state;
     this.setState({
-      isTask: !this.state.isTask,
+      isTask: !isTask,
       title,
       curTask: task,
     });
   };
 
   onTaskClickHandler = (userId, title) => {
+    const { isMemberTasks } = this.state;
     this.setState({
-      isMemberTasks: !this.state.isMemberTasks,
+      isMemberTasks: !isMemberTasks,
       userId,
       title,
     });
   };
 
   onTrackClickHandler = (userTaskId = '', title = '', subtitle = '', track = {}) => {
+    const { isTaskTrack } = this.state;
     this.setState({
-      isTaskTrack: !this.state.isTaskTrack,
+      isTaskTrack: !isTaskTrack,
       userTaskId,
       title,
       subtitle,
