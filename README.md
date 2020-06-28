@@ -48,14 +48,6 @@ Contributions, issues and feature requests are welcome!<br />Feel free to check 
 
 Give a ⭐️ if this project helped you!
 
-## 💻 Data for working
-
-| role   | login              | password |
-| ------ | ------------------ | -------- |
-| admin  | admin@mail.ru      | 123456   |
-| mentor | mentor@mail.ru     | 123456   |
-| user   | medvedev@gmail.com | 123456   |
-
 ## 🗒 Components description
 
 - Used Redux in the next components: App component, Auth component, Registration component, MembersGrid component, Header component;

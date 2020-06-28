@@ -293,7 +293,7 @@ class TaskPage extends Component {
   };
 
   render() {
-    const { title, isTaskPageOpen, statusThePageTask } = this.props;
+    const { title, isTaskPageOpen } = this.props;
     const {
       task: { description, startDate, deadlineDate },
       loading,

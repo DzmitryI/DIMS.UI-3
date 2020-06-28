@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import './buttonValue.scss';
+import './buttonIcon.scss';
 
-const ButtonValue = ({ src, name, width }) => {
+const ButtonIcon = ({ src, name, width }) => {
   return (
     <>
       <span>
@@ -13,14 +13,14 @@ const ButtonValue = ({ src, name, width }) => {
   );
 };
 
-ButtonValue.defaultProps = {
+ButtonIcon.defaultProps = {
   width: '18px',
 };
 
-ButtonValue.propsType = {
+ButtonIcon.propsType = {
   name: PropTypes.string.isRequired,
   src: PropTypes.string.isRequired,
   width: PropTypes.string,
 };
 
-export default ButtonValue;
+export default ButtonIcon;

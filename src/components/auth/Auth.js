@@ -10,11 +10,11 @@ import { auth } from '../../store/actions/auth';
 import { authOtherService } from '../../store/actions/authOtherService';
 import { renderInputs } from '../../page/helpersPage';
 import ImageComponent from '../imageComponent/ImageComponent';
+import ButtonIcon from '../UI/buttonIcon';
 import imgLogo from '../../assets/images/logo.png';
 import imgGoogle from '../../assets/images/auth_service_google.svg';
 import imgGithub from '../../assets/images/auth_service_github.svg';
 import imgTwitter from '../../assets/images/auth_service_twitter.svg';
-import ButtonValue from '../UI/buttonValue/ButtonValue';
 
 class Auth extends PureComponent {
   state = {
@@ -99,17 +99,17 @@ class Auth extends PureComponent {
             <div className=' row'>
               <Button
                 id='google'
-                name={<ButtonValue src={imgGoogle} name={'Google'} />}
+                name={<ButtonIcon src={imgGoogle} name={'Google'} />}
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
                 id='github'
-                name={<ButtonValue src={imgGithub} name={'Github'} />}
+                name={<ButtonIcon src={imgGithub} name={'Github'} />}
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
                 id='twitter'
-                name={<ButtonValue src={imgTwitter} name={'Twitter'} />}
+                name={<ButtonIcon src={imgTwitter} name={'Twitter'} />}
                 onClick={this.loginHandlerWithGoogle}
               />
             </div>

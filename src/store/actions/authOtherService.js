@@ -4,18 +4,23 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 firebase.initializeApp(config);
 
+function getFirebaseProviderMethod(service) {
+  let provider = '';
+  if (service === 'google') {
+    provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+  } else if (service === 'github') {
+    provider = new firebase.auth.GithubAuthProvider();
+    provider.addScope('repo');
+  } else if (service === 'twitter') {
+    provider = new firebase.auth.TwitterAuthProvider();
+  }
+  return provider;
+}
+
 export function authOtherService(service) {
-  return async (dispatch) => {
-    let provider = '';
-    if (service === 'google') {
-      provider = new firebase.auth.GoogleAuthProvider();
-      provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    } else if (service === 'github') {
-      provider = new firebase.auth.GithubAuthProvider();
-      provider.addScope('repo');
-    } else if (service === 'twitter') {
-      provider = new firebase.auth.TwitterAuthProvider();
-    }
+  return (dispatch) => {
+    const provider = getFirebaseProviderMethod(service);
     firebase
       .auth()
       .signInWithPopup(provider)
@@ -48,16 +53,12 @@ export function autoLogin() {
   return (dispatch) => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
-    if (!token) {
+    const expirationDate = new Date(localStorage.getItem('expirationDate'));
+    if (!token || expirationDate <= new Date()) {
       dispatch(logout());
     } else {
-      const expirationDate = new Date(localStorage.getItem('expirationDate'));
-      if (expirationDate <= new Date()) {
-        dispatch(logout());
-      } else {
-        dispatch(authSuccess(token, email));
-        dispatch(autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000));
-      }
+      dispatch(authSuccess(token, email));
+      dispatch(autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000));
     }
   };
 }
