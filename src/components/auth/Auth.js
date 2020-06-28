@@ -99,16 +99,19 @@ class Auth extends PureComponent {
             <div className=' row'>
               <Button
                 id='google'
+                className='btn-auth'
                 name={<ButtonIcon src={imgGoogle} name={'Google'} />}
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
                 id='github'
+                className='btn-auth'
                 name={<ButtonIcon src={imgGithub} name={'Github'} />}
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
                 id='twitter'
+                className='btn-auth'
                 name={<ButtonIcon src={imgTwitter} name={'Twitter'} />}
                 onClick={this.loginHandlerWithGoogle}
               />

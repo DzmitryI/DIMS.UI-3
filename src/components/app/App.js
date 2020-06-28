@@ -128,7 +128,6 @@ class App extends Component {
     const {
       isRegister,
       isTask,
-      // isTaskTrack,
       title,
       subtitle,
       curMember,

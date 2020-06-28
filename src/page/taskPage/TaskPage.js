@@ -346,25 +346,21 @@ class TaskPage extends Component {
                       />
                     </div>
                     <div className='form-group'>
-                      <label htmlFor='description'>
-                        <textarea
-                          id='description'
-                          name='description'
-                          value={description}
-                          rows='7'
-                          disabled={disabled}
-                          onChange={this.handleTextArea}
-                        />
-                        Description
-                      </label>
+                      <label htmlFor='description'>Description</label>
+                      <textarea
+                        id='description'
+                        name='description'
+                        value={description}
+                        rows='7'
+                        disabled={disabled}
+                        onChange={this.handleTextArea}
+                      />
                     </div>
                     <div className='form-group'>
-                      <label htmlFor='members'>
-                        <div id='members' className='column'>
-                          {this.renderCheckbox()}
-                        </div>
-                        Members
-                      </label>
+                      <label htmlFor='members'>Members</label>
+                      <div id='members' className='column'>
+                        {this.renderCheckbox()}
+                      </div>
                     </div>
                   </>
                 )}

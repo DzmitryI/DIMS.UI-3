@@ -63,8 +63,8 @@ class MemberPage extends Component {
       ),
       universityAverageScore: createControl(
         {
-          label: 'University average score',
-          errorMessage: 'enter university average score',
+          label: 'University score',
+          errorMessage: 'enter average score',
           type: 'number',
         },
         { required: true },

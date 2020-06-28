@@ -93,9 +93,9 @@ class MembersGrid extends Component {
               <Cell className='td index' value={index + 1} />
               <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
               <Cell value={!!curDirect && curDirect.name} />
-              <Cell value={education} />
+              <Cell className='td education' value={education} />
               <Cell value={getDate(startDate)} />
-              <Cell value={(birthDate && countAge(birthDate)) || age} />
+              <Cell className='td age' value={(birthDate && countAge(birthDate)) || age} />
               <Cell
                 className='td buttons-wrap'
                 value={

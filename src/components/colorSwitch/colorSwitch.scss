@@ -45,3 +45,20 @@ $blue: rgb(57, 126, 237);
 .switch-btn--sun {
   left: 1.8rem;
 }
+
+@media (max-width: 600px) {
+  .switch-btn {
+    width: 3rem;
+    height: 1.5rem;
+    &::after {
+      width: 1.4rem;
+      height: 1.4rem;
+      top: 1px;
+    }
+  }
+
+  .switch-btn--sun > img,
+  .switch-btn--moon > img {
+    max-width: 22px;
+  }
+}

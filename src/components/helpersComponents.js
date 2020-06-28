@@ -10,7 +10,7 @@ const notification = new DisplayNotification();
 const headerTasksGrid = ['', 'Name', 'Start', 'Deadline', ''];
 const headerTaskTrackGrid = ['', 'Task', 'Note', 'Date', ''];
 const headerMembersGrid = ['', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
-const headerMemberTasksGrid = ['', 'Name', 'Start', 'Deadline', 'Status', '', '(Available only for Admin)'];
+const headerMemberTasksGrid = ['', 'Name', 'Start', 'Deadline', 'Status', 'Track', 'Available only for Admin'];
 const headerMemberProgressGrid = ['', 'Task', 'Note', 'Date'];
 const headerAboutPage = ['Actions', 'Admin', 'Mentor', 'Member'];
 

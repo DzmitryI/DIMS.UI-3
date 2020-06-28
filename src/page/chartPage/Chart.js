@@ -83,7 +83,7 @@ class Chart extends Component {
                   />
                 </>
                 {chart === 'lineChart' ? (
-                  <LineChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <LineChart width={430} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                     {allMemberTasks.map((track, index) => {
                       return <Line key={index} type='monotone' dataKey={track} stroke='#82ca9d' />;
                     })}
@@ -94,7 +94,7 @@ class Chart extends Component {
                     <Legend />
                   </LineChart>
                 ) : (
-                  <AreaChart width={600} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                  <AreaChart width={430} height={300} data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                     {allMemberTasks.map((track, index) => {
                       return <Area key={index} type='monotone' dataKey={track} stroke='#82ca9d' fill='#8884d8' />;
                     })}

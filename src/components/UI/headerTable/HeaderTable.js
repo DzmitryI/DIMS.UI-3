@@ -1,9 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-const HeaderTable = ({ arr }) => {
-  const renderItems = (headers) => headers.map((header, index) => <th key={header + index}>{header}</th>);
-  return <tr>{renderItems(arr)}</tr>;
+import { withRole } from '../../../hoc';
+import { TABLE_ROLES } from '../../helpersComponents';
+const HeaderTable = ({ arr, email }) => {
+  const { isAdmin, isMentor } = TABLE_ROLES;
+  const role = email === isAdmin || email === isMentor;
+  const renderItems = (headers, role) => {
+    return headers.map((header, index) => {
+      if (!role && header === 'Track') {
+        header = '';
+      } else if (!role && header === 'Available only for Admin') {
+        header = 'track';
+      }
+      return (
+        <th key={header + index} className={header.toLowerCase()}>
+          {header}
+        </th>
+      );
+    });
+  };
+  return <tr>{renderItems(arr, role)}</tr>;
 };
 
 HeaderTable.defaultProps = {
@@ -14,4 +30,4 @@ HeaderTable.propTypes = {
   arr: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
-export default HeaderTable;
+export default withRole(HeaderTable);

@@ -123,10 +123,12 @@ const MemberTasksGrid = ({
               <Cell className={`td-${stateName}`} value={stateName} />
               <Cell
                 id={name}
+                className={role ? 'td track' : 'td'}
                 value={<Button className='btn-progress' onClick={onTrackClickHandler} name='Track' disabled={role} />}
               />
               <Cell
                 id={stateId}
+                className={!role ? 'td track' : 'td'}
                 value={
                   <>
                     <Button
