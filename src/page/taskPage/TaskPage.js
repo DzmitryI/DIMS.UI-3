@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
@@ -10,6 +11,7 @@ import { h1TaskPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
 import DatePicker from '../../components/datePicker';
+import { statusThePageTask } from '../../store/actions/statusThePage';
 
 class TaskPage extends Component {
   state = {
@@ -213,6 +215,8 @@ class TaskPage extends Component {
     const { taskId, task, taskInput } = this.state;
     const {
       fetchService: { setTask, setUserTask, editTask },
+      onCreateTaskClick,
+      statusThePageTask,
     } = this.props;
     let notification = '';
     this.setState({ loading: false });
@@ -247,11 +251,13 @@ class TaskPage extends Component {
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const { objInputClear, objElemClear } = clearOblectValue(taskInput, task);
     this.setState({ taskInput: objInputClear, task: objElemClear, taskId: '', members: [] });
-    this.props.onCreateTaskClick();
+    onCreateTaskClick();
+    statusThePageTask();
   };
 
   buttonCloseClick = () => {
     const { task, taskInput } = this.state;
+    const { onCreateTaskClick, statusThePageTask } = this.props;
     const { objInputClear, objElemClear } = clearOblectValue(taskInput, task);
     this.setState({
       taskInput: objInputClear,
@@ -262,7 +268,8 @@ class TaskPage extends Component {
       disabled: false,
       members: [],
     });
-    this.props.onCreateTaskClick();
+    onCreateTaskClick();
+    statusThePageTask();
   };
 
   renderCheckbox = () => {
@@ -286,7 +293,7 @@ class TaskPage extends Component {
   };
 
   render() {
-    const { isOpen, title } = this.props;
+    const { title, isTaskPageOpen, statusThePageTask } = this.props;
     const {
       task: { description, startDate, deadlineDate },
       loading,
@@ -298,11 +305,10 @@ class TaskPage extends Component {
       errorMessage,
       taskInput,
     } = this.state;
-
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
-        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
+        <div className={`page-wrap ${isTaskPageOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             {loading ? (
@@ -313,6 +319,9 @@ class TaskPage extends Component {
                   <ErrorIndicator errorMessage={errorMessage} />
                 ) : (
                   <>
+                    <div className='icon-close' onClick={this.buttonCloseClick}>
+                      &#10006;
+                    </div>
                     {renderInputs(
                       taskInput,
                       disabled,
@@ -373,18 +382,30 @@ class TaskPage extends Component {
             )}
           </form>
         </div>
-        {isOpen && <Backdrop />}
+        {isTaskPageOpen && <Backdrop className='backdrop-task' />}
       </>
     );
   }
 }
 
 TaskPage.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
+  isTaskPageOpen: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
   task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onCreateTaskClick: PropTypes.func.isRequired,
 };
 
-export default withFetchService(TaskPage);
+const mapStateToProps = ({ statusThePage: { isTaskPageOpen } }) => {
+  return {
+    isTaskPageOpen,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageTask: () => dispatch(statusThePageTask()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetchService(TaskPage));

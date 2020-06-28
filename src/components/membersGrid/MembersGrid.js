@@ -12,6 +12,7 @@ import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
 import { withTheme, withRole } from '../../hoc';
 import { fetchMembers, fetchMembersSuccess, fetchMembersDelete } from '../../store/actions/members';
+import { statusThePageMember } from '../../store/actions/statusThePage';
 import Cell from '../UI/cell';
 import Row from '../UI/row';
 
@@ -30,6 +31,7 @@ class MembersGrid extends Component {
   onRegisterClick = () => {
     const { directions } = this.props;
     this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+    this.props.statusThePageMember(true);
   };
 
   onChangeClick = ({ target }) => {
@@ -37,10 +39,11 @@ class MembersGrid extends Component {
     const memberId = target.closest('tr').id;
     const member = members.filter((curMember) => curMember.userId === memberId);
     if (target.id === 'edit') {
-      onRegisterClick(directions, h1MemberPage.get('Edit'), member);
+      onRegisterClick(directions, h1MemberPage.get('Edit'), member, memberId);
     } else {
-      onRegisterClick(directions, h1MemberPage.get('Detail'), member);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), member, memberId);
     }
+    this.props.statusThePageMember(true);
   };
 
   onDeleteClick = async ({ target }) => {
@@ -197,6 +200,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembers: () => dispatch(fetchMembers()),
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
     fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
+    statusThePageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };
 

@@ -10,8 +10,7 @@ import { logout } from '../../../store/actions/auth';
 import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';
 
-const Header = (props) => {
-  const { isAuthenticated, email, theme, logout } = props;
+const Header = ({ isAuthenticated, email, theme, logout }) => {
   const { isAdmin, isMentor } = TABLE_ROLES;
   let arrLinks = [];
 

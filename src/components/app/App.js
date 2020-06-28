@@ -11,6 +11,7 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import AboutAppPage from '../../page/aboutAppPage';
+import Chart from '../../page/chartPage/Chart';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
@@ -68,13 +69,14 @@ class App extends Component {
     this.setState({ theme });
   };
 
-  onRegisterClickHandler = (directions, title = '', member = []) => {
+  onRegisterClickHandler = (directions, title = '', member = [], memberId = '') => {
     const { isRegister } = this.state;
     this.setState({
       isRegister: !isRegister,
       directions,
       title,
       curMember: member,
+      userId: memberId,
     });
   };
 
@@ -126,7 +128,7 @@ class App extends Component {
     const {
       isRegister,
       isTask,
-      isTaskTrack,
+      // isTaskTrack,
       title,
       subtitle,
       curMember,
@@ -211,8 +213,8 @@ class App extends Component {
                   {...props}
                   onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
                   onTrackClick={this.onTrackClickHandler}
+                  onCreateTaskClick={this.onCreateTaskClickHandler}
                   taskId={taskId}
-                  isOpen={isTaskTrack}
                 />
               )}
             />
@@ -232,26 +234,20 @@ class App extends Component {
               {routes}
               <MemberPage
                 onRegisterClick={this.onRegisterClickHandler}
-                isOpen={isRegister}
                 title={title}
                 member={curMember}
                 directions={directions}
               />
-              <TaskPage
-                onCreateTaskClick={this.onCreateTaskClickHandler}
-                isOpen={isTask}
-                title={title}
-                task={curTask}
-              />
+              <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} title={title} task={curTask} />
               <TaskTrackPage
                 onTrackClick={this.onTrackClickHandler}
-                isOpen={isTaskTrack}
                 track={track}
                 title={title}
                 taskId={taskId}
                 userTaskId={userTaskId}
                 subtitle={subtitle}
               />
+              <Chart userId={userId} />
             </ThemeContextProvider>
           </RoleContextProvider>
         </FetchServiceProvider>

@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-wrap-multilines */
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import update from 'immutability-helper';
@@ -10,8 +11,9 @@ import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } f
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
+import { statusThePageTask } from '../../store/actions/statusThePage';
 
-const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
+const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -35,6 +37,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, theme }) => {
     const result = memberProgresses.find((memberProgress) => memberProgress.userTaskTrack.taskTrackId === target.id);
     const { task } = result;
     onTaskClick(h1TaskPage.get('Detail'), task);
+    statusThePageTask(true);
   };
 
   const moveRow = (dragIndex, hoverIndex) => {
@@ -113,4 +116,10 @@ MemberProgressGrid.propTypes = {
   theme: PropTypes.string.isRequired,
 };
 
-export default withTheme(MemberProgressGrid);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageTask: (status) => dispatch(statusThePageTask(status)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(withTheme(MemberProgressGrid));
