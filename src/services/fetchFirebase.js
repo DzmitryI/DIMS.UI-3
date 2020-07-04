@@ -94,12 +94,13 @@ export default class FetchFirebase {
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [taskTrackId, values] = key;
-        const { userTaskId, trackDate, trackNote } = values;
+        const { userTaskId, trackDate, trackNote, trackProgress } = values;
         taskTrack = taskTrack.concat({
           taskTrackId,
           userTaskId,
           trackDate,
           trackNote,
+          trackProgress,
         });
       });
     }

@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
-/* eslint-disable react/jsx-wrap-multilines */
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import update from 'immutability-helper';
@@ -11,10 +11,20 @@ import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
 import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate, updateMemberTasks } from '../helpersComponents';
 import { withFetchService, withRole, withTheme } from '../../hoc';
+import { statusThePageTrack } from '../../store/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 
-const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, fetchService, theme, email }) => {
+const MemberTasksGrid = ({
+  userId,
+  title,
+  onTrackClick,
+  onOpenTaskTracksClick,
+  fetchService,
+  theme,
+  email,
+  statusThePageTrack,
+}) => {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [onNotification, setOnNotification] = useState(false);
@@ -43,6 +53,7 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
     const userTaskId = target.closest('tr').id;
     const taskName = target.closest('td').id;
     onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
+    statusThePageTrack(true);
   };
 
   const onOpenTaskTracksClickHandler = ({ target }) => {
@@ -112,10 +123,12 @@ const MemberTasksGrid = ({ userId, title, onTrackClick, onOpenTaskTracksClick, f
               <Cell className={`td-${stateName}`} value={stateName} />
               <Cell
                 id={name}
+                className={role ? 'td track' : 'td'}
                 value={<Button className='btn-progress' onClick={onTrackClickHandler} name='Track' disabled={role} />}
               />
               <Cell
                 id={stateId}
+                className={!role ? 'td track' : 'td'}
                 value={
                   <>
                     <Button
@@ -170,4 +183,10 @@ MemberTasksGrid.propTypes = {
   email: PropTypes.string.isRequired,
 };
 
-export default withTheme(withRole(withFetchService(MemberTasksGrid)));
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageTrack: (status) => dispatch(statusThePageTrack(status)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(withTheme(withRole(withFetchService(MemberTasksGrid))));

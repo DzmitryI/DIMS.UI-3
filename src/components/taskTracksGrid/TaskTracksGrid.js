@@ -1,5 +1,5 @@
-/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import update from 'immutability-helper';
@@ -10,6 +10,7 @@ import ErrorIndicator from '../errorIndicator';
 import Button from '../UI/button';
 import { headerTaskTrackGrid, h1TaskTrackPage, updateMemberProgress, getDate, TABLE_ROLES } from '../helpersComponents';
 import { withTheme, withRole, withFetchService } from '../../hoc';
+import { statusThePageTrack, statusThePageTask } from '../../store/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 
@@ -28,8 +29,8 @@ class TaskTracksGrid extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { isOpen } = this.props;
-    if (isOpen !== prevProps.isOpen) {
+    const { isTrackPageOpen } = this.props;
+    if (isTrackPageOpen !== prevProps.isTrackPageOpen) {
       this.setState({ loading: true });
       this.fetchMemberProgress();
     }
@@ -37,13 +38,16 @@ class TaskTracksGrid extends Component {
 
   onChangeClick = ({ target }) => {
     const { tracks } = this.state;
+    const { onTrackClick, statusThePageTrack } = this.props;
     const taskTrackId = target.closest('tr').id;
     const { userTaskTrack, task } = tracks.find((track) => track.userTaskTrack.taskTrackId === taskTrackId);
     const [{ name }] = task;
     if (target.id === 'edit') {
-      this.props.onTrackClick(userTaskTrack.userTaskId, h1TaskTrackPage.get('Edit'), name, userTaskTrack);
+      onTrackClick(userTaskTrack.userTaskId, h1TaskTrackPage.get('Edit'), name, userTaskTrack);
+      statusThePageTrack(true);
     } else {
-      this.props.onTrackClick(userTaskTrack.userTaskId, h1TaskTrackPage.get('Detail'), name, userTaskTrack);
+      onTrackClick(userTaskTrack.userTaskId, h1TaskTrackPage.get('Detail'), name, userTaskTrack);
+      statusThePageTrack(true);
     }
   };
 
@@ -159,11 +163,24 @@ class TaskTracksGrid extends Component {
 
 TaskTracksGrid.propTypes = {
   taskId: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
+  isTrackPageOpen: PropTypes.bool.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   theme: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   onTrackClick: PropTypes.func.isRequired,
 };
 
-export default withFetchService(withRole(withTheme(TaskTracksGrid)));
+const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => {
+  return {
+    isTrackPageOpen,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageTrack: (status) => dispatch(statusThePageTrack(status)),
+    statusThePageTask: (status) => dispatch(statusThePageTask(status)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetchService(withRole(withTheme(TaskTracksGrid))));

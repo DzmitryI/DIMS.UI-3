@@ -7,9 +7,14 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { auth } from '../../store/actions/auth';
-import imgLogo from '../../assets/images/logo.png';
-import ImageComponent from '../imageComponent/ImageComponent';
+import { authOtherService } from '../../store/actions/authOtherService';
 import { renderInputs } from '../../page/helpersPage';
+import ImageComponent from '../imageComponent/ImageComponent';
+import ButtonIcon from '../UI/buttonIcon';
+import imgLogo from '../../assets/images/logo.png';
+import imgGoogle from '../../assets/images/auth_service_google.svg';
+import imgGithub from '../../assets/images/auth_service_github.svg';
+import imgTwitter from '../../assets/images/auth_service_twitter.svg';
 
 class Auth extends PureComponent {
   state = {
@@ -39,6 +44,10 @@ class Auth extends PureComponent {
       authInput: { email, password },
     } = this.state;
     this.props.auth(email.value, password.value, true);
+  };
+
+  loginHandlerWithGoogle = ({ target }) => {
+    this.props.authOtherService(target.closest('button').id);
   };
 
   submitHandler = (event) => {
@@ -87,6 +96,26 @@ class Auth extends PureComponent {
           <form onSubmit={this.submitHandler}>
             {renderInputs(authInput, disabled, this.onHandlelInput, this.onHandleFinishEditing, this.onHandleFocus)}
             <br />
+            <div className=' row'>
+              <Button
+                id='google'
+                className='btn-auth'
+                name={<ButtonIcon src={imgGoogle} name={'Google'} />}
+                onClick={this.loginHandlerWithGoogle}
+              />
+              <Button
+                id='github'
+                className='btn-auth'
+                name={<ButtonIcon src={imgGithub} name={'Github'} />}
+                onClick={this.loginHandlerWithGoogle}
+              />
+              <Button
+                id='twitter'
+                className='btn-auth'
+                name={<ButtonIcon src={imgTwitter} name={'Twitter'} />}
+                onClick={this.loginHandlerWithGoogle}
+              />
+            </div>
             <div className='form-group row'>
               <Button type='success' id='login' name='Log in' disabled={!isFormValid} onClick={this.loginHandler} />
               <span className='goRegister'>
@@ -116,6 +145,7 @@ const mapStateToProps = ({ authData: { onNotification, notification } }) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
+    authOtherService: (service) => dispatch(authOtherService(service)),
   };
 };
 

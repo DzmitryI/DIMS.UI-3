@@ -10,10 +10,13 @@ import { logout } from '../../../store/actions/auth';
 import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';
 
-const Header = (props) => {
-  const { isAuthenticated, email, theme, logout } = props;
+const Header = ({ isAuthenticated, email, theme, logout }) => {
   const { isAdmin, isMentor } = TABLE_ROLES;
   let arrLinks = [];
+  let arrDropDownMenu = [
+    { to: '/AboutApp', name: 'About app', click: null },
+    { to: '/Auth', name: 'Logout', click: logout },
+  ];
 
   const renderLinks = (links) => {
     return links.map((link) => (
@@ -39,7 +42,7 @@ const Header = (props) => {
       </div>
       <ul className='nav'>{renderLinks(arrLinks)}</ul>
       <ColorSwitch />
-      <DropDownMenu to='/AboutApp' />
+      <DropDownMenu arrDropDownMenu={arrDropDownMenu} />
       <ButtonLink className='btn-logout' onClick={logout} name='Logout' to='/Auth' />
     </div>
   );

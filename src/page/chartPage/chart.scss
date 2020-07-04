@@ -1,0 +1,24 @@
+.chart {
+  z-index: 300;
+}
+
+.icon-close {
+  margin: 0 95%;
+}
+
+.recharts-wrapper,
+.recharts-surface {
+  margin: 0 auto;
+}
+
+.icon-close:hover {
+  color: red;
+  cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .recharts-wrapper,
+  .recharts-surface {
+    max-width: 350px;
+  }
+}

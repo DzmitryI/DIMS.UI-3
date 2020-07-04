@@ -48,16 +48,16 @@ Contributions, issues and feature requests are welcome!<br />Feel free to check 
 
 Give a ⭐️ if this project helped you!
 
-## 📝 License
-
-Copyright © 2020 [Dmitriy Ivanov](https://github.com/DzmitryI).<br />
-This project is [MIT](https://github.com/DzmitryI/DIMS.UI-3/blob/master/LICENSE) licensed.
-
 ## 🗒 Components description
 
 - Used Redux in the next components: App component, Auth component, Registration component, MembersGrid component, Header component;
 - Used Hook in the next components: MemberProgressGrid component, MemberTasksGrid component;
 - Used Context in the next components: App component, ColorSwitch component, MemberProgressGrid component, MemberGrid component, MemberTasksGrid component, Spinner component, TasksGrid component, TaskTracksGrid component, Footer component, Button component, DropDownMenu component, Header component, AboutAppPage component, MemberPage component, TaskPage component, TaskTrackPage component;
+
+## 📝 License
+
+Copyright © 2020 [Dmitriy Ivanov](https://github.com/DzmitryI).<br />
+This project is [MIT](https://github.com/DzmitryI/DIMS.UI-3/blob/master/LICENSE) licensed.
 
 ---
 

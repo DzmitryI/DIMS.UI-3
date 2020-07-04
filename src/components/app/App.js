@@ -1,5 +1,3 @@
-/* eslint-disable react/no-access-state-in-setstate */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -13,6 +11,7 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import AboutAppPage from '../../page/aboutAppPage';
+import Chart from '../../page/chartPage/Chart';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
@@ -57,7 +56,7 @@ class App extends Component {
       try {
         const members = await fetchService.getAllMember();
         const member = members.find((curMember) => curMember.email === email);
-        this.setState({ userId: member ? member.userId : '', fetchService });
+        this.setState({ userId: member ? member.userId : '', fetchService, title: member ? member.name : '' });
       } catch ({ message }) {
         this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
         setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
@@ -70,34 +69,39 @@ class App extends Component {
     this.setState({ theme });
   };
 
-  onRegisterClickHandler = (directions, title = '', member = []) => {
+  onRegisterClickHandler = (directions, title = '', member = [], memberId = '') => {
+    const { isRegister } = this.state;
     this.setState({
-      isRegister: !this.state.isRegister,
+      isRegister: !isRegister,
       directions,
       title,
       curMember: member,
+      userId: memberId,
     });
   };
 
   onCreateTaskClickHandler = (title = '', task = []) => {
+    const { isTask } = this.state;
     this.setState({
-      isTask: !this.state.isTask,
+      isTask: !isTask,
       title,
       curTask: task,
     });
   };
 
   onTaskClickHandler = (userId, title) => {
+    const { isMemberTasks } = this.state;
     this.setState({
-      isMemberTasks: !this.state.isMemberTasks,
+      isMemberTasks: !isMemberTasks,
       userId,
       title,
     });
   };
 
   onTrackClickHandler = (userTaskId = '', title = '', subtitle = '', track = {}) => {
+    const { isTaskTrack } = this.state;
     this.setState({
-      isTaskTrack: !this.state.isTaskTrack,
+      isTaskTrack: !isTaskTrack,
       userTaskId,
       title,
       subtitle,
@@ -124,7 +128,6 @@ class App extends Component {
     const {
       isRegister,
       isTask,
-      isTaskTrack,
       title,
       subtitle,
       curMember,
@@ -209,8 +212,8 @@ class App extends Component {
                   {...props}
                   onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
                   onTrackClick={this.onTrackClickHandler}
+                  onCreateTaskClick={this.onCreateTaskClickHandler}
                   taskId={taskId}
-                  isOpen={isTaskTrack}
                 />
               )}
             />
@@ -230,26 +233,20 @@ class App extends Component {
               {routes}
               <MemberPage
                 onRegisterClick={this.onRegisterClickHandler}
-                isOpen={isRegister}
                 title={title}
                 member={curMember}
                 directions={directions}
               />
-              <TaskPage
-                onCreateTaskClick={this.onCreateTaskClickHandler}
-                isOpen={isTask}
-                title={title}
-                task={curTask}
-              />
+              <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} title={title} task={curTask} />
               <TaskTrackPage
                 onTrackClick={this.onTrackClickHandler}
-                isOpen={isTaskTrack}
                 track={track}
                 title={title}
                 taskId={taskId}
                 userTaskId={userTaskId}
                 subtitle={subtitle}
               />
+              <Chart userId={userId} />
             </ThemeContextProvider>
           </RoleContextProvider>
         </FetchServiceProvider>

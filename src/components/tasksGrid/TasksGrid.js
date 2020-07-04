@@ -1,5 +1,5 @@
-/* eslint-disable react/jsx-wrap-multilines */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import Spinner from '../spinner';
@@ -11,6 +11,7 @@ import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate } from '../help
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
+import { statusThePageTask } from '../../store/actions/statusThePage';
 
 class TasksGrid extends Component {
   state = {
@@ -33,16 +34,21 @@ class TasksGrid extends Component {
   }
 
   onCreateTaskClick = () => {
-    this.props.onCreateTaskClick(h1TaskPage.get('Create'));
+    const { onCreateTaskClick, statusThePageTask } = this.props;
+    onCreateTaskClick(h1TaskPage.get('Create'));
+    statusThePageTask(true);
   };
 
   onChangeClick = ({ target }) => {
+    const { onCreateTaskClick, statusThePageTask } = this.props;
     const taskId = target.closest('tr').id;
     const task = this.state.tasks.filter((curTask) => curTask.taskId === taskId);
     if (target.id === 'edit') {
-      this.props.onCreateTaskClick(h1TaskPage.get('Edit'), task);
+      onCreateTaskClick(h1TaskPage.get('Edit'), task);
+      statusThePageTask(true);
     } else {
-      this.props.onCreateTaskClick(h1TaskPage.get('Detail'), task);
+      onCreateTaskClick(h1TaskPage.get('Detail'), task);
+      statusThePageTask(true);
     }
     this.setState({
       loading: true,
@@ -159,4 +165,10 @@ TasksGrid.propTypes = {
   onCreateTaskClick: PropTypes.func.isRequired,
 };
 
-export default withTheme(withFetchService(TasksGrid));
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageTask: (status) => dispatch(statusThePageTask(status)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(withTheme(withFetchService(TasksGrid)));

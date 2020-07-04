@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
@@ -10,6 +11,8 @@ import { createControl, validateControl, fillControl, formValid } from '../../se
 import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
+import imgChart from '../../assets/images/chart.png';
+import { statusThePageChart, statusThePageMember } from '../../store/actions/statusThePage';
 
 class MemberPage extends Component {
   state = {
@@ -60,8 +63,8 @@ class MemberPage extends Component {
       ),
       universityAverageScore: createControl(
         {
-          label: 'University average score',
-          errorMessage: 'enter university average score',
+          label: 'University score',
+          errorMessage: 'enter average score',
           type: 'number',
         },
         { required: true },
@@ -211,6 +214,10 @@ class MemberPage extends Component {
     this.setState({ memberInput });
   };
 
+  hundleShowChart = () => {
+    this.props.statusThePageChart(true);
+  };
+
   onHandleChangeDate = (id) => (value) => {
     this.handleChangeDate(value, id);
   };
@@ -248,10 +255,12 @@ class MemberPage extends Component {
     } else {
       this.changeMember('edit');
     }
+    this.props.statusThePageMember();
   };
 
   buttonCloseClick = () => {
     const { directions, memberInput, member } = this.state;
+    const { onRegisterClick, statusThePageMember } = this.props;
     const res = clearOblectValue(memberInput, member);
     this.setState({
       memberInput: res.objInputClear,
@@ -261,7 +270,8 @@ class MemberPage extends Component {
       disabled: false,
       loading: true,
     });
-    this.props.onRegisterClick(directions);
+    onRegisterClick(directions);
+    statusThePageMember();
   };
 
   async changeMember(value) {
@@ -325,18 +335,20 @@ class MemberPage extends Component {
       notification,
       memberInput,
     } = this.state;
-    const { isOpen, title } = this.props;
-
+    const { isMemberPageOpen, title } = this.props;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
-        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
+        <div className={`page-wrap ${isMemberPageOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form member'>
             {loading ? (
               <Spinner />
             ) : (
               <>
+                <div className='icon-close' onClick={this.buttonCloseClick}>
+                  &#10006;
+                </div>
                 <div className='form-group-members'>
                   {renderInputs(
                     memberInput,
@@ -374,11 +386,16 @@ class MemberPage extends Component {
                   />
                   <Button className='btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
                 </div>
+                <div className='chart_wrap'>
+                  <div className='imgMain-wrap' onClick={this.hundleShowChart}>
+                    <img src={imgChart} alt='chart icon' />
+                  </div>
+                </div>
               </>
             )}
           </form>
         </div>
-        {isOpen && <Backdrop />}
+        {isMemberPageOpen && <Backdrop className='backdrop-member' />}
       </>
     );
   }
@@ -390,7 +407,20 @@ MemberPage.propTypes = {
   title: PropTypes.string.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onRegisterClick: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
+  isMemberPageOpen: PropTypes.bool.isRequired,
 };
 
-export default withFetchService(MemberPage);
+const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => {
+  return {
+    isMemberPageOpen,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageChart: (status) => dispatch(statusThePageChart(status)),
+    statusThePageMember: () => dispatch(statusThePageMember()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetchService(MemberPage));

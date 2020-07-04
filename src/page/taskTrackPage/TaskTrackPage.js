@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
@@ -8,12 +9,14 @@ import { clearOblectValue } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
+import { statusThePageTrack } from '../../store/actions/statusThePage';
 
 class TaskTrackPage extends Component {
   state = {
     taskTrack: {
       trackDate: new Date(),
       trackNote: '',
+      trackProgress: '0',
     },
     disabled: false,
     taskTrackId: null,
@@ -56,7 +59,7 @@ class TaskTrackPage extends Component {
     this.setState({ taskTrack });
   };
 
-  handleTextArea = ({ target: { id, value } }) => {
+  handleChange = ({ target: { id, value } }) => {
     const { taskTrack } = this.state;
     taskTrack[id] = value;
     this.setState({ taskTrack });
@@ -68,18 +71,20 @@ class TaskTrackPage extends Component {
 
   buttonCloseClick = () => {
     const { taskTrack, taskId } = this.state;
+    const { onTrackClick, statusThePageTrack } = this.props;
     const res = clearOblectValue({}, taskTrack);
     this.setState({
       taskTrack: res.objElemClear,
       disabled: false,
       loading: true,
     });
-    this.props.onTrackClick(taskId);
+    onTrackClick(taskId);
+    statusThePageTrack();
   };
 
   createTaskTrackHandler = async () => {
     const { taskTrackId, taskTrack, taskId } = this.state;
-    const { fetchService, userTaskId } = this.props;
+    const { fetchService, userTaskId, onTrackClick, statusThePageTrack } = this.props;
     taskTrack.userTaskId = userTaskId;
     let notification = '';
     if (!taskTrackId) {
@@ -97,13 +102,14 @@ class TaskTrackPage extends Component {
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
     const res = clearOblectValue({}, taskTrack);
     this.setState({ taskTrack: res.objElemClear, taskTrackId: null });
-    this.props.onTrackClick(taskId);
+    onTrackClick(taskId);
+    statusThePageTrack();
   };
 
   render() {
-    const { isOpen, title } = this.props;
+    const { isTrackPageOpen, title } = this.props;
     const {
-      taskTrack: { trackDate, trackNote },
+      taskTrack: { trackDate, trackNote, trackProgress },
       disabled,
       notification,
       onNotification,
@@ -112,33 +118,50 @@ class TaskTrackPage extends Component {
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
-        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
+        <div className={`page-wrap ${isTrackPageOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
           <form onSubmit={this.submitHandler} className='page-form'>
             {loading ? (
               <Spinner />
             ) : (
               <>
-                <DatePicker
-                  date={trackDate}
-                  id='date'
-                  label='Date'
-                  disabled={disabled}
-                  onChange={this.onHandleChangeDate('trackDate')}
-                />
-                <div className='form-group'>
-                  <label htmlFor='trackNote'>
-                    <textarea
-                      key='trackNote'
-                      id='trackNote'
-                      name='note'
+                <div className='icon-close' onClick={this.buttonCloseClick}>
+                  &#10006;
+                </div>
+                <div className='row'>
+                  <DatePicker
+                    date={trackDate}
+                    id='date'
+                    label='Date'
+                    disabled={disabled}
+                    onChange={this.onHandleChangeDate('trackDate')}
+                  />
+                  <div className={`form-group`}>
+                    <label htmlFor='trackProgress'>Progress (%)</label>
+                    <input
+                      key='trackProgress'
+                      type='number'
+                      id='trackProgress'
+                      value={trackProgress}
+                      onChange={this.handleChange}
                       disabled={disabled}
-                      value={trackNote}
-                      rows='7'
-                      onChange={this.handleTextArea}
+                      placeholder='progress'
+                      autoComplete='off'
+                      min='0'
                     />
-                    Note
-                  </label>
+                  </div>
+                </div>
+                <div className='form-group'>
+                  <label htmlFor='trackNote'>Note</label>
+                  <textarea
+                    key='trackNote'
+                    id='trackNote'
+                    name='note'
+                    disabled={disabled}
+                    value={trackNote}
+                    rows='7'
+                    onChange={this.handleChange}
+                  />
                 </div>
                 <div className='form-group row'>
                   <Button
@@ -154,7 +177,7 @@ class TaskTrackPage extends Component {
             )}
           </form>
         </div>
-        {isOpen && <Backdrop />}
+        {isTrackPageOpen && <Backdrop className='backdrop-track' />}
       </>
     );
   }
@@ -164,10 +187,22 @@ TaskTrackPage.propTypes = {
   title: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
   userTaskId: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
+  isTrackPageOpen: PropTypes.bool.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   track: PropTypes.objectOf(PropTypes.string).isRequired,
   onTrackClick: PropTypes.func.isRequired,
 };
 
-export default withFetchService(TaskTrackPage);
+const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => {
+  return {
+    isTrackPageOpen,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageTrack: () => dispatch(statusThePageTrack()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetchService(TaskTrackPage));

@@ -1,4 +1,5 @@
 $dark: rgb(0, 0, 0);
+$dark-light: rgba(0, 0, 0, 0.3);
 $light: rgb(255, 255, 255);
 $blue: rgb(57, 126, 237);
 
@@ -6,6 +7,7 @@ $blue: rgb(57, 126, 237);
   width: 1.5rem;
   height: 10px;
   margin-bottom: 5px;
+  z-index: 180;
   &:hover {
     cursor: pointer;
   }
@@ -25,11 +27,15 @@ $blue: rgb(57, 126, 237);
     margin-top: 3px;
   }
   & .burger-menu {
-    display: block;
+    position: relative;
+    right: 90px;
     width: 7rem;
+    border: 1px solid $blue;
+    box-shadow: 0px 0px 8px 4px $blue;
     max-height: 0;
-    margin-top: 5px;
+    margin-top: 8px;
     font-size: 0;
+    text-align: left;
     overflow: hidden;
     transition: 0.5s all;
     & li {
@@ -38,15 +44,27 @@ $blue: rgb(57, 126, 237);
   }
   .burger-menu-item {
     display: inline-block;
-    border: 1px solid $blue;
-    background: $light;
+    width: 100%;
     padding: 5px;
-    color: $dark;
     text-decoration: none;
   }
+  .burger-menu-item--dark {
+    background: $dark;
+    color: $light;
+  }
+  .burger-menu-item--light {
+    background: $light;
+    color: $dark;
+  }
   .show {
-    max-height: 3rem;
+    max-height: 9rem;
     font-size: 1rem;
     color: $dark;
+  }
+}
+
+@media (max-width: 600px) {
+  .dropdown-menu {
+    width: 1.3rem;
   }
 }

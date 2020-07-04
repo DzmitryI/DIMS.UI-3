@@ -6,7 +6,8 @@ $grееn: rgb(0, 143, 2);
 $red: rgb(230, 30, 30);
 
 .page-wrap {
-  width: 90%;
+  width: 50%;
+  min-width: 450px;
   display: block;
   margin: 0 auto;
   padding-bottom: 1em;
@@ -16,15 +17,17 @@ $red: rgb(230, 30, 30);
   left: 0;
   right: 0;
   & .page-form {
-    width: 25rem;
-    padding-top: 2rem;
+    width: 100%;
     border: 1px solid $dark;
     border-radius: 5px;
     margin: 0 auto;
     background-color: $light;
   }
   & .member {
-    width: 29rem;
+    .chart_wrap {
+      margin: 0 90%;
+      margin-bottom: 0.5rem;
+    }
   }
   & .form-group-members {
     display: flex;
@@ -77,4 +80,11 @@ textarea {
 
 .red {
   color: $red;
+}
+
+@media (max-width: 500px) {
+  .page-wrap {
+    min-width: auto;
+    width: 99%;
+  }
 }

@@ -46,7 +46,7 @@ h3,
 caption {
   margin-bottom: 10px;
   text-align: left;
-  font-size: 20px;
+  font-size: 1.2rem;
 }
 
 .subtitle {
@@ -126,11 +126,7 @@ table {
 }
 
 .buttons-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
   padding: 0;
-  border: none;
 }
 
 .row {
@@ -143,4 +139,28 @@ table {
 
 .close {
   display: none;
+}
+
+@media (max-width: 600px) {
+  .grid-wrap {
+    width: 95%;
+  }
+  h1,
+  .title {
+    font-size: 1.4rem;
+  }
+  caption {
+    font-size: 1rem;
+  }
+  th {
+    font-size: 14px;
+  }
+  td {
+    font-size: 12px;
+  }
+  .age,
+  .education,
+  .track {
+    display: none;
+  }
 }

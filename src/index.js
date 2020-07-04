@@ -17,12 +17,12 @@ const composeEnhancers =
 const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 const app = (
-  <DndProvider backend={HTML5Backend}>
-    <Provider store={store}>
+  <Provider store={store}>
+    <DndProvider backend={HTML5Backend}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </Provider>
-  </DndProvider>
+    </DndProvider>
+  </Provider>
 );
 ReactDOM.render(app, document.getElementById('root'));

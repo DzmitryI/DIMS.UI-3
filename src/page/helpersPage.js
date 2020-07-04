@@ -16,7 +16,7 @@ function clearOblectValue(objInput, objElem) {
       objElemClear[key] = 'direction1';
     } else if (key === 'sex') {
       objElemClear[key] = 'sex1';
-    } else if (['startDate', 'deadlineDate', 'birthDate'].includes(key)) {
+    } else if (['startDate', 'deadlineDate', 'birthDate', 'trackDate'].includes(key)) {
       objElemClear[key] = new Date();
     } else {
       objElemClear[key] = '';

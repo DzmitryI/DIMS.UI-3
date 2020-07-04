@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
@@ -11,8 +12,9 @@ import ButtonLink from '../UI/buttonLink';
 import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
 import { withTheme, withRole } from '../../hoc';
 import { fetchMembers, fetchMembersSuccess, fetchMembersDelete } from '../../store/actions/members';
-import Cell from '../UI/cell/Cell';
-import Row from '../UI/row/Row';
+import { statusThePageMember } from '../../store/actions/statusThePage';
+import Cell from '../UI/cell';
+import Row from '../UI/row';
 
 const { isAdmin } = TABLE_ROLES;
 class MembersGrid extends Component {
@@ -29,6 +31,7 @@ class MembersGrid extends Component {
   onRegisterClick = () => {
     const { directions } = this.props;
     this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+    this.props.statusThePageMember(true);
   };
 
   onChangeClick = ({ target }) => {
@@ -36,10 +39,11 @@ class MembersGrid extends Component {
     const memberId = target.closest('tr').id;
     const member = members.filter((curMember) => curMember.userId === memberId);
     if (target.id === 'edit') {
-      onRegisterClick(directions, h1MemberPage.get('Edit'), member);
+      onRegisterClick(directions, h1MemberPage.get('Edit'), member, memberId);
     } else {
-      onRegisterClick(directions, h1MemberPage.get('Detail'), member);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), member, memberId);
     }
+    this.props.statusThePageMember(true);
   };
 
   onDeleteClick = async ({ target }) => {
@@ -89,9 +93,9 @@ class MembersGrid extends Component {
               <Cell className='td index' value={index + 1} />
               <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
               <Cell value={!!curDirect && curDirect.name} />
-              <Cell value={education} />
+              <Cell className='td education' value={education} />
               <Cell value={getDate(startDate)} />
-              <Cell value={(birthDate && countAge(birthDate)) || age} />
+              <Cell className='td age' value={(birthDate && countAge(birthDate)) || age} />
               <Cell
                 className='td buttons-wrap'
                 value={
@@ -196,6 +200,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembers: () => dispatch(fetchMembers()),
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
     fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
+    statusThePageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };
 
