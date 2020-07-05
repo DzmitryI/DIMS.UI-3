@@ -1,7 +1,6 @@
 /* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
@@ -9,10 +8,15 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge, sortUp } from '../helpersComponents';
 import { withTheme, withRole } from '../../hoc';
-import { fetchMembers, fetchMembersSuccess, fetchMembersDelete } from '../../store/actions/members';
-import { statusThePageMember } from '../../store/actions/statusThePage';
+import {
+  fetchMembers,
+  fetchMembersSuccess,
+  fetchMemberChangeIndex,
+  fetchMembersDelete,
+} from '../../redux/actions/members';
+import { statusThePageMember } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell';
 import Row from '../UI/row';
 
@@ -29,8 +33,8 @@ class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions } = this.props;
-    this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+    const { directions, members } = this.props;
+    this.props.onRegisterClick(directions, h1MemberPage.get('Create'), members.length);
     this.props.statusThePageMember(true);
   };
 
@@ -38,10 +42,11 @@ class MembersGrid extends Component {
     const { directions, members, onRegisterClick } = this.props;
     const memberId = target.closest('tr').id;
     const member = members.filter((curMember) => curMember.userId === memberId);
+    const [curMember] = member;
     if (target.id === 'edit') {
-      onRegisterClick(directions, h1MemberPage.get('Edit'), member, memberId);
+      onRegisterClick(directions, h1MemberPage.get('Edit'), curMember.index, member, memberId);
     } else {
-      onRegisterClick(directions, h1MemberPage.get('Detail'), member, memberId);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), curMember.index, member, memberId);
     }
     this.props.statusThePageMember(true);
   };
@@ -67,18 +72,22 @@ class MembersGrid extends Component {
 
   moveRow = (dragIndex, hoverIndex) => {
     let { members } = this.props;
-    const { directions, fetchMembersSuccess } = this.props;
-    const dragRow = members[dragIndex];
-    members = update(members, {
-      $splice: [
-        [dragIndex, 1],
-        [hoverIndex, 0, dragRow],
-      ],
-    });
+    const changeMembers = [...members];
+    const { directions, fetchMembersSuccess, fetchMemberChangeIndex } = this.props;
+    const dragRow = changeMembers[dragIndex];
+    dragRow.index = hoverIndex;
+    fetchMemberChangeIndex(dragRow.userId, dragRow);
+    const hoverRow = changeMembers[hoverIndex];
+    hoverRow.index = dragIndex;
+    fetchMemberChangeIndex(hoverRow.userId, hoverRow);
+    members = changeMembers;
+
     fetchMembersSuccess(members, directions);
   };
 
   renderTBody = (members, directions, email) => {
+    members.sort(sortUp);
+
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
@@ -179,6 +188,7 @@ MembersGrid.propTypes = {
   fetchMembersDelete: PropTypes.func.isRequired,
   fetchMembers: PropTypes.func.isRequired,
   fetchMembersSuccess: PropTypes.func.isRequired,
+  fetchMemberChangeIndex: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
@@ -200,6 +210,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembers: () => dispatch(fetchMembers()),
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
     fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
+    fetchMemberChangeIndex: (memberId, member) => dispatch(fetchMemberChangeIndex(memberId, member)),
     statusThePageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };

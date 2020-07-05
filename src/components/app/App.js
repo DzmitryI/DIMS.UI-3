@@ -18,7 +18,7 @@ import Auth from '../auth';
 import Registration from '../registration';
 import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
-import { autoLogin } from '../../store/actions/auth';
+import { autoLogin } from '../../redux/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
 
 class App extends Component {
@@ -27,6 +27,7 @@ class App extends Component {
     isTask: false,
     isMemberTasks: false,
     isTaskTrack: false,
+    index: '',
     title: '',
     subtitle: '',
     curMember: [],
@@ -69,23 +70,25 @@ class App extends Component {
     this.setState({ theme });
   };
 
-  onRegisterClickHandler = (directions, title = '', member = [], memberId = '') => {
+  onRegisterClickHandler = (directions, title = '', index, member = [], memberId = '') => {
     const { isRegister } = this.state;
     this.setState({
       isRegister: !isRegister,
       directions,
       title,
+      index,
       curMember: member,
       userId: memberId,
     });
   };
 
-  onCreateTaskClickHandler = (title = '', task = []) => {
+  onCreateTaskClickHandler = (index, title = '', task = []) => {
     const { isTask } = this.state;
     this.setState({
       isTask: !isTask,
       title,
       curTask: task,
+      index,
     });
   };
 
@@ -98,7 +101,7 @@ class App extends Component {
     });
   };
 
-  onTrackClickHandler = (userTaskId = '', title = '', subtitle = '', track = {}) => {
+  onTrackClickHandler = (index, userTaskId = '', title = '', subtitle = '', track = {}) => {
     const { isTaskTrack } = this.state;
     this.setState({
       isTaskTrack: !isTaskTrack,
@@ -106,6 +109,7 @@ class App extends Component {
       title,
       subtitle,
       track,
+      index,
     });
   };
 
@@ -141,6 +145,7 @@ class App extends Component {
       fetchService,
       onNotification,
       notification,
+      index,
     } = this.state;
     const { isAuthenticated, email } = this.props;
 
@@ -236,8 +241,9 @@ class App extends Component {
                 title={title}
                 member={curMember}
                 directions={directions}
+                index={index}
               />
-              <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} title={title} task={curTask} />
+              <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} title={title} task={curTask} index={index} />
               <TaskTrackPage
                 onTrackClick={this.onTrackClickHandler}
                 track={track}
@@ -245,6 +251,7 @@ class App extends Component {
                 taskId={taskId}
                 userTaskId={userTaskId}
                 subtitle={subtitle}
+                index={index}
               />
               <Chart userId={userId} />
             </ThemeContextProvider>

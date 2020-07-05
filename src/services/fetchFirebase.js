@@ -42,13 +42,9 @@ export default class FetchFirebase {
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [taskId, values] = key;
-        const { name, description, startDate, deadlineDate } = values;
         tasks = tasks.concat({
           taskId,
-          name,
-          description,
-          startDate,
-          deadlineDate,
+          ...values,
         });
       });
     }
@@ -71,12 +67,9 @@ export default class FetchFirebase {
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [userTaskId, values] = key;
-        const { taskId, userId, stateId } = values;
         userTasks = userTasks.concat({
           userTaskId,
-          taskId,
-          userId,
-          stateId,
+          ...values,
         });
       });
     }
@@ -94,13 +87,9 @@ export default class FetchFirebase {
     if (response && response.data) {
       Object.entries(response.data).forEach((key) => {
         const [taskTrackId, values] = key;
-        const { userTaskId, trackDate, trackNote, trackProgress } = values;
         taskTrack = taskTrack.concat({
           taskTrackId,
-          userTaskId,
-          trackDate,
-          trackNote,
-          trackProgress,
+          ...values,
         });
       });
     }

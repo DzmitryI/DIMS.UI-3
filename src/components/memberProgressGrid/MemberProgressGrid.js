@@ -11,7 +11,7 @@ import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } f
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
-import { statusThePageTask } from '../../store/actions/statusThePage';
+import { statusThePageTask } from '../../redux/actions/statusThePage';
 
 const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);

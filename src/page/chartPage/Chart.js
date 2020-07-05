@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Backdrop from '../../components/UI/backdrop';
-import { statusThePageChart } from '../../store/actions/statusThePage';
+import { statusThePageChart } from '../../redux/actions/statusThePage';
 import { LineChart, AreaChart, Line, Area, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { updateMemberChart, getDateToComporation } from '../../components/helpersComponents';
 import Spinner from '../../components/spinner';

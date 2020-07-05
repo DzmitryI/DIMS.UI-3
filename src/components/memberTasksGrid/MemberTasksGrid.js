@@ -9,9 +9,16 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate, updateMemberTasks } from '../helpersComponents';
+import {
+  headerMemberTasksGrid,
+  h1TaskTrackPage,
+  TABLE_ROLES,
+  getDate,
+  updateMemberTasks,
+  updateMemberProgress,
+} from '../helpersComponents';
 import { withFetchService, withRole, withTheme } from '../../hoc';
-import { statusThePageTrack } from '../../store/actions/statusThePage';
+import { statusThePageTrack } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 
@@ -49,10 +56,19 @@ const MemberTasksGrid = ({
     fetchData();
   }, [userId]);
 
-  const onTrackClickHandler = ({ target }) => {
+  const onTrackClickHandler = async ({ target }) => {
     const userTaskId = target.closest('tr').id;
     const taskName = target.closest('td').id;
-    onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
+    const taskId = target.closest('tr').children[1].id;
+
+    try {
+      const tracks = await updateMemberProgress('', taskId);
+      onTrackClick(tracks.length, userTaskId, h1TaskTrackPage.get('Create'), taskName);
+    } catch ({ message }) {
+      setError(true);
+      setErrorMessage(message);
+    }
+
     statusThePageTrack(true);
   };
 

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
-import { auth } from '../../store/actions/auth';
+import { auth } from '../../redux/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
 import ImageComponent from '../imageComponent/ImageComponent';
 import { renderInputs } from '../../page/helpersPage';

@@ -12,7 +12,7 @@ import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import imgChart from '../../assets/images/chart.png';
-import { statusThePageChart, statusThePageMember } from '../../store/actions/statusThePage';
+import { statusThePageChart, statusThePageMember } from '../../redux/actions/statusThePage';
 
 class MemberPage extends Component {
   state = {
@@ -121,6 +121,7 @@ class MemberPage extends Component {
       startDate: new Date(),
       directionId: 'direction1',
       sex: 'sex1',
+      index: '',
     },
     userId: null,
     disabled: false,
@@ -129,6 +130,13 @@ class MemberPage extends Component {
     onNotification: false,
     notification: {},
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { index } = nextProps;
+    return {
+      member: { ...prevState.member, index },
+    };
+  }
 
   componentDidUpdate(prevProps) {
     const { member, directions, title } = this.props;

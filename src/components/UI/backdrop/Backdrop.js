@@ -5,7 +5,7 @@ import {
   statusThePageMember,
   statusThePageTask,
   statusThePageTrack,
-} from '../../../store/actions/statusThePage';
+} from '../../../redux/actions/statusThePage';
 
 const Backdrop = ({
   statusThePageChart,

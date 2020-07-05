@@ -9,7 +9,7 @@ import { clearOblectValue } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponents';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
-import { statusThePageTrack } from '../../store/actions/statusThePage';
+import { statusThePageTrack } from '../../redux/actions/statusThePage';
 
 class TaskTrackPage extends Component {
   state = {
@@ -17,6 +17,7 @@ class TaskTrackPage extends Component {
       trackDate: new Date(),
       trackNote: '',
       trackProgress: '0',
+      index: '',
     },
     disabled: false,
     taskTrackId: null,
@@ -25,6 +26,13 @@ class TaskTrackPage extends Component {
     notification: {},
     loading: true,
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { index } = nextProps;
+    return {
+      taskTrack: { ...prevState.taskTrack, index },
+    };
+  }
 
   componentDidUpdate(prevProps) {
     const { track, title, taskId } = this.props;
@@ -189,7 +197,7 @@ TaskTrackPage.propTypes = {
   userTaskId: PropTypes.string.isRequired,
   isTrackPageOpen: PropTypes.bool.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
-  track: PropTypes.objectOf(PropTypes.string).isRequired,
+  track: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
   onTrackClick: PropTypes.func.isRequired,
 };
 

@@ -6,6 +6,7 @@ import {
   FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
+  FETCH_MEMBER_CHANGE_INDEX,
 } from './actionTypes';
 
 const fetchService = new FetchFirabase();
@@ -20,6 +21,19 @@ export function fetchMembers() {
       dispatch(fetchMembersSuccess(members, directions));
     } catch (error) {
       dispatch(fetchMembersError(error.message));
+    }
+  };
+}
+
+export function fetchMemberChangeIndex(memberId, member) {
+  return async (dispatch) => {
+    if (member) {
+      try {
+        await fetchService.editMember(memberId, member);
+        dispatch(fetchMemberChangeIndexSuccess());
+      } catch (error) {
+        dispatch(fetchMembersError(error.message));
+      }
     }
   };
 }
@@ -52,6 +66,12 @@ export function fetchMembersSuccess(members, directions) {
     type: FETCH_MEMBERS_SUCCESS,
     members,
     directions,
+  };
+}
+
+export function fetchMemberChangeIndexSuccess() {
+  return {
+    type: FETCH_MEMBER_CHANGE_INDEX,
   };
 }
 

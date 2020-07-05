@@ -210,6 +210,36 @@ async function deleteAllElements(id, element) {
   }
 }
 
+const sortUp = (a, b) => {
+  if (a.index > b.index) {
+    return 1;
+  } else if (a.index < b.index) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
+
+const sortUpDeep = (a, b) => {
+  if (a.userTaskTrack.index > b.userTaskTrack.index) {
+    return 1;
+  } else if (a.userTaskTrack.index < b.userTaskTrack.index) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
+
+const sortDown = (a, b) => {
+  if (a.index > b.index) {
+    return -1;
+  } else if (a.index < b.index) {
+    return 1;
+  } else {
+    return 0;
+  }
+};
+
 SetUp.propTypes = {
   fetchServiceValue: PropTypes.oneOfType([PropTypes.object]).isRequired,
   roleValue: PropTypes.string.isRequired,
@@ -236,4 +266,7 @@ export {
   updateMemberChart,
   updateMemberTasks,
   deleteAllElements,
+  sortUp,
+  sortUpDeep,
+  sortDown,
 };
