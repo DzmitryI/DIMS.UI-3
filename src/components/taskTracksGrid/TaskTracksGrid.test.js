@@ -3,7 +3,7 @@ import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { MemoryRouter } from 'react-router-dom';
 import TaskTracksGrid from './TaskTracksGrid';
-import { SetUp } from '../helpersComponents';
+import { SetUp } from '../helpersComponentPageMaking';
 
 configure({
   adapter: new Adapter(),

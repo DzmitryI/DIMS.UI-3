@@ -7,11 +7,12 @@ import Backdrop from '../../components/UI/backdrop';
 import Button from '../../components/UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
-import { h1TaskPage } from '../../components/helpersComponents';
+import { h1TaskPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
 import DatePicker from '../../components/datePicker';
 import { statusThePageTask } from '../../redux/actions/statusThePage';
+import TextArea from '../../components/UI/textArea/TextArea';
 
 class TaskPage extends Component {
   state = {
@@ -353,17 +354,13 @@ class TaskPage extends Component {
                         onChange={this.onHandleChangeDate('deadlineDate')}
                       />
                     </div>
-                    <div className='form-group'>
-                      <label htmlFor='description'>Description</label>
-                      <textarea
-                        id='description'
-                        name='description'
-                        value={description}
-                        rows='7'
-                        disabled={disabled}
-                        onChange={this.handleTextArea}
-                      />
-                    </div>
+                    <TextArea
+                      value={description}
+                      onChange={this.handleTextArea}
+                      label='Description'
+                      id='description'
+                      name='description'
+                    />
                     <div className='form-group'>
                       <label htmlFor='members'>Members</label>
                       <div id='members' className='column'>
@@ -400,11 +397,9 @@ TaskPage.propTypes = {
   onCreateTaskClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ statusThePage: { isTaskPageOpen } }) => {
-  return {
-    isTaskPageOpen,
-  };
-};
+const mapStateToProps = ({ statusThePage: { isTaskPageOpen } }) => ({
+  isTaskPageOpen,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

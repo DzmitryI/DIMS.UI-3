@@ -11,7 +11,7 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import AboutAppPage from '../../page/aboutAppPage';
-import Chart from '../../page/chartPage/Chart';
+import ChartPage from '../../page/chartPage';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
@@ -20,6 +20,7 @@ import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
 import { autoLogin } from '../../redux/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
+import { bindActionCreators } from 'redux';
 
 class App extends Component {
   state = {
@@ -253,7 +254,7 @@ class App extends Component {
                 subtitle={subtitle}
                 index={index}
               />
-              <Chart userId={userId} />
+              <ChartPage userId={userId} />
             </ThemeContextProvider>
           </RoleContextProvider>
         </FetchServiceProvider>
@@ -273,17 +274,13 @@ App.defaultProps = {
   email: null,
 };
 
-const mapStateToProps = ({ authData: { token, email } }) => {
-  return {
-    isAuthenticated: !!token,
-    email,
-  };
-};
+const mapStateToProps = ({ authData: { token, email } }) => ({
+  isAuthenticated: !!token,
+  email,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    autoLogin: () => dispatch(autoLogin()),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  autoLogin: bindActionCreators(autoLogin, dispatch),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

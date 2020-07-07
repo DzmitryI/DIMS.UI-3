@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   statusThePageChart,
   statusThePageMember,
@@ -30,10 +31,10 @@ const Backdrop = ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageChart: () => dispatch(statusThePageChart()),
-    statusThePageMember: () => dispatch(statusThePageMember()),
-    statusThePageTask: () => dispatch(statusThePageTask()),
-    statusThePageTrack: () => dispatch(statusThePageTrack()),
+    statusThePageChart: bindActionCreators(statusThePageChart, dispatch),
+    statusThePageMember: bindActionCreators(statusThePageMember, dispatch),
+    statusThePageTask: bindActionCreators(statusThePageTask, dispatch),
+    statusThePageTrack: bindActionCreators(statusThePageTrack, dispatch),
   };
 };
 

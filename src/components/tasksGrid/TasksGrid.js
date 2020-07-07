@@ -6,7 +6,8 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { headerTasksGrid, h1TaskPage, deleteAllElements, getDate, sortUp } from '../helpersComponents';
+import { deleteAllElements, getDate, getSortUp } from '../helpersComponents';
+import { headerTasksGrid, h1TaskPage } from '../helpersComponentPageMaking';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
@@ -101,7 +102,7 @@ class TasksGrid extends Component {
   }
 
   renderTBody = (tasks) => {
-    tasks.sort(sortUp);
+    tasks.sort(getSortUp('index'));
     return tasks.map((task, index) => {
       const { taskId, name, startDate, deadlineDate } = task;
       return (

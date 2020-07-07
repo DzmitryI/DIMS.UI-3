@@ -8,7 +8,8 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge, sortUp } from '../helpersComponents';
+import { getDate, countAge, getSortUp } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, TABLE_ROLES } from '../helpersComponentPageMaking';
 import { withTheme, withRole } from '../../hoc';
 import {
   fetchMembers,
@@ -86,7 +87,7 @@ class MembersGrid extends Component {
   };
 
   renderTBody = (members, directions, email) => {
-    members.sort(sortUp);
+    members.sort(getSortUp('index'));
 
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
@@ -193,17 +194,15 @@ MembersGrid.propTypes = {
 
 const mapStateToProps = ({
   members: { members, directions, loading, error, errorMessage, onNotification, notification },
-}) => {
-  return {
-    members,
-    directions,
-    loading,
-    error,
-    errorMessage,
-    onNotification,
-    notification,
-  };
-};
+}) => ({
+  members,
+  directions,
+  loading,
+  error,
+  errorMessage,
+  onNotification,
+  notification,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

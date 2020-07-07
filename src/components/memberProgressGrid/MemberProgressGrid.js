@@ -7,7 +7,8 @@ import update from 'immutability-helper';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
+import { updateDataMemberProgress, getDate } from '../helpersComponents';
+import { headerMemberProgressGrid, h1TaskPage } from '../helpersComponentPageMaking';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
@@ -22,7 +23,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setMemberProgresses(await updateMemberProgress(userId));
+        setMemberProgresses(await updateDataMemberProgress(userId));
         setLoading(false);
       } catch ({ message }) {
         setLoading(false);

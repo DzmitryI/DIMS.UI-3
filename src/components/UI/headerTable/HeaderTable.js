@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withRole } from '../../../hoc';
-import { TABLE_ROLES } from '../../helpersComponents';
+import { TABLE_ROLES } from '../../helpersComponentPageMaking';
 const HeaderTable = ({ arr, email }) => {
   const { isAdmin, isMentor } = TABLE_ROLES;
   const role = email === isAdmin || email === isMentor;

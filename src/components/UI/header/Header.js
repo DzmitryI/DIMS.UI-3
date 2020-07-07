@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import ButtonLink from '../buttonLink';
 import ColorSwitch from '../../colorSwitch';
 import DropDownMenu from '../dropDownMenu';
-import { TABLE_ROLES } from '../../helpersComponents';
+import { TABLE_ROLES } from '../../helpersComponentPageMaking';
 import { logout } from '../../../redux/actions/auth';
 import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';

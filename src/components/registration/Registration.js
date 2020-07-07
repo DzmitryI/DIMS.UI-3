@@ -113,13 +113,12 @@ Registration.propTypes = {
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => {
-  return {
-    onNotification,
-    notification,
-    isRegistred,
-  };
-};
+const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => ({
+  onNotification,
+  notification,
+  isRegistred,
+});
+
 const mapDispatchToProps = (dispatch) => {
   return {
     auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),

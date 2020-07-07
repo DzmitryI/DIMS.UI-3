@@ -9,7 +9,7 @@ import Button from '../../components/UI/button';
 import DatePicker from '../../components/datePicker';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
-import { h1MemberPage } from '../../components/helpersComponents';
+import { h1MemberPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import imgChart from '../../assets/images/chart.png';
 import { statusThePageChart, statusThePageMember } from '../../redux/actions/statusThePage';
@@ -418,11 +418,9 @@ MemberPage.propTypes = {
   isMemberPageOpen: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => {
-  return {
-    isMemberPageOpen,
-  };
-};
+const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => ({
+  isMemberPageOpen,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

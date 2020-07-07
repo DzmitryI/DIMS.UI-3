@@ -11,14 +11,8 @@ import { withTheme, withRole, withFetchService } from '../../hoc';
 import { statusThePageTrack, statusThePageTask } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
-import {
-  headerTaskTrackGrid,
-  h1TaskTrackPage,
-  updateMemberProgress,
-  getDate,
-  TABLE_ROLES,
-  sortUpDeep,
-} from '../helpersComponents';
+import { updateDataMemberProgress, getDate, getSortUp } from '../helpersComponents';
+import { headerTaskTrackGrid, h1TaskTrackPage, TABLE_ROLES } from '../helpersComponentPageMaking';
 
 class TaskTracksGrid extends Component {
   state = {
@@ -87,7 +81,7 @@ class TaskTracksGrid extends Component {
   async fetchMemberProgress() {
     try {
       const { taskId } = this.props;
-      const tracks = await updateMemberProgress('', taskId);
+      const tracks = await updateDataMemberProgress('', taskId);
       this.setState({ tracks, loading: false });
     } catch ({ message }) {
       this.setState({ loading: false, error: true, errorMessage: message });
@@ -95,7 +89,7 @@ class TaskTracksGrid extends Component {
   }
 
   renderTBody = (tracks, adminMentor) => {
-    tracks.sort(sortUpDeep);
+    tracks.sort(getSortUp('userTaskTrack', 'index'));
     return tracks.map((track, index) => {
       const {
         userTaskTrack: { taskTrackId, trackDate, trackNote },
@@ -175,11 +169,9 @@ TaskTracksGrid.propTypes = {
   onTrackClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => {
-  return {
-    isTrackPageOpen,
-  };
-};
+const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => ({
+  isTrackPageOpen,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

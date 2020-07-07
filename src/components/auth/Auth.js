@@ -135,18 +135,14 @@ Auth.propTypes = {
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ authData: { onNotification, notification } }) => {
-  return {
-    onNotification,
-    notification,
-  };
-};
+const mapStateToProps = ({ authData: { onNotification, notification } }) => ({
+  onNotification,
+  notification,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
-    authOtherService: (service) => dispatch(authOtherService(service)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
+  authOtherService: (service) => dispatch(authOtherService(service)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);
