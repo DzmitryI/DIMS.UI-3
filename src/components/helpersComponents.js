@@ -207,6 +207,30 @@ function getSortUp(param, param2 = null) {
   }
 }
 
+function getSortDown(param, param2 = null) {
+  if (!param2) {
+    return (a, b) => {
+      if (a[param] > b[param]) {
+        return -1;
+      } else if (a[param] < b[param]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    };
+  } else {
+    return (a, b) => {
+      if (a[param][param2] > b[param][param2]) {
+        return -1;
+      } else if (a[param][param2] < b[param][param2]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    };
+  }
+}
+
 export {
   getDate,
   getDateToComporation,
@@ -216,5 +240,6 @@ export {
   updateDataMemberTasks,
   deleteAllElements,
   getSortUp,
+  getSortDown,
   getAllPointsForPeriod,
 };

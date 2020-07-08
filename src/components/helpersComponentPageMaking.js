@@ -12,12 +12,54 @@ const SetUp = ({ fetchServiceValue, roleValue, themeValue, component }) => {
   );
 };
 
-const headerTasksGrid = ['', 'Name', 'Start', 'Deadline', ''];
-const headerTaskTrackGrid = ['', 'Task', 'Note', 'Date', ''];
-const headerMembersGrid = ['', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
-const headerMemberTasksGrid = ['', 'Name', 'Start', 'Deadline', 'Status', 'Track', 'Available only for Admin'];
-const headerMemberProgressGrid = ['', 'Task', 'Note', 'Date'];
-const headerAboutPage = ['Actions', 'Admin', 'Mentor', 'Member'];
+const headerTasksGrid = [
+  { name: '', className: '' },
+  { name: 'Name', className: 'name' },
+  { name: 'Start', className: 'startDate' },
+  { name: 'Deadline', className: 'deadlineDate' },
+  { name: '', className: '' },
+];
+const headerTaskTrackGrid = [
+  { name: '', className: '' },
+  { name: 'Task', className: '' },
+  { name: 'Note', className: '' },
+  { name: 'Date', className: '' },
+  { name: '', className: '' },
+];
+const headerMembersGrid = [
+  { name: '', className: '' },
+  { name: 'Full Name', className: 'name' },
+  { name: 'Direction', className: '' },
+  { name: 'Education', className: 'education' },
+  { name: 'Start', className: 'startDate' },
+  { name: 'Age', className: 'birthDate' },
+  { name: '', className: '' },
+];
+
+const headerMemberTasksGrid = [
+  { name: '', className: '' },
+  { name: 'Name', className: 'name' },
+  { name: 'Start', className: 'name' },
+  { name: 'Deadline', className: 'name' },
+  { name: 'name', className: '' },
+  { name: 'Status', className: 'name' },
+  { name: 'Track', className: 'name' },
+  { name: 'Available only for Admin', className: 'name' },
+];
+
+const headerMemberProgressGrid = [
+  { name: '', className: '' },
+  { name: 'Task', className: 'name' },
+  { name: 'Note', className: 'name' },
+  { name: 'Date', className: 'name' },
+];
+
+const headerAboutPage = [
+  { name: 'Actions', className: '' },
+  { name: 'Admin', className: '' },
+  { name: 'Mentor', className: '' },
+  { name: 'Member', className: '' },
+];
 
 const h1TaskPage = new Map([
   ['Create', 'Create Task page'],
@@ -47,6 +89,12 @@ SetUp.propTypes = {
   component: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
+const handleSortEnd = (elem, className) => {
+  [].forEach.call(elem, (col) => {
+    col.classList.remove(className);
+  });
+};
+
 export {
   SetUp,
   headerTasksGrid,
@@ -59,4 +107,5 @@ export {
   h1MemberPage,
   h1TaskTrackPage,
   TABLE_ROLES,
+  handleSortEnd,
 };

@@ -6,8 +6,8 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { deleteAllElements, getDate, getSortUp } from '../helpersComponents';
-import { headerTasksGrid, h1TaskPage } from '../helpersComponentPageMaking';
+import { deleteAllElements, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { headerTasksGrid, h1TaskPage, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
@@ -74,6 +74,21 @@ class TasksGrid extends Component {
     }
   };
 
+  handleSortClick = ({ target: { classList } }) => {
+    const { tasks } = this.state;
+    const up = document.querySelectorAll('.up');
+    const down = document.querySelectorAll('.down');
+    handleSortEnd(up, 'active');
+    handleSortEnd(down, 'active');
+    classList.toggle('active');
+    if (classList.value.includes('up')) {
+      tasks.sort(getSortUp(classList[1]));
+    } else {
+      tasks.sort(getSortDown(classList[1]));
+    }
+    this.setState(tasks);
+  };
+
   moveRow = async (dragIndex, hoverIndex) => {
     const { tasks } = this.state;
     const dragRow = tasks[dragIndex];
@@ -102,7 +117,6 @@ class TasksGrid extends Component {
   }
 
   renderTBody = (tasks) => {
-    tasks.sort(getSortUp('index'));
     return tasks.map((task, index) => {
       const { taskId, name, startDate, deadlineDate } = task;
       return (
@@ -150,7 +164,7 @@ class TasksGrid extends Component {
             <Button className='btn-register' name='Create' onClick={this.onCreateTaskClick} />
             <table border='1' className={`${theme}--table`}>
               <thead>
-                <HeaderTable arr={headerTasksGrid} />
+                <HeaderTable arr={headerTasksGrid} onClick={this.handleSortClick} />
               </thead>
               <tbody>{this.renderTBody(tasks)}</tbody>
             </table>

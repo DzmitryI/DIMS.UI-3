@@ -9,7 +9,7 @@ import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
 import { getDate, countAge, getSortUp } from '../helpersComponents';
-import { headerMembersGrid, h1MemberPage, TABLE_ROLES } from '../helpersComponentPageMaking';
+import { headerMembersGrid, h1MemberPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme, withRole } from '../../hoc';
 import {
   fetchMembers,
@@ -86,9 +86,20 @@ class MembersGrid extends Component {
     fetchMembersSuccess(members, directions);
   };
 
-  renderTBody = (members, directions, email) => {
-    members.sort(getSortUp('index'));
+  handleSortClick = ({ target }) => {
+    const up = document.querySelectorAll('.up');
+    const down = document.querySelectorAll('.down');
+    handleSortEnd(up, 'active');
+    handleSortEnd(down, 'active');
+    target.classList.toggle('active');
+    if (target.classList.value.includes('up')) {
+      console.log('up');
+    } else {
+      console.log('down');
+    }
+  };
 
+  renderTBody = (members, directions, email) => {
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
@@ -160,7 +171,7 @@ class MembersGrid extends Component {
             {isAdmin === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
             <table border='1' className={`${theme}--table`}>
               <thead>
-                <HeaderTable arr={headerMembersGrid} />
+                <HeaderTable arr={headerMembersGrid} onClick={this.handleSortClick} />
               </thead>
               <tbody>{members && this.renderTBody(members, directions, email)}</tbody>
             </table>
