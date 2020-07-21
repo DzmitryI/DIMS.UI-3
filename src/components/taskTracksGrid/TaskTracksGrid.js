@@ -11,8 +11,8 @@ import { withTheme, withRole, withFetchService } from '../../hoc';
 import { statusThePageTrack, statusThePageTask } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
-import { updateDataMemberProgress, getDate, getSortUp } from '../helpersComponents';
-import { headerTaskTrackGrid, h1TaskTrackPage, TABLE_ROLES } from '../helpersComponentPageMaking';
+import { updateDataMemberProgress, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { headerTaskTrackGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 
 class TaskTracksGrid extends Component {
   state = {
@@ -63,6 +63,19 @@ class TaskTracksGrid extends Component {
     }
   };
 
+  handleSortClick = ({ target: { classList } }) => {
+    const { tracks } = this.state;
+    handleSortEnd();
+    classList.toggle('active');
+    const [, classNameParent, classNameChild] = classList;
+    if (classList.value.includes('up')) {
+      tracks.sort(getSortUp(classNameParent, classNameChild));
+    } else {
+      tracks.sort(getSortDown(classNameParent, classNameChild));
+    }
+    this.setState({ tracks });
+  };
+
   moveRow = async (dragIndex, hoverIndex) => {
     const { tracks } = this.state;
     const { userTaskTrack: dragRow } = tracks[dragIndex];
@@ -89,7 +102,6 @@ class TaskTracksGrid extends Component {
   }
 
   renderTBody = (tracks, adminMentor) => {
-    tracks.sort(getSortUp('userTaskTrack', 'index'));
     return tracks.map((track, index) => {
       const {
         userTaskTrack: { taskTrackId, trackDate, trackNote },
@@ -149,7 +161,7 @@ class TaskTracksGrid extends Component {
           <table border='1' className={`${theme}--table`}>
             <caption>This is your task tracks</caption>
             <thead>
-              <HeaderTable arr={headerTaskTrackGrid} />
+              <HeaderTable arr={headerTaskTrackGrid} onClick={this.handleSortClick} />
             </thead>
             <tbody>{this.renderTBody(tracks, adminMentor)}</tbody>
           </table>

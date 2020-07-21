@@ -88,9 +88,10 @@ SetUp.propTypes = {
   component: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
-const handleSortEnd = (elem, className) => {
-  [].forEach.call(elem, (col) => {
-    col.classList.remove(className);
+const handleSortEnd = () => {
+  const arrUpDown = [...document.querySelectorAll('.up'), ...document.querySelectorAll('.down')];
+  [].forEach.call(arrUpDown, (col) => {
+    col.classList.remove('active');
   });
 };
 

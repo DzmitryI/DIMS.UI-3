@@ -76,15 +76,13 @@ class TasksGrid extends Component {
 
   handleSortClick = ({ target: { classList } }) => {
     const { tasks } = this.state;
-    const up = document.querySelectorAll('.up');
-    const down = document.querySelectorAll('.down');
-    handleSortEnd(up, 'active');
-    handleSortEnd(down, 'active');
+    handleSortEnd();
     classList.toggle('active');
+    const [, className] = classList;
     if (classList.value.includes('up')) {
-      tasks.sort(getSortUp(classList[1]));
+      tasks.sort(getSortUp(className));
     } else {
-      tasks.sort(getSortDown(classList[1]));
+      tasks.sort(getSortDown(className));
     }
     this.setState(tasks);
   };

@@ -87,14 +87,11 @@ class MembersGrid extends Component {
     fetchMembersSuccess(members, directions);
   };
 
-  handleSortClick = ({ target }) => {
+  handleSortClick = ({ target: { classList } }) => {
     const { members, directions, membersSort } = this.props;
-    const up = document.querySelectorAll('.up');
-    const down = document.querySelectorAll('.down');
-    handleSortEnd(up, 'active');
-    handleSortEnd(down, 'active');
-    target.classList.toggle('active');
-    membersSort(members, directions, target.classList);
+    handleSortEnd();
+    classList.toggle('active');
+    membersSort(members, directions, classList);
   };
 
   renderTBody = (members, directions, email) => {

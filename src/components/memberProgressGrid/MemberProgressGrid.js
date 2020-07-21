@@ -42,18 +42,14 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
   };
 
   const handleSortClick = ({ target: { classList } }) => {
-    const up = document.querySelectorAll('.up');
-    const down = document.querySelectorAll('.down');
     const memberProgressArr = [...memberProgresses];
-    handleSortEnd(up, 'active');
-    handleSortEnd(down, 'active');
+    handleSortEnd();
     classList.toggle('active');
+    const [, classNameParent, classNameChild] = classList;
     if (classList.value.includes('up')) {
-      memberProgressArr.sort(getSortUp(classList[1], classList[2]));
-      console.log(memberProgressArr);
+      memberProgressArr.sort(getSortUp(classNameParent, classNameChild));
     } else {
-      console.log(memberProgressArr);
-      memberProgressArr.sort(getSortDown(classList[1], classList[2]));
+      memberProgressArr.sort(getSortDown(classNameParent, classNameChild));
     }
     setMemberProgresses(memberProgressArr);
   };

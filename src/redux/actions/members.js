@@ -58,10 +58,11 @@ export function fetchMembersDelete(memberId, members) {
 export function membersSort(members, directions, classList) {
   return (dispatch) => {
     dispatch(fetchMembersStart());
+    const [, className] = classList;
     if (classList.value.includes('up')) {
-      members.sort(getSortUp(classList[1]));
+      members.sort(getSortUp(className));
     } else {
-      members.sort(getSortDown(classList[1]));
+      members.sort(getSortDown(className));
     }
     dispatch(fetchMembersSuccess(members, directions));
   };

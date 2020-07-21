@@ -67,17 +67,14 @@ const MemberTasksGrid = ({
   };
 
   const handleSortClick = ({ target: { classList } }) => {
-    const up = document.querySelectorAll('.up');
-    const down = document.querySelectorAll('.down');
     const userTasksArr = [...userTasks];
-    handleSortEnd(up, 'active');
-    handleSortEnd(down, 'active');
+    handleSortEnd();
     classList.toggle('active');
-
+    const [, className] = classList;
     if (classList.value.includes('up')) {
-      userTasksArr.sort(getSortUp(classList[1]));
+      userTasksArr.sort(getSortUp(className));
     } else {
-      userTasksArr.sort(getSortDown(classList[1]));
+      userTasksArr.sort(getSortDown(className));
     }
     setUserTasks(userTasksArr);
   };
