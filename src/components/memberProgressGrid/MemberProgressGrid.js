@@ -7,8 +7,8 @@ import update from 'immutability-helper';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { updateDataMemberProgress, getDate } from '../helpersComponents';
-import { headerMemberProgressGrid, h1TaskPage } from '../helpersComponentPageMaking';
+import { updateDataMemberProgress, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { headerMemberProgressGrid, h1TaskPage, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
@@ -39,6 +39,23 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
     const { task } = result;
     onTaskClick(h1TaskPage.get('Detail'), task);
     statusThePageTask(true);
+  };
+
+  const handleSortClick = ({ target: { classList } }) => {
+    const up = document.querySelectorAll('.up');
+    const down = document.querySelectorAll('.down');
+    const memberProgressArr = [...memberProgresses];
+    handleSortEnd(up, 'active');
+    handleSortEnd(down, 'active');
+    classList.toggle('active');
+    if (classList.value.includes('up')) {
+      memberProgressArr.sort(getSortUp(classList[1], classList[2]));
+      console.log(memberProgressArr);
+    } else {
+      console.log(memberProgressArr);
+      memberProgressArr.sort(getSortDown(classList[1], classList[2]));
+    }
+    setMemberProgresses(memberProgressArr);
   };
 
   const moveRow = (dragIndex, hoverIndex) => {
@@ -101,7 +118,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
         <table border='1' className={`${theme}--table`}>
           <caption>{title && `${title}'s progress:`}</caption>
           <thead>
-            <HeaderTable arr={headerMemberProgressGrid} />
+            <HeaderTable arr={headerMemberProgressGrid} onClick={handleSortClick} />
           </thead>
           <tbody>{renderTBody(memberProgresses)}</tbody>
         </table>

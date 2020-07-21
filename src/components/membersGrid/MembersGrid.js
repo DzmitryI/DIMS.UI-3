@@ -8,7 +8,7 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { getDate, countAge, getSortUp } from '../helpersComponents';
+import { getDate, countAge } from '../helpersComponents';
 import { headerMembersGrid, h1MemberPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme, withRole } from '../../hoc';
 import {
@@ -16,6 +16,7 @@ import {
   fetchMembersSuccess,
   fetchMemberChangeIndex,
   fetchMembersDelete,
+  membersSort,
 } from '../../redux/actions/members';
 import { statusThePageMember } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell';
@@ -87,16 +88,13 @@ class MembersGrid extends Component {
   };
 
   handleSortClick = ({ target }) => {
+    const { members, directions, membersSort } = this.props;
     const up = document.querySelectorAll('.up');
     const down = document.querySelectorAll('.down');
     handleSortEnd(up, 'active');
     handleSortEnd(down, 'active');
     target.classList.toggle('active');
-    if (target.classList.value.includes('up')) {
-      console.log('up');
-    } else {
-      console.log('down');
-    }
+    membersSort(members, directions, target.classList);
   };
 
   renderTBody = (members, directions, email) => {
@@ -201,6 +199,7 @@ MembersGrid.propTypes = {
   fetchMembers: PropTypes.func.isRequired,
   fetchMembersSuccess: PropTypes.func.isRequired,
   fetchMemberChangeIndex: PropTypes.func.isRequired,
+  membersSort: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
@@ -221,6 +220,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
     fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
     fetchMemberChangeIndex: (memberId, member) => dispatch(fetchMemberChangeIndex(memberId, member)),
+    membersSort: (members, directions, classList) => dispatch(membersSort(members, directions, classList)),
     statusThePageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };

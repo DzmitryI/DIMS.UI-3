@@ -21,15 +21,15 @@ const headerTasksGrid = [
 ];
 const headerTaskTrackGrid = [
   { name: '', className: '' },
-  { name: 'Task', className: '' },
-  { name: 'Note', className: '' },
-  { name: 'Date', className: '' },
+  { name: 'Task', className: 'taskTrackId' },
+  { name: 'Note', className: 'trackNote' },
+  { name: 'Date', className: 'trackDate' },
   { name: '', className: '' },
 ];
 const headerMembersGrid = [
   { name: '', className: '' },
   { name: 'Full Name', className: 'name' },
-  { name: 'Direction', className: '' },
+  { name: 'Direction', className: 'directionId' },
   { name: 'Education', className: 'education' },
   { name: 'Start', className: 'startDate' },
   { name: 'Age', className: 'birthDate' },
@@ -39,19 +39,18 @@ const headerMembersGrid = [
 const headerMemberTasksGrid = [
   { name: '', className: '' },
   { name: 'Name', className: 'name' },
-  { name: 'Start', className: 'name' },
-  { name: 'Deadline', className: 'name' },
-  { name: 'name', className: '' },
-  { name: 'Status', className: 'name' },
-  { name: 'Track', className: 'name' },
-  { name: 'Available only for Admin', className: 'name' },
+  { name: 'Start', className: 'startDate' },
+  { name: 'Deadline', className: 'deadlineDate' },
+  { name: 'Status', className: 'stateName' },
+  { name: 'Track', className: '' },
+  { name: 'Available only for Admin', className: '' },
 ];
 
 const headerMemberProgressGrid = [
   { name: '', className: '' },
-  { name: 'Task', className: 'name' },
-  { name: 'Note', className: 'name' },
-  { name: 'Date', className: 'name' },
+  { name: 'Task', className: 'userTaskTrack userTaskId' },
+  { name: 'Note', className: 'userTaskTrack trackNote' },
+  { name: 'Date', className: 'userTaskTrack trackDate' },
 ];
 
 const headerAboutPage = [

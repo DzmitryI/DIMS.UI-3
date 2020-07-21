@@ -1,5 +1,5 @@
 import FetchFirabase from '../../services/fetchFirebase';
-import { deleteAllElements } from '../../components/helpersComponents';
+import { deleteAllElements, getSortUp, getSortDown } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
   FETCH_MEMBERS_SUCCESS,
@@ -52,6 +52,18 @@ export function fetchMembersDelete(memberId, members) {
         dispatch(fetchMembersError(error.message));
       }
     }
+  };
+}
+
+export function membersSort(members, directions, classList) {
+  return (dispatch) => {
+    dispatch(fetchMembersStart());
+    if (classList.value.includes('up')) {
+      members.sort(getSortUp(classList[1]));
+    } else {
+      members.sort(getSortDown(classList[1]));
+    }
+    dispatch(fetchMembersSuccess(members, directions));
   };
 }
 

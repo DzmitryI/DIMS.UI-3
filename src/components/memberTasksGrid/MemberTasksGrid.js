@@ -9,8 +9,8 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { getDate, updateDataMemberTasks, updateDataMemberProgress } from '../helpersComponents';
-import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES } from '../helpersComponentPageMaking';
+import { getDate, updateDataMemberTasks, updateDataMemberProgress, getSortUp, getSortDown } from '../helpersComponents';
+import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withFetchService, withRole, withTheme } from '../../hoc';
 import { statusThePageTrack } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
@@ -64,6 +64,22 @@ const MemberTasksGrid = ({
     }
 
     statusThePageTrack(true);
+  };
+
+  const handleSortClick = ({ target: { classList } }) => {
+    const up = document.querySelectorAll('.up');
+    const down = document.querySelectorAll('.down');
+    const userTasksArr = [...userTasks];
+    handleSortEnd(up, 'active');
+    handleSortEnd(down, 'active');
+    classList.toggle('active');
+
+    if (classList.value.includes('up')) {
+      userTasksArr.sort(getSortUp(classList[1]));
+    } else {
+      userTasksArr.sort(getSortDown(classList[1]));
+    }
+    setUserTasks(userTasksArr);
   };
 
   const onOpenTaskTracksClickHandler = ({ target }) => {
@@ -173,7 +189,7 @@ const MemberTasksGrid = ({
         <table border='1' className={`${theme}--table`}>
           <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
           <thead>
-            <HeaderTable arr={headerMemberTasksGrid} />
+            <HeaderTable arr={headerMemberTasksGrid} onClick={handleSortClick} />
           </thead>
           <tbody>{renderTBody(userTasks)}</tbody>
         </table>
