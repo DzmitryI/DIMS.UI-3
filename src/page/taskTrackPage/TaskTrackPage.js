@@ -6,10 +6,12 @@ import Button from '../../components/UI/button';
 import Backdrop from '../../components/UI/backdrop';
 import DatePicker from '../../components/datePicker';
 import { clearOblectValue } from '../helpersPage';
-import { h1TaskTrackPage } from '../../components/helpersComponents';
+import { h1TaskTrackPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
-import { statusThePageTrack } from '../../store/actions/statusThePage';
+import { statusThePageTrack } from '../../redux/actions/statusThePage';
+import Input from '../../components/UI/input';
+import TextArea from '../../components/UI/textArea/TextArea';
 
 class TaskTrackPage extends Component {
   state = {
@@ -17,6 +19,7 @@ class TaskTrackPage extends Component {
       trackDate: new Date(),
       trackNote: '',
       trackProgress: '0',
+      index: '',
     },
     disabled: false,
     taskTrackId: null,
@@ -25,6 +28,13 @@ class TaskTrackPage extends Component {
     notification: {},
     loading: true,
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { index } = nextProps;
+    return {
+      taskTrack: { ...prevState.taskTrack, index },
+    };
+  }
 
   componentDidUpdate(prevProps) {
     const { track, title, taskId } = this.props;
@@ -136,33 +146,22 @@ class TaskTrackPage extends Component {
                     disabled={disabled}
                     onChange={this.onHandleChangeDate('trackDate')}
                   />
-                  <div className={`form-group`}>
-                    <label htmlFor='trackProgress'>Progress (%)</label>
-                    <input
-                      key='trackProgress'
-                      type='number'
-                      id='trackProgress'
-                      value={trackProgress}
-                      onChange={this.handleChange}
-                      disabled={disabled}
-                      placeholder='progress'
-                      autoComplete='off'
-                      min='0'
-                    />
-                  </div>
-                </div>
-                <div className='form-group'>
-                  <label htmlFor='trackNote'>Note</label>
-                  <textarea
-                    key='trackNote'
-                    id='trackNote'
-                    name='note'
+                  <Input
+                    key='trackProgress'
+                    id='trackProgress'
+                    type='number'
+                    value={trackProgress}
+                    valid={true}
+                    touched={false}
+                    label='Progress (%)'
                     disabled={disabled}
-                    value={trackNote}
-                    rows='7'
+                    shouldValidation={false}
                     onChange={this.handleChange}
+                    placeholder='progress'
+                    min='0'
                   />
                 </div>
+                <TextArea value={trackNote} onChange={this.handleChange} label='Note' />
                 <div className='form-group row'>
                   <Button
                     className='btn-add'
@@ -189,15 +188,13 @@ TaskTrackPage.propTypes = {
   userTaskId: PropTypes.string.isRequired,
   isTrackPageOpen: PropTypes.bool.isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
-  track: PropTypes.objectOf(PropTypes.string).isRequired,
+  track: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
   onTrackClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => {
-  return {
-    isTrackPageOpen,
-  };
-};
+const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => ({
+  isTrackPageOpen,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

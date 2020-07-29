@@ -53,11 +53,11 @@ Input.propTypes = {
   label: PropTypes.string.isRequired,
   touched: PropTypes.bool.isRequired,
   shouldValidation: PropTypes.bool.isRequired,
-  errorMessage: PropTypes.string.isRequired,
+  errorMessage: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.PropTypes.string.isRequired,
-  onBlur: PropTypes.func.isRequired,
-  onFocus: PropTypes.func.isRequired,
+  onBlur: PropTypes.func,
+  onFocus: PropTypes.func,
   className: PropTypes.string,
   valid: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]).isRequired,
 };
@@ -68,6 +68,9 @@ Input.defaultProps = {
   disabled: false,
   placeholder: '',
   className: '',
+  onBlur: null,
+  onFocus: null,
+  errorMessage: '',
 };
 
 export default Input;

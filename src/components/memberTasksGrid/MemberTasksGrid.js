@@ -9,9 +9,10 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, getDate, updateMemberTasks } from '../helpersComponents';
+import { getDate, updateDataMemberTasks, updateDataMemberProgress, getSortUp, getSortDown } from '../helpersComponents';
+import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withFetchService, withRole, withTheme } from '../../hoc';
-import { statusThePageTrack } from '../../store/actions/statusThePage';
+import { statusThePageTrack } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 
@@ -37,7 +38,7 @@ const MemberTasksGrid = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setUserTasks(await updateMemberTasks(userId));
+        setUserTasks(await updateDataMemberTasks(userId));
         setLoading(false);
         setOnNotification(false);
       } catch ({ message }) {
@@ -49,11 +50,33 @@ const MemberTasksGrid = ({
     fetchData();
   }, [userId]);
 
-  const onTrackClickHandler = ({ target }) => {
+  const onTrackClickHandler = async ({ target }) => {
     const userTaskId = target.closest('tr').id;
     const taskName = target.closest('td').id;
-    onTrackClick(userTaskId, h1TaskTrackPage.get('Create'), taskName);
+    const taskId = target.closest('tr').children[1].id;
+
+    try {
+      const tracks = await updateDataMemberProgress('', taskId);
+      onTrackClick(tracks.length, userTaskId, h1TaskTrackPage.get('Create'), taskName);
+    } catch ({ message }) {
+      setError(true);
+      setErrorMessage(message);
+    }
+
     statusThePageTrack(true);
+  };
+
+  const handleSortClick = ({ target: { classList } }) => {
+    const userTasksArr = [...userTasks];
+    handleSortEnd();
+    classList.toggle('active');
+    const [, className] = classList;
+    if (classList.value.includes('up')) {
+      userTasksArr.sort(getSortUp(className));
+    } else {
+      userTasksArr.sort(getSortDown(className));
+    }
+    setUserTasks(userTasksArr);
   };
 
   const onOpenTaskTracksClickHandler = ({ target }) => {
@@ -163,7 +186,7 @@ const MemberTasksGrid = ({
         <table border='1' className={`${theme}--table`}>
           <caption>{title && `Hi, dear ${title}! This is your current tasks:`}</caption>
           <thead>
-            <HeaderTable arr={headerMemberTasksGrid} />
+            <HeaderTable arr={headerMemberTasksGrid} onClick={handleSortClick} />
           </thead>
           <tbody>{renderTBody(userTasks)}</tbody>
         </table>

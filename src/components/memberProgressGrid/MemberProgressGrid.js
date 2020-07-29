@@ -7,11 +7,12 @@ import update from 'immutability-helper';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { headerMemberProgressGrid, h1TaskPage, updateMemberProgress, getDate } from '../helpersComponents';
+import { updateDataMemberProgress, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { headerMemberProgressGrid, h1TaskPage, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
-import { statusThePageTask } from '../../store/actions/statusThePage';
+import { statusThePageTask } from '../../redux/actions/statusThePage';
 
 const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
@@ -22,7 +23,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setMemberProgresses(await updateMemberProgress(userId));
+        setMemberProgresses(await updateDataMemberProgress(userId));
         setLoading(false);
       } catch ({ message }) {
         setLoading(false);
@@ -38,6 +39,19 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
     const { task } = result;
     onTaskClick(h1TaskPage.get('Detail'), task);
     statusThePageTask(true);
+  };
+
+  const handleSortClick = ({ target: { classList } }) => {
+    const memberProgressArr = [...memberProgresses];
+    handleSortEnd();
+    classList.toggle('active');
+    const [, classNameParent, classNameChild] = classList;
+    if (classList.value.includes('up')) {
+      memberProgressArr.sort(getSortUp(classNameParent, classNameChild));
+    } else {
+      memberProgressArr.sort(getSortDown(classNameParent, classNameChild));
+    }
+    setMemberProgresses(memberProgressArr);
   };
 
   const moveRow = (dragIndex, hoverIndex) => {
@@ -100,7 +114,7 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
         <table border='1' className={`${theme}--table`}>
           <caption>{title && `${title}'s progress:`}</caption>
           <thead>
-            <HeaderTable arr={headerMemberProgressGrid} />
+            <HeaderTable arr={headerMemberProgressGrid} onClick={handleSortClick} />
           </thead>
           <tbody>{renderTBody(memberProgresses)}</tbody>
         </table>

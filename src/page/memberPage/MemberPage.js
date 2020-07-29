@@ -9,10 +9,10 @@ import Button from '../../components/UI/button';
 import DatePicker from '../../components/datePicker';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
-import { h1MemberPage } from '../../components/helpersComponents';
+import { h1MemberPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import imgChart from '../../assets/images/chart.png';
-import { statusThePageChart, statusThePageMember } from '../../store/actions/statusThePage';
+import { statusThePageChart, statusThePageMember } from '../../redux/actions/statusThePage';
 
 class MemberPage extends Component {
   state = {
@@ -121,6 +121,7 @@ class MemberPage extends Component {
       startDate: new Date(),
       directionId: 'direction1',
       sex: 'sex1',
+      index: '',
     },
     userId: null,
     disabled: false,
@@ -129,6 +130,13 @@ class MemberPage extends Component {
     onNotification: false,
     notification: {},
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { index } = nextProps;
+    return {
+      member: { ...prevState.member, index },
+    };
+  }
 
   componentDidUpdate(prevProps) {
     const { member, directions, title } = this.props;
@@ -410,11 +418,9 @@ MemberPage.propTypes = {
   isMemberPageOpen: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => {
-  return {
-    isMemberPageOpen,
-  };
-};
+const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => ({
+  isMemberPageOpen,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

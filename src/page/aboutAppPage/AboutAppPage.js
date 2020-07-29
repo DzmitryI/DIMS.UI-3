@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import HeaderTable from '../../components/UI/headerTable';
 import { withTheme } from '../../hoc';
 import BodyTable from '../../components/UI/bodyTable';
-import { headerAboutPage } from '../../components/helpersComponents';
+import { headerAboutPage } from '../../components/helpersComponentPageMaking';
 
 const AboutAppPage = ({ theme }) => {
   const tableBody = [

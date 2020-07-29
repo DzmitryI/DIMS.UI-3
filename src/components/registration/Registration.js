@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
-import { auth } from '../../store/actions/auth';
+import { auth } from '../../redux/actions/auth';
 import imgLogo from '../../assets/images/logo.png';
 import ImageComponent from '../imageComponent/ImageComponent';
 import { renderInputs } from '../../page/helpersPage';
@@ -113,13 +113,12 @@ Registration.propTypes = {
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => {
-  return {
-    onNotification,
-    notification,
-    isRegistred,
-  };
-};
+const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => ({
+  onNotification,
+  notification,
+  isRegistred,
+});
+
 const mapDispatchToProps = (dispatch) => {
   return {
     auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),

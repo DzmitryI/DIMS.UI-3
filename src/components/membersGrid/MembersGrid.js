@@ -1,7 +1,6 @@
 /* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import Spinner from '../spinner';
 import DisplayNotification from '../displayNotification';
@@ -9,10 +8,17 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate, TABLE_ROLES, countAge } from '../helpersComponents';
+import { getDate, countAge } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme, withRole } from '../../hoc';
-import { fetchMembers, fetchMembersSuccess, fetchMembersDelete } from '../../store/actions/members';
-import { statusThePageMember } from '../../store/actions/statusThePage';
+import {
+  fetchMembers,
+  fetchMembersSuccess,
+  fetchMemberChangeIndex,
+  fetchMembersDelete,
+  membersSort,
+} from '../../redux/actions/members';
+import { statusThePageMember } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell';
 import Row from '../UI/row';
 
@@ -29,8 +35,8 @@ class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions } = this.props;
-    this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+    const { directions, members } = this.props;
+    this.props.onRegisterClick(directions, h1MemberPage.get('Create'), members.length);
     this.props.statusThePageMember(true);
   };
 
@@ -38,10 +44,11 @@ class MembersGrid extends Component {
     const { directions, members, onRegisterClick } = this.props;
     const memberId = target.closest('tr').id;
     const member = members.filter((curMember) => curMember.userId === memberId);
+    const [curMember] = member;
     if (target.id === 'edit') {
-      onRegisterClick(directions, h1MemberPage.get('Edit'), member, memberId);
+      onRegisterClick(directions, h1MemberPage.get('Edit'), curMember.index, member, memberId);
     } else {
-      onRegisterClick(directions, h1MemberPage.get('Detail'), member, memberId);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), curMember.index, member, memberId);
     }
     this.props.statusThePageMember(true);
   };
@@ -67,15 +74,24 @@ class MembersGrid extends Component {
 
   moveRow = (dragIndex, hoverIndex) => {
     let { members } = this.props;
-    const { directions, fetchMembersSuccess } = this.props;
-    const dragRow = members[dragIndex];
-    members = update(members, {
-      $splice: [
-        [dragIndex, 1],
-        [hoverIndex, 0, dragRow],
-      ],
-    });
+    const changeMembers = [...members];
+    const { directions, fetchMembersSuccess, fetchMemberChangeIndex } = this.props;
+    const dragRow = changeMembers[dragIndex];
+    dragRow.index = hoverIndex;
+    fetchMemberChangeIndex(dragRow.userId, dragRow);
+    const hoverRow = changeMembers[hoverIndex];
+    hoverRow.index = dragIndex;
+    fetchMemberChangeIndex(hoverRow.userId, hoverRow);
+    members = changeMembers;
+
     fetchMembersSuccess(members, directions);
+  };
+
+  handleSortClick = ({ target: { classList } }) => {
+    const { members, directions, membersSort } = this.props;
+    handleSortEnd();
+    classList.toggle('active');
+    membersSort(members, directions, classList);
   };
 
   renderTBody = (members, directions, email) => {
@@ -150,7 +166,7 @@ class MembersGrid extends Component {
             {isAdmin === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
             <table border='1' className={`${theme}--table`}>
               <thead>
-                <HeaderTable arr={headerMembersGrid} />
+                <HeaderTable arr={headerMembersGrid} onClick={this.handleSortClick} />
               </thead>
               <tbody>{members && this.renderTBody(members, directions, email)}</tbody>
             </table>
@@ -179,27 +195,29 @@ MembersGrid.propTypes = {
   fetchMembersDelete: PropTypes.func.isRequired,
   fetchMembers: PropTypes.func.isRequired,
   fetchMembersSuccess: PropTypes.func.isRequired,
+  fetchMemberChangeIndex: PropTypes.func.isRequired,
+  membersSort: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
   members: { members, directions, loading, error, errorMessage, onNotification, notification },
-}) => {
-  return {
-    members,
-    directions,
-    loading,
-    error,
-    errorMessage,
-    onNotification,
-    notification,
-  };
-};
+}) => ({
+  members,
+  directions,
+  loading,
+  error,
+  errorMessage,
+  onNotification,
+  notification,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchMembers: () => dispatch(fetchMembers()),
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
     fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
+    fetchMemberChangeIndex: (memberId, member) => dispatch(fetchMemberChangeIndex(memberId, member)),
+    membersSort: (members, directions, classList) => dispatch(membersSort(members, directions, classList)),
     statusThePageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };

@@ -4,6 +4,7 @@ import {
   FETCH_MEMBERS_ERROR,
   FETCH_MEMBERS_DELETE_SUCCESS,
   FETCH_MEMBERS_DELETE_FINISH,
+  FETCH_MEMBER_CHANGE_INDEX,
 } from '../actions/actionTypes';
 
 const initialState = {
@@ -55,6 +56,10 @@ export default function membersReducer(
         onNotification: false,
         error,
         notification: {},
+      };
+    case FETCH_MEMBER_CHANGE_INDEX:
+      return {
+        ...state,
       };
     default:
       return state;

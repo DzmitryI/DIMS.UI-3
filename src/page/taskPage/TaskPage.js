@@ -7,11 +7,12 @@ import Backdrop from '../../components/UI/backdrop';
 import Button from '../../components/UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
 import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
-import { h1TaskPage } from '../../components/helpersComponents';
+import { h1TaskPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
 import DatePicker from '../../components/datePicker';
-import { statusThePageTask } from '../../store/actions/statusThePage';
+import { statusThePageTask } from '../../redux/actions/statusThePage';
+import TextArea from '../../components/UI/textArea/TextArea';
 
 class TaskPage extends Component {
   state = {
@@ -30,6 +31,7 @@ class TaskPage extends Component {
       description: '',
       startDate: new Date(),
       deadlineDate: new Date(),
+      index: '',
     },
     taskId: null,
     loading: true,
@@ -45,6 +47,13 @@ class TaskPage extends Component {
   taskState = {
     stateName: 'Active',
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { index } = nextProps;
+    return {
+      task: { ...prevState.task, index },
+    };
+  }
 
   async componentDidUpdate(prevProps) {
     const { task, title, fetchService } = this.props;
@@ -345,17 +354,13 @@ class TaskPage extends Component {
                         onChange={this.onHandleChangeDate('deadlineDate')}
                       />
                     </div>
-                    <div className='form-group'>
-                      <label htmlFor='description'>Description</label>
-                      <textarea
-                        id='description'
-                        name='description'
-                        value={description}
-                        rows='7'
-                        disabled={disabled}
-                        onChange={this.handleTextArea}
-                      />
-                    </div>
+                    <TextArea
+                      value={description}
+                      onChange={this.handleTextArea}
+                      label='Description'
+                      id='description'
+                      name='description'
+                    />
                     <div className='form-group'>
                       <label htmlFor='members'>Members</label>
                       <div id='members' className='column'>
@@ -387,16 +392,14 @@ class TaskPage extends Component {
 TaskPage.propTypes = {
   isTaskPageOpen: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
-  task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)).isRequired,
+  task: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string]))).isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onCreateTaskClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ statusThePage: { isTaskPageOpen } }) => {
-  return {
-    isTaskPageOpen,
-  };
-};
+const mapStateToProps = ({ statusThePage: { isTaskPageOpen } }) => ({
+  isTaskPageOpen,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {

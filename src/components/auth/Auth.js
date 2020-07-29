@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
-import { auth } from '../../store/actions/auth';
-import { authOtherService } from '../../store/actions/authOtherService';
+import { auth } from '../../redux/actions/auth';
+import { authOtherService } from '../../redux/actions/authOtherService';
 import { renderInputs } from '../../page/helpersPage';
 import ImageComponent from '../imageComponent/ImageComponent';
 import ButtonIcon from '../UI/buttonIcon';
@@ -135,18 +135,14 @@ Auth.propTypes = {
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ authData: { onNotification, notification } }) => {
-  return {
-    onNotification,
-    notification,
-  };
-};
+const mapStateToProps = ({ authData: { onNotification, notification } }) => ({
+  onNotification,
+  notification,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
-    authOtherService: (service) => dispatch(authOtherService(service)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin)),
+  authOtherService: (service) => dispatch(authOtherService(service)),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);
