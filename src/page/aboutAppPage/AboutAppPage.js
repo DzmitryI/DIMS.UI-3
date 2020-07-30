@@ -117,6 +117,7 @@ const AboutAppPage = ({ theme }) => {
       { className: 'green', value: '✔️' },
     ],
   ];
+
   return (
     <div className='grid-wrap'>
       <h3>Hi, dear friend!</h3>

@@ -21,6 +21,7 @@ const Input = ({
   disabled,
   placeholder,
   className,
+  pattern,
 }) => {
   const result = isInvalid(valid, touched, shouldValidation);
   return (
@@ -38,6 +39,7 @@ const Input = ({
         onBlur={onBlur}
         onFocus={onFocus}
         min='0'
+        pattern={pattern}
       />
       <span className={`invalid-text ${result ? 'visibility' : ''}`}>{errorMessage}</span>
     </div>
@@ -55,7 +57,7 @@ Input.propTypes = {
   shouldValidation: PropTypes.bool.isRequired,
   errorMessage: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
   className: PropTypes.string,
@@ -70,6 +72,7 @@ Input.defaultProps = {
   className: '',
   onBlur: null,
   onFocus: null,
+  pattern: null,
   errorMessage: '',
 };
 

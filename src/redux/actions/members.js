@@ -1,5 +1,5 @@
 import FetchFirabase from '../../services/fetchFirebase';
-import { deleteAllElements, getSortUp, getSortDown } from '../../components/helpersComponents';
+import { deleteAllElements, getSort } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
   FETCH_MEMBERS_SUCCESS,
@@ -14,7 +14,6 @@ const fetchService = new FetchFirabase();
 export function fetchMembers() {
   return async (dispatch) => {
     dispatch(fetchMembersStart());
-
     try {
       const members = await fetchService.getAllMember();
       const directions = await fetchService.getDirection();
@@ -60,9 +59,9 @@ export function membersSort(members, directions, classList) {
     dispatch(fetchMembersStart());
     const [, className] = classList;
     if (classList.value.includes('up')) {
-      members.sort(getSortUp(className));
+      members.sort(getSort('up', className));
     } else {
-      members.sort(getSortDown(className));
+      members.sort(getSort('down', className));
     }
     dispatch(fetchMembersSuccess(members, directions));
   };

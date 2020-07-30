@@ -35,9 +35,9 @@ class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions, members } = this.props;
-    this.props.onRegisterClick(directions, h1MemberPage.get('Create'), members.length);
-    this.props.statusThePageMember(true);
+    const { directions, members, statusThePageMember, onRegisterClick } = this.props;
+    onRegisterClick(directions, h1MemberPage.get('Create'), members.length);
+    statusThePageMember(true);
   };
 
   onChangeClick = ({ target }) => {
@@ -197,6 +197,7 @@ MembersGrid.propTypes = {
   fetchMembersSuccess: PropTypes.func.isRequired,
   fetchMemberChangeIndex: PropTypes.func.isRequired,
   membersSort: PropTypes.func.isRequired,
+  statusThePageMember: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({

@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '../components/UI/input';
 
-function clearOblectValue(objInput, objElem) {
+function clearObjectValue(objInput, objElem) {
   const objInputClear = { ...objInput };
   const objElemClear = { ...objElem };
   Object.keys(objInputClear).forEach((key) => {
@@ -67,4 +67,4 @@ function renderInputs(inputs, disabled, onChange, onBlur, onFocus, className = '
   });
 }
 
-export { clearOblectValue, updateInput, renderInputs };
+export { clearObjectValue, updateInput, renderInputs };

@@ -12,9 +12,9 @@ const DropDownMenu = ({ arrDropDownMenu, theme }) => {
 
   return (
     <div className='dropdown-menu' onClick={dropdownMenuClick}>
-      <div className={`burger-line first burger-line--${theme}`}></div>
-      <div className={`burger-line second burger-line--${theme}`}></div>
-      <div className={`burger-line third burger-line--${theme}`}></div>
+      <div className={`burger-line first burger-line--${theme}`} />
+      <div className={`burger-line second burger-line--${theme}`} />
+      <div className={`burger-line third burger-line--${theme}`} />
       <nav className='burger-menu close' ref={burgerMenu}>
         {arrDropDownMenu.length &&
           arrDropDownMenu.map((curMenu) => {

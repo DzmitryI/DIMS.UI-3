@@ -9,7 +9,7 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { getDate, updateDataMemberTasks, updateDataMemberProgress, getSortUp, getSortDown } from '../helpersComponents';
+import { getDate, updateDataMemberTasks, updateDataMemberProgress, getSort } from '../helpersComponents';
 import { headerMemberTasksGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withFetchService, withRole, withTheme } from '../../hoc';
 import { statusThePageTrack } from '../../redux/actions/statusThePage';
@@ -72,9 +72,9 @@ const MemberTasksGrid = ({
     classList.toggle('active');
     const [, className] = classList;
     if (classList.value.includes('up')) {
-      userTasksArr.sort(getSortUp(className));
+      userTasksArr.sort(getSort('up', className));
     } else {
-      userTasksArr.sort(getSortDown(className));
+      userTasksArr.sort(getSort('down', className));
     }
     setUserTasks(userTasksArr);
   };

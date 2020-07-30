@@ -8,10 +8,11 @@ import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
 import DatePicker from '../../components/datePicker';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
-import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
+import { clearObjectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1MemberPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import imgChart from '../../assets/images/chart.png';
+
 import { statusThePageChart, statusThePageMember } from '../../redux/actions/statusThePage';
 
 class MemberPage extends Component {
@@ -81,7 +82,8 @@ class MemberPage extends Component {
         {
           label: 'Mobile phone',
           errorMessage: 'enter mobile phone',
-          placeholder: '+375 xx xxxxxxx',
+          // placeholder: '+375 xx xxxxxxx',
+          pattern: '2-[0-9]{3}-[0-9]{3}',
         },
         { required: true },
       ),
@@ -190,7 +192,7 @@ class MemberPage extends Component {
     }
   }
 
-  onHandlelInput = (controlName) => (event) => {
+  onHandleInput = (controlName) => (event) => {
     this.handleInput(event, controlName);
   };
 
@@ -222,7 +224,7 @@ class MemberPage extends Component {
     this.setState({ memberInput });
   };
 
-  hundleShowChart = () => {
+  handleShowChart = () => {
     this.props.statusThePageChart(true);
   };
 
@@ -236,7 +238,7 @@ class MemberPage extends Component {
     this.setState({ member });
   };
 
-  onHandlelSelect = (controlName) => (event) => {
+  onHandleSelect = (controlName) => (event) => {
     this.handleSelect(event, controlName);
   };
 
@@ -269,7 +271,7 @@ class MemberPage extends Component {
   buttonCloseClick = () => {
     const { directions, memberInput, member } = this.state;
     const { onRegisterClick, statusThePageMember } = this.props;
-    const res = clearOblectValue(memberInput, member);
+    const res = clearObjectValue(memberInput, member);
     this.setState({
       memberInput: res.objInputClear,
       member: res.objElemClear,
@@ -295,7 +297,7 @@ class MemberPage extends Component {
         notification = { title: `✔️ New member: ${member.name} ${member.lastName} was added` };
       }
       this.setState({ onNotification: true, notification });
-      const res = clearOblectValue(memberInput, member);
+      const res = clearObjectValue(memberInput, member);
       this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
       onRegisterClick(directions);
     } catch ({ message }) {
@@ -308,8 +310,8 @@ class MemberPage extends Component {
     const { memberSelect, member, disabled } = this.state;
     return Object.keys(memberSelect).map((controlName) => {
       const control = memberSelect[controlName];
-      let defaultValue = false;
-      let options = [];
+      let defaultValue;
+      let options;
       const { directions } = this.props;
       if (controlName === memberSelect.direction.name) {
         defaultValue = member.directionId;
@@ -327,7 +329,7 @@ class MemberPage extends Component {
           key={controlName}
           id={controlName}
           disabled={disabled}
-          onChange={this.onHandlelSelect(controlName)}
+          onChange={this.onHandleSelect(controlName)}
         />
       );
     });
@@ -361,7 +363,7 @@ class MemberPage extends Component {
                   {renderInputs(
                     memberInput,
                     disabled,
-                    this.onHandlelInput,
+                    this.onHandleInput,
                     this.onHandleFinishEditing,
                     this.onHandleFocus,
                     'form-group-member',
@@ -371,7 +373,7 @@ class MemberPage extends Component {
                   <DatePicker
                     date={birthDate}
                     id='birthDate'
-                    label='Bith date'
+                    label='Birth date'
                     disabled={disabled}
                     onChange={this.onHandleChangeDate('birthDate')}
                   />
@@ -395,7 +397,7 @@ class MemberPage extends Component {
                   <Button className='btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
                 </div>
                 <div className='chart_wrap'>
-                  <div className='imgMain-wrap' onClick={this.hundleShowChart}>
+                  <div className='imgMain-wrap' onClick={this.handleShowChart}>
                     <img src={imgChart} alt='chart icon' />
                   </div>
                 </div>
@@ -410,12 +412,14 @@ class MemberPage extends Component {
 }
 
 MemberPage.propTypes = {
-  member: PropTypes.arrayOf(PropTypes.object).isRequired,
-  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string.isRequired,
-  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onRegisterClick: PropTypes.func.isRequired,
   isMemberPageOpen: PropTypes.bool.isRequired,
+  statusThePageChart: PropTypes.func.isRequired,
+  statusThePageMember: PropTypes.func.isRequired,
+  member: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
 const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => ({

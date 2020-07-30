@@ -6,7 +6,7 @@ import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
 import Button from '../../components/UI/button';
 import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
-import { clearOblectValue, updateInput, renderInputs } from '../helpersPage';
+import { clearObjectValue, updateInput, renderInputs } from '../helpersPage';
 import { h1TaskPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import ErrorIndicator from '../../components/errorIndicator';
@@ -140,7 +140,7 @@ class TaskPage extends Component {
     return members;
   };
 
-  onHandlelInput = (controlName) => (event) => {
+  onHandleInput = (controlName) => (event) => {
     this.handleInput(event, controlName);
   };
 
@@ -258,7 +258,7 @@ class TaskPage extends Component {
       this.setState({ onNotification: true, notification: { title: `❗️ ${message}`, status: 'error' } });
     }
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
-    const { objInputClear, objElemClear } = clearOblectValue(taskInput, task);
+    const { objInputClear, objElemClear } = clearObjectValue(taskInput, task);
     this.setState({ taskInput: objInputClear, task: objElemClear, taskId: '', members: [] });
     onCreateTaskClick();
     statusThePageTask();
@@ -267,7 +267,7 @@ class TaskPage extends Component {
   buttonCloseClick = () => {
     const { task, taskInput } = this.state;
     const { onCreateTaskClick, statusThePageTask } = this.props;
-    const { objInputClear, objElemClear } = clearOblectValue(taskInput, task);
+    const { objInputClear, objElemClear } = clearObjectValue(taskInput, task);
     this.setState({
       taskInput: objInputClear,
       task: objElemClear,
@@ -334,7 +334,7 @@ class TaskPage extends Component {
                     {renderInputs(
                       taskInput,
                       disabled,
-                      this.onHandlelInput,
+                      this.onHandleInput,
                       this.onHandleFinishEditing,
                       this.onHandleFocus,
                     )}

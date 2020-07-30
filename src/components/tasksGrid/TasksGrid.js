@@ -6,7 +6,7 @@ import DisplayNotification from '../displayNotification';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { deleteAllElements, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { deleteAllElements, getDate, getSort } from '../helpersComponents';
 import { headerTasksGrid, h1TaskPage, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme, withFetchService } from '../../hoc';
 import Cell from '../UI/cell/Cell';
@@ -80,9 +80,9 @@ class TasksGrid extends Component {
     classList.toggle('active');
     const [, className] = classList;
     if (classList.value.includes('up')) {
-      tasks.sort(getSortUp(className));
+      tasks.sort(getSort('up', className));
     } else {
-      tasks.sort(getSortDown(className));
+      tasks.sort(getSort('down', className));
     }
     this.setState(tasks);
   };

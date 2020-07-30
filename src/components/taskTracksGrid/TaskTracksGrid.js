@@ -11,7 +11,7 @@ import { withTheme, withRole, withFetchService } from '../../hoc';
 import { statusThePageTrack, statusThePageTask } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
-import { updateDataMemberProgress, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { updateDataMemberProgress, getDate, getSort } from '../helpersComponents';
 import { headerTaskTrackGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 
 class TaskTracksGrid extends Component {
@@ -69,9 +69,9 @@ class TaskTracksGrid extends Component {
     classList.toggle('active');
     const [, classNameParent, classNameChild] = classList;
     if (classList.value.includes('up')) {
-      tracks.sort(getSortUp(classNameParent, classNameChild));
+      tracks.sort(getSort('up', classNameParent, classNameChild));
     } else {
-      tracks.sort(getSortDown(classNameParent, classNameChild));
+      tracks.sort(getSort('down', classNameParent, classNameChild));
     }
     this.setState({ tracks });
   };

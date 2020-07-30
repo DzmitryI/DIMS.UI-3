@@ -14,8 +14,10 @@ TextArea.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
   disabled: PropTypes.bool,
-  value: PropTypes.string,
   rows: PropTypes.string,
+  className: PropTypes.string,
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 

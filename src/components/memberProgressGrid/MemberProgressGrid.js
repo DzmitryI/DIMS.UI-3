@@ -7,7 +7,7 @@ import update from 'immutability-helper';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { updateDataMemberProgress, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { updateDataMemberProgress, getDate, getSort } from '../helpersComponents';
 import { headerMemberProgressGrid, h1TaskPage, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
@@ -47,9 +47,9 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
     classList.toggle('active');
     const [, classNameParent, classNameChild] = classList;
     if (classList.value.includes('up')) {
-      memberProgressArr.sort(getSortUp(classNameParent, classNameChild));
+      memberProgressArr.sort(getSort('up', classNameParent, classNameChild));
     } else {
-      memberProgressArr.sort(getSortDown(classNameParent, classNameChild));
+      memberProgressArr.sort(getSort('down', classNameParent, classNameChild));
     }
     setMemberProgresses(memberProgressArr);
   };

@@ -5,7 +5,7 @@ import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
 import Backdrop from '../../components/UI/backdrop';
 import DatePicker from '../../components/datePicker';
-import { clearOblectValue } from '../helpersPage';
+import { clearObjectValue } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
@@ -82,7 +82,7 @@ class TaskTrackPage extends Component {
   buttonCloseClick = () => {
     const { taskTrack, taskId } = this.state;
     const { onTrackClick, statusThePageTrack } = this.props;
-    const res = clearOblectValue({}, taskTrack);
+    const res = clearObjectValue({}, taskTrack);
     this.setState({
       taskTrack: res.objElemClear,
       disabled: false,
@@ -110,7 +110,7 @@ class TaskTrackPage extends Component {
     }
     this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
-    const res = clearOblectValue({}, taskTrack);
+    const res = clearObjectValue({}, taskTrack);
     this.setState({ taskTrack: res.objElemClear, taskTrackId: null });
     onTrackClick(taskId);
     statusThePageTrack();
@@ -151,7 +151,7 @@ class TaskTrackPage extends Component {
                     id='trackProgress'
                     type='number'
                     value={trackProgress}
-                    valid={true}
+                    valid
                     touched={false}
                     label='Progress (%)'
                     disabled={disabled}

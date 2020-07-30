@@ -12,24 +12,26 @@ const HeaderTable = ({ arr, email, onClick }) => {
 
   const renderItems = (headers, role) => {
     return headers.map((header, index) => {
+      let { name, className } = header;
       let sortSpan = false;
-      if (!role && header.name === 'Track') {
-        header.name = '';
-      } else if (!role && header.name === 'Available only for Admin') {
-        header.name = 'track';
+      if (!role && name === 'Track') {
+        name = '';
+      } else if (!role && name === 'Available only for Admin') {
+        name = 'track';
       }
-      if (header.name.length && !set.has(header.name)) {
+      if (name.length && !set.has(name)) {
         sortSpan = true;
       }
       return (
-        <th key={header.name + index} className={header.name.toLowerCase()}>
-          {header.name}&nbsp;
+        <th key={name + index} className={name.toLowerCase()}>
+          {header.name}
+          &nbsp;
           {sortSpan ? (
             <>
-              <span className={`up ${header.className}`} onClick={onClick}>
+              <span className={`up ${className}`} onClick={onClick}>
                 &#9650;
               </span>
-              <span className={`down ${header.className}`} onClick={onClick}>
+              <span className={`down ${className}`} onClick={onClick}>
                 &#9660;
               </span>
             </>
@@ -47,6 +49,8 @@ HeaderTable.defaultProps = {
 
 HeaderTable.propTypes = {
   arr: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  email: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
 };
 
 export default withRole(HeaderTable);

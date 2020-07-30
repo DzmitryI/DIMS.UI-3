@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { LineChart, AreaChart, Line, Area, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import PropTypes from 'prop-types';
 import Backdrop from '../../components/UI/backdrop';
 import { statusThePageChart } from '../../redux/actions/statusThePage';
-import { LineChart, AreaChart, Line, Area, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { updateDataMemberChart, getAllPointsForPeriod } from '../../components/helpersComponents';
 import Spinner from '../../components/spinner';
 import Radio from '../../components/UI/radio';
@@ -119,6 +120,11 @@ class Chart extends Component {
     );
   }
 }
+
+Chart.propTypes = {
+  isChartOpen: PropTypes.bool.isRequired,
+  statusThePageChart: PropTypes.func.isRequired,
+};
 
 const mapStateToProps = ({ statusThePage: { isChartOpen } }) => ({
   isChartOpen,
