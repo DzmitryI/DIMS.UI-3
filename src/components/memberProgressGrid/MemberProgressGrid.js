@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-wrap-multilines */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -14,31 +14,31 @@ import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 import { statusThePageTask } from '../../redux/actions/statusThePage';
 
-const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, theme }) => {
+const MemberProgressGrid = ({ userId, title, onTaskClick, statusPageTask, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setMemberProgresses(await updateDataMemberProgress(userId));
-        setLoading(false);
-      } catch ({ message }) {
-        setLoading(false);
-        setError(true);
-        setErrorMessage(message);
-      }
-    };
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(false);
+    try {
+      setMemberProgresses(await updateDataMemberProgress(userId));
+    } catch ({ message }) {
+      setError(true);
+      setErrorMessage(message);
+    }
   }, [userId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onShowClick = ({ target }) => {
     const result = memberProgresses.find((memberProgress) => memberProgress.userTaskTrack.taskTrackId === target.id);
     const { task } = result;
     onTaskClick(h1TaskPage.get('Detail'), task);
-    statusThePageTask(true);
+    statusPageTask(true);
   };
 
   const handleSortClick = ({ target: { classList } }) => {
@@ -127,12 +127,13 @@ MemberProgressGrid.propTypes = {
   userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   onTaskClick: PropTypes.func.isRequired,
+  statusPageTask: PropTypes.func.isRequired,
   theme: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageTask: (status) => dispatch(statusThePageTask(status)),
+    statusPageTask: (status) => dispatch(statusThePageTask(status)),
   };
 };
 

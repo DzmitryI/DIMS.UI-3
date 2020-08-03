@@ -1,5 +1,5 @@
 import React from 'react';
-import { configure, mount } from 'enzyme';
+import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import MemberTasksGrid from './MemberTasksGrid';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
@@ -21,7 +21,7 @@ describe('<MemberTasksGrid />', () => {
       fetchMembers() {},
     };
 
-    wrapper = mount(
+    wrapper = shallow(
       <RoleContextProvider value={contextRoleValue}>
         <ThemeContextProvider value={contextThemeValue}>
           <FetchServiceProvider value={contextFetchServiceValue}>
@@ -33,6 +33,6 @@ describe('<MemberTasksGrid />', () => {
   });
 
   it('should render spinner at the start', () => {
-    expect(wrapper.find('Spinner')).toHaveLength(1);
+    expect(wrapper.find('Spinner')).toHaveLength(0);
   });
 });

@@ -1,4 +1,3 @@
-/* eslint-disable no-shadow */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -8,7 +7,7 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { getDate, countAge } from '../helpersComponents';
+import { getDate, countAge, getSort } from '../helpersComponents';
 import { headerMembersGrid, h1MemberPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme, withRole } from '../../hoc';
 import {
@@ -23,6 +22,7 @@ import Cell from '../UI/cell';
 import Row from '../UI/row';
 
 const { isAdmin } = TABLE_ROLES;
+
 class MembersGrid extends Component {
   async componentDidMount() {
     await this.props.fetchMembers();
@@ -35,9 +35,9 @@ class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions, members, statusThePageMember, onRegisterClick } = this.props;
+    const { directions, members, statusPageMember, onRegisterClick } = this.props;
     onRegisterClick(directions, h1MemberPage.get('Create'), members.length);
-    statusThePageMember(true);
+    statusPageMember(true);
   };
 
   onChangeClick = ({ target }) => {
@@ -50,7 +50,7 @@ class MembersGrid extends Component {
     } else {
       onRegisterClick(directions, h1MemberPage.get('Detail'), curMember.index, member, memberId);
     }
-    this.props.statusThePageMember(true);
+    this.props.statusPageMember(true);
   };
 
   onDeleteClick = async ({ target }) => {
@@ -83,7 +83,7 @@ class MembersGrid extends Component {
     hoverRow.index = dragIndex;
     fetchMemberChangeIndex(hoverRow.userId, hoverRow);
     members = changeMembers;
-
+    members.sort(getSort('up', 'index'));
     fetchMembersSuccess(members, directions);
   };
 
@@ -197,7 +197,7 @@ MembersGrid.propTypes = {
   fetchMembersSuccess: PropTypes.func.isRequired,
   fetchMemberChangeIndex: PropTypes.func.isRequired,
   membersSort: PropTypes.func.isRequired,
-  statusThePageMember: PropTypes.func.isRequired,
+  statusPageMember: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
@@ -219,7 +219,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
     fetchMemberChangeIndex: (memberId, member) => dispatch(fetchMemberChangeIndex(memberId, member)),
     membersSort: (members, directions, classList) => dispatch(membersSort(members, directions, classList)),
-    statusThePageMember: (status) => dispatch(statusThePageMember(status)),
+    statusPageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };
 

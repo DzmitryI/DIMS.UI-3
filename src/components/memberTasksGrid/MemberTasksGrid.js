@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -24,7 +24,7 @@ const MemberTasksGrid = ({
   fetchService,
   theme,
   email,
-  statusThePageTrack,
+  statusPageTrack,
 }) => {
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,20 +35,21 @@ const MemberTasksGrid = ({
   const { isAdmin, isMentor } = TABLE_ROLES;
   const role = email === isAdmin || email === isMentor;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setUserTasks(await updateDataMemberTasks(userId));
-        setLoading(false);
-        setOnNotification(false);
-      } catch ({ message }) {
-        setLoading(false);
-        setError(true);
-        setErrorMessage(message);
-      }
-    };
-    fetchData();
+  const fetchData = useCallback(async () => {
+    try {
+      setUserTasks(await updateDataMemberTasks(userId));
+      setLoading(false);
+      setOnNotification(false);
+    } catch ({ message }) {
+      setLoading(false);
+      setError(true);
+      setErrorMessage(message);
+    }
   }, [userId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onTrackClickHandler = async ({ target }) => {
     const userTaskId = target.closest('tr').id;
@@ -63,7 +64,7 @@ const MemberTasksGrid = ({
       setErrorMessage(message);
     }
 
-    statusThePageTrack(true);
+    statusPageTrack(true);
   };
 
   const handleSortClick = ({ target: { classList } }) => {
@@ -197,18 +198,19 @@ const MemberTasksGrid = ({
 };
 
 MemberTasksGrid.propTypes = {
-  userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  onTrackClick: PropTypes.func.isRequired,
-  onOpenTaskTracksClick: PropTypes.func.isRequired,
-  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   theme: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
+  onTrackClick: PropTypes.func.isRequired,
+  statusPageTrack: PropTypes.func.isRequired,
+  onOpenTaskTracksClick: PropTypes.func.isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageTrack: (status) => dispatch(statusThePageTrack(status)),
+    statusPageTrack: (status) => dispatch(statusThePageTrack(status)),
   };
 };
 

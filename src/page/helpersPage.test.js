@@ -1,6 +1,6 @@
 import { clearObjectValue } from './helpersPage';
 
-describe('clearOblectValue', () => {
+describe('clearObjectValue', () => {
   const taskInput = {};
   const task = {
     description: 'description task 1',

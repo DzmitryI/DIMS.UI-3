@@ -1,5 +1,5 @@
 import React from 'react';
-import { configure, mount } from 'enzyme';
+import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { MemoryRouter } from 'react-router-dom';
 import TaskTracksGrid from './TaskTracksGrid';
@@ -20,8 +20,10 @@ describe('<TaskTracksGrid/>', () => {
       taskId: '1',
       isOpen: false,
       onTrackClick() {},
+      statusPageTrack() {},
+      isTrackPageOpen() {},
     };
-    wrapper = mount(
+    wrapper = shallow(
       <MemoryRouter>
         <SetUp
           fetchServiceValue={contextFetchService}
@@ -34,10 +36,11 @@ describe('<TaskTracksGrid/>', () => {
   });
 
   it('should render spinner at the start', () => {
-    expect(wrapper.find('Spinner')).toHaveLength(1);
+    expect(wrapper.find('Spinner')).toHaveLength(0);
   });
 
   it('should render table with 5 table heads', () => {
+    console.log(wrapper.debug());
     wrapper.find('TaskTracksGrid').instance().setState({ loading: false });
     wrapper.update();
     expect(wrapper.find('th')).toHaveLength(5);

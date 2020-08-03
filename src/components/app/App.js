@@ -34,7 +34,7 @@ class App extends Component {
     curMember: [],
     curTask: [],
     track: {},
-    userId: null,
+    userId: '',
     taskId: '',
     userTaskId: '',
     theme: 'light',
@@ -50,6 +50,7 @@ class App extends Component {
 
   async componentDidUpdate(prevProps) {
     const { email } = this.props;
+
     const fetchService = new FetchFirebase();
     if (email !== prevProps.email) {
       if (!email) {

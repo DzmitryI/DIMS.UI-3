@@ -18,6 +18,8 @@ function clearObjectValue(objInput, objElem) {
       objElemClear[key] = 'sex1';
     } else if (['startDate', 'deadlineDate', 'birthDate', 'trackDate'].includes(key)) {
       objElemClear[key] = new Date();
+    } else if (key === 'trackProgress') {
+      objElemClear[key] = 0;
     } else {
       objElemClear[key] = '';
     }

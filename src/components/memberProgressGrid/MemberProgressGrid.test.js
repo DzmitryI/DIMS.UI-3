@@ -1,5 +1,5 @@
 import React from 'react';
-import { configure, mount } from 'enzyme';
+import { configure, shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import MemberProgressGrid from './MemberProgressGrid';
 import { ThemeContextProvider } from '../context';
@@ -17,8 +17,9 @@ describe('<MemberProgressGrid/>', () => {
       userId: '1',
       title: 'test',
       onTaskClick() {},
+      statusPageTask() {},
     };
-    wrapper = mount(
+    wrapper = shallow(
       <ThemeContextProvider value={contextThemeValue}>
         <MemberProgressGrid {...props} />
       </ThemeContextProvider>,
@@ -26,6 +27,6 @@ describe('<MemberProgressGrid/>', () => {
   });
 
   it('should render spinner at the start', () => {
-    expect(wrapper.find('Spinner')).toHaveLength(1);
+    expect(wrapper.find('Spinner')).toHaveLength(0);
   });
 });

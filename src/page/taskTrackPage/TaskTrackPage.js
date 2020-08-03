@@ -29,8 +29,7 @@ class TaskTrackPage extends Component {
     loading: true,
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { index } = nextProps;
+  static getDerivedStateFromProps({ index }, prevState) {
     return {
       taskTrack: { ...prevState.taskTrack, index },
     };
@@ -81,7 +80,7 @@ class TaskTrackPage extends Component {
 
   buttonCloseClick = () => {
     const { taskTrack, taskId } = this.state;
-    const { onTrackClick, statusThePageTrack } = this.props;
+    const { onTrackClick, statusPageTrack } = this.props;
     const res = clearObjectValue({}, taskTrack);
     this.setState({
       taskTrack: res.objElemClear,
@@ -89,14 +88,14 @@ class TaskTrackPage extends Component {
       loading: true,
     });
     onTrackClick(taskId);
-    statusThePageTrack();
+    statusPageTrack();
   };
 
   createTaskTrackHandler = async () => {
-    const { taskTrackId, taskTrack, taskId } = this.state;
-    const { fetchService, userTaskId, onTrackClick, statusThePageTrack } = this.props;
-    taskTrack.userTaskId = userTaskId;
     let notification = '';
+    const { taskTrackId, taskTrack, taskId } = this.state;
+    const { fetchService, userTaskId, onTrackClick, statusPageTrack } = this.props;
+    taskTrack.userTaskId = userTaskId;
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
       if (response) {
@@ -113,7 +112,7 @@ class TaskTrackPage extends Component {
     const res = clearObjectValue({}, taskTrack);
     this.setState({ taskTrack: res.objElemClear, taskTrackId: null });
     onTrackClick(taskId);
-    statusThePageTrack();
+    statusPageTrack();
   };
 
   render() {
@@ -161,7 +160,7 @@ class TaskTrackPage extends Component {
                     min='0'
                   />
                 </div>
-                <TextArea value={trackNote} onChange={this.handleChange} label='Note' />
+                <TextArea value={trackNote} onChange={this.handleChange} disabled={disabled} label='Note' />
                 <div className='form-group row'>
                   <Button
                     className='btn-add'
@@ -185,11 +184,13 @@ class TaskTrackPage extends Component {
 TaskTrackPage.propTypes = {
   title: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
+  onTrackClick: PropTypes.func.isRequired,
   userTaskId: PropTypes.string.isRequired,
   isTrackPageOpen: PropTypes.bool.isRequired,
+  statusPageTrack: PropTypes.func.isRequired,
+  index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   track: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
-  onTrackClick: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => ({
@@ -198,7 +199,7 @@ const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageTrack: () => dispatch(statusThePageTrack()),
+    statusPageTrack: () => dispatch(statusThePageTrack()),
   };
 };
 

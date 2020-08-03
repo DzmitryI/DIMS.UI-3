@@ -23,25 +23,25 @@ class TasksGrid extends Component {
     errorMessage: '',
   };
 
-  componentDidMount() {
-    this.fetchTasks();
+  async componentDidMount() {
+    await this.fetchTasks();
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (this.props.isTask !== prevProps.isTask) {
-      this.fetchTasks();
+      await this.fetchTasks();
     }
   }
 
   onCreateTaskClick = () => {
-    const { onCreateTaskClick, statusThePageTask } = this.props;
+    const { onCreateTaskClick, statusPageTask } = this.props;
     const { tasks } = this.state;
     onCreateTaskClick(tasks.length, h1TaskPage.get('Create'));
-    statusThePageTask(true);
+    statusPageTask(true);
   };
 
   onChangeClick = ({ target }) => {
-    const { onCreateTaskClick, statusThePageTask } = this.props;
+    const { onCreateTaskClick, statusPageTask } = this.props;
     const taskId = target.closest('tr').id;
     const task = this.state.tasks.filter((curTask) => curTask.taskId === taskId);
     const [curTask] = task;
@@ -50,7 +50,7 @@ class TasksGrid extends Component {
     } else {
       onCreateTaskClick(curTask.index, h1TaskPage.get('Detail'), task);
     }
-    statusThePageTask(true);
+    statusPageTask(true);
     this.setState({
       loading: true,
     });
@@ -62,12 +62,12 @@ class TasksGrid extends Component {
     const { name } = this.state.tasks.find((task) => task.taskId === taskId);
     try {
       const response = await fetchService.delTask(taskId);
-      deleteAllElements('taskId', taskId);
+      await deleteAllElements('taskId', taskId);
       if (response) {
         const notification = { title: `${name} was deleted!` };
         this.setState({ onNotification: true, notification });
         setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
-        this.fetchTasks();
+        await this.fetchTasks();
       }
     } catch ({ message }) {
       this.setState({ loading: false, error: true, errorMessage: message });
@@ -99,6 +99,7 @@ class TasksGrid extends Component {
     } catch ({ message }) {
       this.setState({ error: true, errorMessage: message });
     }
+    tasks.sort(getSort('up', 'index'));
     this.setState({ tasks });
   };
 
@@ -179,11 +180,12 @@ TasksGrid.propTypes = {
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   theme: PropTypes.string.isRequired,
   onCreateTaskClick: PropTypes.func.isRequired,
+  statusPageTask: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageTask: (status) => dispatch(statusThePageTask(status)),
+    statusPageTask: (status) => dispatch(statusThePageTask(status)),
   };
 };
 

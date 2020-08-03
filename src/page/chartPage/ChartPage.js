@@ -41,7 +41,7 @@ class Chart extends Component {
   };
 
   render() {
-    const { isChartOpen, statusThePageChart } = this.props;
+    const { isChartOpen, statusPageChart } = this.props;
     const { data, allMemberTasks, loading, chart, error, errorMessage } = this.state;
     const isLineChart = chart === 'lineChart';
     return (
@@ -57,7 +57,7 @@ class Chart extends Component {
                   <ErrorIndicator errorMessage={errorMessage} />
                 ) : (
                   <>
-                    <div className='icon-close' onClick={statusThePageChart}>
+                    <div className='icon-close' onClick={statusPageChart}>
                       &#10006;
                     </div>
                     <>
@@ -123,7 +123,7 @@ class Chart extends Component {
 
 Chart.propTypes = {
   isChartOpen: PropTypes.bool.isRequired,
-  statusThePageChart: PropTypes.func.isRequired,
+  statusPageChart: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ statusThePage: { isChartOpen } }) => ({
@@ -131,7 +131,7 @@ const mapStateToProps = ({ statusThePage: { isChartOpen } }) => ({
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return { statusThePageChart: () => dispatch(statusThePageChart()) };
+  return { statusPageChart: () => dispatch(statusThePageChart()) };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chart);

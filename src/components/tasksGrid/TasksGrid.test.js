@@ -19,6 +19,7 @@ describe('<TasksGrid />', () => {
     const props = {
       isTask: true,
       onCreateTaskClick() {},
+      statusPageTask() {},
     };
     wrapper = mount(
       <ThemeContextProvider value={contextThemeValue}>
@@ -27,9 +28,11 @@ describe('<TasksGrid />', () => {
         </FetchServiceProvider>
       </ThemeContextProvider>,
     );
+    console.log(wrapper.debug());
   });
 
   it('should render spinner at the start', () => {
+    console.log(wrapper.debug());
     expect(wrapper.find(Spinner)).toHaveLength(1);
   });
 

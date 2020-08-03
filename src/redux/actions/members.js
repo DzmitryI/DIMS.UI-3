@@ -1,4 +1,4 @@
-import FetchFirabase from '../../services/fetchFirebase';
+import FetchFirebase from '../../services/fetchFirebase';
 import { deleteAllElements, getSort } from '../../components/helpersComponents';
 import {
   FETCH_MEMBERS_START,
@@ -9,7 +9,7 @@ import {
   FETCH_MEMBER_CHANGE_INDEX,
 } from './actionTypes';
 
-const fetchService = new FetchFirabase();
+const fetchService = new FetchFirebase();
 
 export function fetchMembers() {
   return async (dispatch) => {

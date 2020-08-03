@@ -26,10 +26,10 @@ class Registration extends PureComponent {
       password: createControl(
         {
           label: 'Password',
-          errorMessage: 'enter password, min lenght 6 simbols',
+          errorMessage: 'enter password, min length 6 symbols',
           type: 'password',
         },
-        { required: true, minLenght: 6 },
+        { required: true, minLength: 6 },
       ),
     },
   };
@@ -45,7 +45,7 @@ class Registration extends PureComponent {
     event.preventDefault();
   };
 
-  onHandlelInput = (controlName) => (event) => {
+  onHandleInput = (controlName) => (event) => {
     this.handleInput(event, controlName);
   };
 
@@ -77,9 +77,9 @@ class Registration extends PureComponent {
   };
 
   render() {
-    const { notification, onNotification, isRegistred } = this.props;
+    const { notification, onNotification, isRegistered } = this.props;
     const { isFormValid, authInput, disabled } = this.state;
-    if (isRegistred) {
+    if (isRegistered) {
       return <Redirect push to='/Auth' />;
     }
     return (
@@ -88,7 +88,7 @@ class Registration extends PureComponent {
         <div className='auth'>
           <ImageComponent className='auth-img' src={imgLogo} alt='logo' />
           <form onSubmit={this.submitHandler}>
-            {renderInputs(authInput, disabled, this.onHandlelInput, this.onHandleFinishEditing, this.onHandleFocus)}
+            {renderInputs(authInput, disabled, this.onHandleInput, this.onHandleFinishEditing, this.onHandleFocus)}
             <br />
             <div className='form-group row'>
               <Button
@@ -108,15 +108,15 @@ class Registration extends PureComponent {
 
 Registration.propTypes = {
   onNotification: PropTypes.bool.isRequired,
-  isRegistred: PropTypes.bool.isRequired,
+  isRegistered: PropTypes.bool.isRequired,
   notification: PropTypes.objectOf(PropTypes.string).isRequired,
   auth: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ authData: { onNotification, notification, isRegistred } }) => ({
+const mapStateToProps = ({ authData: { onNotification, notification, isRegistered } }) => ({
   onNotification,
   notification,
-  isRegistred,
+  isRegistered,
 });
 
 const mapDispatchToProps = (dispatch) => {
