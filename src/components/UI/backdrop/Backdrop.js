@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 import * as actions from '../../../redux/actions/statusThePage';
 
 const Backdrop = ({
@@ -22,6 +23,14 @@ const Backdrop = ({
     }
   }
   return <div className={`backdrop ${className}`} onClick={onClick} />;
+};
+
+Backdrop.propTypes = {
+  statusThePageChart: PropTypes.func.isRequired,
+  statusThePageMember: PropTypes.func.isRequired,
+  statusThePageTask: PropTypes.func.isRequired,
+  statusThePageTrack: PropTypes.func.isRequired,
+  className: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => {

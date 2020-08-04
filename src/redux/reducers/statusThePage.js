@@ -3,7 +3,7 @@ import {
   STATUS_THE_PAGE_MEMBER,
   STATUS_THE_PAGE_TASK,
   STATUS_THE_PAGE_TRACK,
-} from '../actions/actionTypes.js';
+} from '../actions/actionTypes';
 
 const initialState = {
   isChartOpen: false,

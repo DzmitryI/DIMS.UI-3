@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-wrap-multilines */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -7,38 +7,38 @@ import update from 'immutability-helper';
 import Spinner from '../spinner';
 import HeaderTable from '../UI/headerTable';
 import ErrorIndicator from '../errorIndicator';
-import { updateDataMemberProgress, getDate, getSortUp, getSortDown } from '../helpersComponents';
+import { updateDataMemberProgress, getDate, getSort } from '../helpersComponents';
 import { headerMemberProgressGrid, h1TaskPage, handleSortEnd } from '../helpersComponentPageMaking';
 import { withTheme } from '../../hoc';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 import { statusThePageTask } from '../../redux/actions/statusThePage';
 
-const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, theme }) => {
+const MemberProgressGrid = ({ userId, title, onTaskClick, statusPageTask, theme }) => {
   const [memberProgresses, setMemberProgresses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setMemberProgresses(await updateDataMemberProgress(userId));
-        setLoading(false);
-      } catch ({ message }) {
-        setLoading(false);
-        setError(true);
-        setErrorMessage(message);
-      }
-    };
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(false);
+    try {
+      setMemberProgresses(await updateDataMemberProgress(userId));
+    } catch ({ message }) {
+      setError(true);
+      setErrorMessage(message);
+    }
   }, [userId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onShowClick = ({ target }) => {
     const result = memberProgresses.find((memberProgress) => memberProgress.userTaskTrack.taskTrackId === target.id);
     const { task } = result;
     onTaskClick(h1TaskPage.get('Detail'), task);
-    statusThePageTask(true);
+    statusPageTask(true);
   };
 
   const handleSortClick = ({ target: { classList } }) => {
@@ -47,9 +47,9 @@ const MemberProgressGrid = ({ userId, title, onTaskClick, statusThePageTask, the
     classList.toggle('active');
     const [, classNameParent, classNameChild] = classList;
     if (classList.value.includes('up')) {
-      memberProgressArr.sort(getSortUp(classNameParent, classNameChild));
+      memberProgressArr.sort(getSort('up', classNameParent, classNameChild));
     } else {
-      memberProgressArr.sort(getSortDown(classNameParent, classNameChild));
+      memberProgressArr.sort(getSort('down', classNameParent, classNameChild));
     }
     setMemberProgresses(memberProgressArr);
   };
@@ -127,12 +127,13 @@ MemberProgressGrid.propTypes = {
   userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   onTaskClick: PropTypes.func.isRequired,
+  statusPageTask: PropTypes.func.isRequired,
   theme: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageTask: (status) => dispatch(statusThePageTask(status)),
+    statusPageTask: (status) => dispatch(statusThePageTask(status)),
   };
 };
 

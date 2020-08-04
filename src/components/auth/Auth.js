@@ -31,10 +31,10 @@ class Auth extends PureComponent {
       password: createControl(
         {
           label: 'Password',
-          errorMessage: 'enter password, min lenght 6 simbols',
+          errorMessage: 'enter password, min length 6 symbols',
           type: 'password',
         },
-        { required: true, minLenght: 6 },
+        { required: true, minLength: 6 },
       ),
     },
   };
@@ -54,7 +54,7 @@ class Auth extends PureComponent {
     event.preventDefault();
   };
 
-  onHandlelInput = (controlName) => (event) => {
+  onHandleInput = (controlName) => (event) => {
     this.handleInput(event, controlName);
   };
 
@@ -94,25 +94,25 @@ class Auth extends PureComponent {
         <div className='auth'>
           <ImageComponent className='auth-img' src={imgLogo} alt='logo' />
           <form onSubmit={this.submitHandler}>
-            {renderInputs(authInput, disabled, this.onHandlelInput, this.onHandleFinishEditing, this.onHandleFocus)}
+            {renderInputs(authInput, disabled, this.onHandleInput, this.onHandleFinishEditing, this.onHandleFocus)}
             <br />
             <div className=' row'>
               <Button
                 id='google'
                 className='btn-auth'
-                name={<ButtonIcon src={imgGoogle} name={'Google'} />}
+                name={<ButtonIcon src={imgGoogle} name='Google' />}
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
                 id='github'
                 className='btn-auth'
-                name={<ButtonIcon src={imgGithub} name={'Github'} />}
+                name={<ButtonIcon src={imgGithub} name='Github' />}
                 onClick={this.loginHandlerWithGoogle}
               />
               <Button
                 id='twitter'
                 className='btn-auth'
-                name={<ButtonIcon src={imgTwitter} name={'Twitter'} />}
+                name={<ButtonIcon src={imgTwitter} name='Twitter' />}
                 onClick={this.loginHandlerWithGoogle}
               />
             </div>
@@ -133,6 +133,7 @@ Auth.propTypes = {
   onNotification: PropTypes.bool.isRequired,
   notification: PropTypes.objectOf(PropTypes.string).isRequired,
   auth: PropTypes.func.isRequired,
+  authOtherService: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ authData: { onNotification, notification } }) => ({

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import MembersGrid from '../membersGrid';
@@ -20,7 +21,6 @@ import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
 import { autoLogin } from '../../redux/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
-import { bindActionCreators } from 'redux';
 
 class App extends Component {
   state = {
@@ -34,7 +34,7 @@ class App extends Component {
     curMember: [],
     curTask: [],
     track: {},
-    userId: null,
+    userId: '',
     taskId: '',
     userTaskId: '',
     theme: 'light',
@@ -50,6 +50,7 @@ class App extends Component {
 
   async componentDidUpdate(prevProps) {
     const { email } = this.props;
+
     const fetchService = new FetchFirebase();
     if (email !== prevProps.email) {
       if (!email) {
@@ -149,7 +150,6 @@ class App extends Component {
       index,
     } = this.state;
     const { isAuthenticated, email } = this.props;
-
     let routes = (
       <Switch>
         <Route path='/Auth' exact component={Auth} />

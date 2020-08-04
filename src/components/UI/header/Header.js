@@ -13,7 +13,7 @@ import imgMain from '../../../assets/images/main.png';
 const Header = ({ isAuthenticated, email, theme, logout }) => {
   const { isAdmin, isMentor } = TABLE_ROLES;
   let arrLinks = [];
-  let arrDropDownMenu = [
+  const arrDropDownMenu = [
     { to: '/AboutApp', name: 'About app', click: null },
     { to: '/Auth', name: 'Logout', click: logout },
   ];

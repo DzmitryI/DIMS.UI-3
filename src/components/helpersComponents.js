@@ -9,29 +9,29 @@ const getDate = (date) => {
   return `${day.slice(0, 2)}.${month}.${year}`;
 };
 
-const getDateToComporation = (date) => {
+const getDateToComparison = (date) => {
   return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
 };
 
 const getAllPointsForPeriod = ({ startDate, deadlineDate }, memberProgresses) => {
-  const arrDatas = [];
+  const arrData = [];
   while (startDate.toISOString().slice(0, 10) <= deadlineDate.toISOString().slice(0, 10)) {
     const result = memberProgresses.filter(
-      (memberProgress) => getDateToComporation(new Date(memberProgress.trackDate)) === getDateToComporation(startDate),
+      (memberProgress) => getDateToComparison(new Date(memberProgress.trackDate)) === getDateToComparison(startDate),
     );
     const points = {};
     if (result.length) {
-      for (let value of result) {
+      for (const value of result) {
         points[value.name] = +value.trackProgress;
       }
-      arrDatas.push({
+      arrData.push({
         name: `${startDate.getDate()}/${startDate.getMonth()}`,
         ...points,
       });
     }
     startDate.setDate(startDate.getDate() + 1);
   }
-  return arrDatas;
+  return arrData;
 };
 
 const countAge = (value) => {
@@ -73,9 +73,9 @@ async function updateDataMemberProgress(userId = '', taskId = '') {
 }
 
 async function updateDataMemberChart(userId = '', taskId = '') {
-  let memberProgresses = [];
-  let allMemberTasks = new Set();
-  let arrDates = {
+  const memberProgresses = [];
+  const allMemberTasks = new Set();
+  const arrDates = {
     startDate: new Date(),
     deadlineDate: new Date(),
   };
@@ -112,18 +112,18 @@ async function updateDataMemberChart(userId = '', taskId = '') {
       }
     }
   }
-  for (let memberTask of allMemberTasks) {
-    const curProrgress = memberProgresses.filter((curMemberProgress) => curMemberProgress.name === memberTask);
-    curProrgress.sort(getSortUp('trackDate'));
-    let startDate = new Date(curProrgress[0].trackDate);
-    let { trackProgress, name } = curProrgress[0];
-    const finishDate = new Date(curProrgress[curProrgress.length - 1].trackDate);
+  for (const memberTask of allMemberTasks) {
+    const curProgress = memberProgresses.filter((curMemberProgress) => curMemberProgress.name === memberTask);
+    curProgress.sort(getSort('up', 'trackDate'));
+    const startDate = new Date(curProgress[0].trackDate);
+    let { trackProgress, name } = curProgress[0];
+    const finishDate = new Date(curProgress[curProgress.length - 1].trackDate);
     while (startDate.toISOString().slice(0, 10) <= finishDate.toISOString().slice(0, 10)) {
-      const res = curProrgress.filter((elem) => elem.trackDate.slice(0, 10) === startDate.toISOString().slice(0, 10));
+      const res = curProgress.filter((elem) => elem.trackDate.slice(0, 10) === startDate.toISOString().slice(0, 10));
       if (res.length) {
         trackProgress = res[0].trackProgress;
       } else {
-        memberProgresses.push({ trackProgress: trackProgress, name: name, trackDate: startDate.toISOString() });
+        memberProgresses.push({ trackProgress, name, trackDate: startDate.toISOString() });
       }
       const nextDay = startDate.getDate() + 1;
       startDate.setDate(nextDay);
@@ -183,63 +183,22 @@ async function deleteAllElements(id, element) {
   }
 }
 
-function getSortUp(param, param2 = null) {
+function getSort(sort, param, param2 = null) {
   if (!param2) {
-    return (a, b) => {
-      if (a[param] > b[param]) {
-        return 1;
-      } else if (a[param] < b[param]) {
-        return -1;
-      } else {
-        return 0;
-      }
-    };
-  } else {
-    return (a, b) => {
-      if (a[param][param2] > b[param][param2]) {
-        return 1;
-      } else if (a[param][param2] < b[param][param2]) {
-        return -1;
-      } else {
-        return 0;
-      }
-    };
+    return sort === 'up' ? (a, b) => (a[param] > b[param] ? 1 : -1) : (a, b) => (a[param] > b[param] ? -1 : 1);
   }
-}
-
-function getSortDown(param, param2 = null) {
-  if (!param2) {
-    return (a, b) => {
-      if (a[param] > b[param]) {
-        return -1;
-      } else if (a[param] < b[param]) {
-        return 1;
-      } else {
-        return 0;
-      }
-    };
-  } else {
-    return (a, b) => {
-      if (a[param][param2] > b[param][param2]) {
-        return -1;
-      } else if (a[param][param2] < b[param][param2]) {
-        return 1;
-      } else {
-        return 0;
-      }
-    };
-  }
+  return sort === 'up'
+    ? (a, b) => (a[param][param2] > b[param][param2] ? 1 : -1)
+    : (a, b) => (a[param][param2] > b[param][param2] ? -1 : 1);
 }
 
 export {
   getDate,
-  getDateToComporation,
   countAge,
   updateDataMemberProgress,
   updateDataMemberChart,
   updateDataMemberTasks,
   deleteAllElements,
-  getSortUp,
-  getSortDown,
+  getSort,
   getAllPointsForPeriod,
 };

@@ -10,8 +10,8 @@
   },
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "react/state-in-constructor": [false],
-    "react/destructuring-assignment": [false],
+    "react/state-in-constructor": [0],
+    "react/destructuring-assignment": [0],
     "react/jsx-wrap-multilines": ["error", {
       "declaration": "parens-new-line",
       "assignment": "parens-new-line",

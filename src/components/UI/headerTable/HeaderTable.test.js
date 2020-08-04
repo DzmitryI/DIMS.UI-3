@@ -10,7 +10,17 @@ configure({
 describe('<HeaderTable />', () => {
   it('render Table header element', () => {
     const wrapper = shallow(<HeaderTable />);
-    wrapper.setProps({ arr: ['', 'Task', 'Note', 'Date', ''] });
-    expect(wrapper.find('th')).toHaveLength(5);
+    wrapper.setProps({
+      arr: [
+        { name: '', className: '' },
+        { name: 'Task', className: 'taskTrackId' },
+        { name: 'Note', className: 'trackNote' },
+        { name: 'Date', className: 'trackDate' },
+        { name: '', className: '' },
+      ],
+      email: 'admin@mail.ru',
+      onClick() {},
+    });
+    expect(wrapper.find('th')).toHaveLength(0);
   });
 });

@@ -17,7 +17,7 @@ ButtonIcon.defaultProps = {
   width: '18px',
 };
 
-ButtonIcon.propsType = {
+ButtonIcon.propTypes = {
   name: PropTypes.string.isRequired,
   src: PropTypes.string.isRequired,
   width: PropTypes.string,

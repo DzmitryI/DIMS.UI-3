@@ -81,18 +81,18 @@ const TABLE_ROLES = {
   isMentor: 'mentor@mail.ru',
 };
 
-SetUp.propTypes = {
-  fetchServiceValue: PropTypes.oneOfType([PropTypes.object]).isRequired,
-  roleValue: PropTypes.string.isRequired,
-  themeValue: PropTypes.string.isRequired,
-  component: PropTypes.objectOf(PropTypes.object).isRequired,
-};
-
 const handleSortEnd = () => {
   const arrUpDown = [...document.querySelectorAll('.up'), ...document.querySelectorAll('.down')];
   [].forEach.call(arrUpDown, (col) => {
     col.classList.remove('active');
   });
+};
+
+SetUp.propTypes = {
+  fetchServiceValue: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  roleValue: PropTypes.string.isRequired,
+  themeValue: PropTypes.string.isRequired,
+  component: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 export {

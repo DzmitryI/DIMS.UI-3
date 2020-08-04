@@ -16,7 +16,7 @@ describe('<Registration />', () => {
     authData: {
       onNotification: false,
       notification: {},
-      isRegistred: false,
+      isRegistered: false,
     },
   };
 

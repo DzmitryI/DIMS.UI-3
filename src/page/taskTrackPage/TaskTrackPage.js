@@ -5,7 +5,7 @@ import DisplayNotification from '../../components/displayNotification';
 import Button from '../../components/UI/button';
 import Backdrop from '../../components/UI/backdrop';
 import DatePicker from '../../components/datePicker';
-import { clearOblectValue } from '../helpersPage';
+import { clearObjectValue } from '../helpersPage';
 import { h1TaskTrackPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
 import Spinner from '../../components/spinner';
@@ -29,8 +29,7 @@ class TaskTrackPage extends Component {
     loading: true,
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { index } = nextProps;
+  static getDerivedStateFromProps({ index }, prevState) {
     return {
       taskTrack: { ...prevState.taskTrack, index },
     };
@@ -81,22 +80,22 @@ class TaskTrackPage extends Component {
 
   buttonCloseClick = () => {
     const { taskTrack, taskId } = this.state;
-    const { onTrackClick, statusThePageTrack } = this.props;
-    const res = clearOblectValue({}, taskTrack);
+    const { onTrackClick, statusPageTrack } = this.props;
+    const res = clearObjectValue({}, taskTrack);
     this.setState({
       taskTrack: res.objElemClear,
       disabled: false,
       loading: true,
     });
     onTrackClick(taskId);
-    statusThePageTrack();
+    statusPageTrack();
   };
 
   createTaskTrackHandler = async () => {
-    const { taskTrackId, taskTrack, taskId } = this.state;
-    const { fetchService, userTaskId, onTrackClick, statusThePageTrack } = this.props;
-    taskTrack.userTaskId = userTaskId;
     let notification = '';
+    const { taskTrackId, taskTrack, taskId } = this.state;
+    const { fetchService, userTaskId, onTrackClick, statusPageTrack } = this.props;
+    taskTrack.userTaskId = userTaskId;
     if (!taskTrackId) {
       const response = await fetchService.setTaskTrack(taskTrack);
       if (response) {
@@ -110,10 +109,10 @@ class TaskTrackPage extends Component {
     }
     this.setState({ onNotification: true, notification });
     setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
-    const res = clearOblectValue({}, taskTrack);
+    const res = clearObjectValue({}, taskTrack);
     this.setState({ taskTrack: res.objElemClear, taskTrackId: null });
     onTrackClick(taskId);
-    statusThePageTrack();
+    statusPageTrack();
   };
 
   render() {
@@ -151,7 +150,7 @@ class TaskTrackPage extends Component {
                     id='trackProgress'
                     type='number'
                     value={trackProgress}
-                    valid={true}
+                    valid
                     touched={false}
                     label='Progress (%)'
                     disabled={disabled}
@@ -161,7 +160,7 @@ class TaskTrackPage extends Component {
                     min='0'
                   />
                 </div>
-                <TextArea value={trackNote} onChange={this.handleChange} label='Note' />
+                <TextArea value={trackNote} onChange={this.handleChange} disabled={disabled} label='Note' />
                 <div className='form-group row'>
                   <Button
                     className='btn-add'
@@ -185,11 +184,13 @@ class TaskTrackPage extends Component {
 TaskTrackPage.propTypes = {
   title: PropTypes.string.isRequired,
   taskId: PropTypes.string.isRequired,
+  onTrackClick: PropTypes.func.isRequired,
   userTaskId: PropTypes.string.isRequired,
   isTrackPageOpen: PropTypes.bool.isRequired,
+  statusPageTrack: PropTypes.func.isRequired,
+  index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   track: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.number, PropTypes.string])).isRequired,
-  onTrackClick: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => ({
@@ -198,7 +199,7 @@ const mapStateToProps = ({ statusThePage: { isTrackPageOpen } }) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    statusThePageTrack: () => dispatch(statusThePageTrack()),
+    statusPageTrack: () => dispatch(statusThePageTrack()),
   };
 };
 

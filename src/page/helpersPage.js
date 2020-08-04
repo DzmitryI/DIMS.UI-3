@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '../components/UI/input';
 
-function clearOblectValue(objInput, objElem) {
+function clearObjectValue(objInput, objElem) {
   const objInputClear = { ...objInput };
   const objElemClear = { ...objElem };
   Object.keys(objInputClear).forEach((key) => {
@@ -18,6 +18,8 @@ function clearOblectValue(objInput, objElem) {
       objElemClear[key] = 'sex1';
     } else if (['startDate', 'deadlineDate', 'birthDate', 'trackDate'].includes(key)) {
       objElemClear[key] = new Date();
+    } else if (key === 'trackProgress') {
+      objElemClear[key] = 0;
     } else {
       objElemClear[key] = '';
     }
@@ -67,4 +69,4 @@ function renderInputs(inputs, disabled, onChange, onBlur, onFocus, className = '
   });
 }
 
-export { clearOblectValue, updateInput, renderInputs };
+export { clearObjectValue, updateInput, renderInputs };

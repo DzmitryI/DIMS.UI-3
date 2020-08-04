@@ -1,6 +1,6 @@
-import { clearOblectValue } from './helpersPage';
+import { clearObjectValue } from './helpersPage';
 
-describe('clearOblectValue', () => {
+describe('clearObjectValue', () => {
   const taskInput = {};
   const task = {
     description: 'description task 1',
@@ -13,7 +13,7 @@ describe('clearOblectValue', () => {
   };
   const res = { objInputClear, objElemClear };
   it('clear object value', () => {
-    const value = clearOblectValue(taskInput, task);
+    const value = clearObjectValue(taskInput, task);
     expect(value).toEqual(res);
   });
 });
