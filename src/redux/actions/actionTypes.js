@@ -21,6 +21,7 @@ export const STATUS_THE_PAGE_TASK = 'STATUS_THE_PAGE_TASK';
 export const STATUS_THE_PAGE_TRACK = 'STATUS_THE_PAGE_TRACK';
 
 export const TRACKS = 'TRACKS';
+export const USER_TASKS = 'USER_TASKS';
 export const LOADING = 'LOADING';
 export const ON_NOTIFICATION = 'ON_NOTIFICATION';
 export const NOTIFICATION = 'NOTIFICATION';

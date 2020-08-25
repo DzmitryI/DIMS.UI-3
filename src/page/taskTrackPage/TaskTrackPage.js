@@ -18,7 +18,7 @@ class TaskTrackPage extends Component {
     taskTrack: {
       trackDate: new Date(),
       trackNote: '',
-      trackProgress: '0',
+      trackProgress: 0,
       index: '',
     },
     disabled: false,

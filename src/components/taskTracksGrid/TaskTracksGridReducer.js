@@ -1,23 +1,7 @@
-import {
-  USER_TASKS,
-  LOADING,
-  ERROR,
-  ERROR_MESSAGE,
-  NOTIFICATION,
-  ON_NOTIFICATION,
-} from '../../redux/actions/actionTypes';
+import { ERROR, ERROR_MESSAGE, LOADING, NOTIFICATION, ON_NOTIFICATION, TRACKS } from '../../redux/actions/actionTypes';
 
-export default function reducer(
-  state,
-  { type, loading, onNotification, notification, error, errorMessage, userTasks },
-) {
+export default function reducer(state, { type, loading, onNotification, notification, error, errorMessage, tracks }) {
   switch (type) {
-    case USER_TASKS: {
-      return {
-        ...state,
-        userTasks,
-      };
-    }
     case LOADING: {
       return {
         ...state,
@@ -46,6 +30,12 @@ export default function reducer(
       return {
         ...state,
         errorMessage,
+      };
+    }
+    case TRACKS: {
+      return {
+        ...state,
+        tracks,
       };
     }
     default:

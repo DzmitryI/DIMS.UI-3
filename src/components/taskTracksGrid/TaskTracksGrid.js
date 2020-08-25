@@ -13,7 +13,7 @@ import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 import { updateDataMemberProgress, getDate, getSort } from '../helpersComponents';
 import { headerTaskTrackGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
-import reducer from '../memberTasksGrid/MemberTasksGridReducer';
+import reducer from './TaskTracksGridReducer';
 import { ERROR, ERROR_MESSAGE, TRACKS, LOADING, NOTIFICATION, ON_NOTIFICATION } from '../../redux/actions/actionTypes';
 
 function TaskTracksGrid({ onTrackClick, statusPageTrack, isTrackPageOpen, fetchService, taskId, theme, email }) {
