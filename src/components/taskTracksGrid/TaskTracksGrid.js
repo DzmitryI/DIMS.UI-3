@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useReducer } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -13,26 +13,30 @@ import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
 import { updateDataMemberProgress, getDate, getSort } from '../helpersComponents';
 import { headerTaskTrackGrid, h1TaskTrackPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
+import reducer from '../memberTasksGrid/MemberTasksGridReducer';
+import { ERROR, ERROR_MESSAGE, TRACKS, LOADING, NOTIFICATION, ON_NOTIFICATION } from '../../redux/actions/actionTypes';
 
 function TaskTracksGrid({ onTrackClick, statusPageTrack, isTrackPageOpen, fetchService, taskId, theme, email }) {
-  const [tracks, setTrack] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [onNotification, setOnNotification] = useState(false);
-  const [notification, setNotification] = useState({});
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [{ tracks, loading, onNotification, notification, error, errorMessage }, dispatch] = useReducer(reducer, {
+    tracks: [],
+    loading: true,
+    onNotification: false,
+    notification: {},
+    error: false,
+    errorMessage: '',
+  });
 
   const { isAdmin, isMentor } = TABLE_ROLES;
   const adminMentor = email === isAdmin || email === isMentor;
 
   const fetchMemberProgress = useCallback(async () => {
     try {
-      setTrack(await updateDataMemberProgress('', taskId));
-      setLoading(false);
+      dispatch({ type: TRACKS, tracks: await updateDataMemberProgress('', taskId) });
+      dispatch({ type: LOADING, loading: false });
     } catch ({ message }) {
-      setLoading(false);
-      setError(true);
-      setErrorMessage(message);
+      dispatch({ type: LOADING, loading: false });
+      dispatch({ type: ERROR, error: true });
+      dispatch({ type: ERROR_MESSAGE, errorMessage: message });
     }
   }, [taskId]);
 
@@ -41,7 +45,7 @@ function TaskTracksGrid({ onTrackClick, statusPageTrack, isTrackPageOpen, fetchS
   }, [fetchMemberProgress]);
 
   useEffect(() => {
-    setLoading(true);
+    dispatch({ type: LOADING, loading: true });
     fetchMemberProgress();
   }, [isTrackPageOpen, fetchMemberProgress]);
 
@@ -61,17 +65,16 @@ function TaskTracksGrid({ onTrackClick, statusPageTrack, isTrackPageOpen, fetchS
     const taskTrackId = target.closest('tr').id;
     try {
       await fetchService.delTaskTrack(taskTrackId);
-      const curNotification = { title: 'Task track was deleted' };
-      setOnNotification(true);
-      setNotification(curNotification);
+      dispatch({ type: NOTIFICATION, notification: { title: 'Task track was deleted' } });
+      dispatch({ type: ON_NOTIFICATION, onNotification: true });
       setTimeout(() => {
-        setOnNotification(false);
-        setNotification({});
+        dispatch({ type: ON_NOTIFICATION, onNotification: false });
+        dispatch({ type: NOTIFICATION, notification: {} });
       }, 5000);
       await fetchMemberProgress();
     } catch ({ message }) {
-      setLoading(false);
-      setErrorMessage(message);
+      dispatch({ type: LOADING, loading: false });
+      dispatch({ type: ERROR_MESSAGE, errorMessage: message });
     }
   };
 
@@ -85,7 +88,7 @@ function TaskTracksGrid({ onTrackClick, statusPageTrack, isTrackPageOpen, fetchS
     } else {
       arrTracks.sort(getSort('down', 'userTaskTrack', classNameParent));
     }
-    setTrack(arrTracks);
+    dispatch({ type: 'TRACKS', tracks: arrTracks });
   };
 
   const moveRow = async (dragIndex, hoverIndex) => {
@@ -98,11 +101,11 @@ function TaskTracksGrid({ onTrackClick, statusPageTrack, isTrackPageOpen, fetchS
       await fetchService.editTaskTrack(dragRow.taskTrackId, dragRow);
       await fetchService.editTaskTrack(hoverRow.taskTrackId, hoverRow);
     } catch ({ message }) {
-      setError(true);
-      setErrorMessage(message);
+      dispatch({ type: ERROR, error: true });
+      dispatch({ type: ERROR_MESSAGE, errorMessage: message });
     }
     arrTracks.sort(getSort('up', 'userTaskTrack', 'index'));
-    setTrack(arrTracks);
+    dispatch({ type: 'TRACKS', tracks: arrTracks });
   };
 
   const renderTBody = (tracksArr) => {

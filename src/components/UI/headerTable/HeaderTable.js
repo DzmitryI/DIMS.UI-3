@@ -50,7 +50,7 @@ HeaderTable.defaultProps = {
 HeaderTable.propTypes = {
   arr: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   email: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.oneOfType([PropTypes.func.isRequired, PropTypes.instanceOf(null)]),
 };
 
 export default withRole(HeaderTable);
