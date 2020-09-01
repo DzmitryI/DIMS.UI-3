@@ -136,7 +136,7 @@ class MembersGrid extends Component {
               />
             </>
           }
-        /
+        />
       );
     });
   };
