@@ -1,6 +1,8 @@
 import React from 'react';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import Spinner from '../spinner';
 import TasksGrid from './TasksGrid';
 import FetchFirebase from '../../services/fetchFirebase';
@@ -13,6 +15,16 @@ configure({
 describe('<TasksGrid />', () => {
   let wrapper;
 
+  const props = {
+    tasks: [],
+    loading: true,
+    onNotification: false,
+    notification: {},
+    error: false,
+    errorMessage: '',
+  };
+
+  const store = createStore(() => props);
   beforeEach(() => {
     const contextThemeValue = { theme: 'dark' };
     const contextFetchService = new FetchFirebase();
@@ -22,17 +34,18 @@ describe('<TasksGrid />', () => {
       statusPageTask() {},
     };
     wrapper = mount(
-      <ThemeContextProvider value={contextThemeValue}>
-        <FetchServiceProvider value={contextFetchService}>
-          <TasksGrid {...props} />
-        </FetchServiceProvider>
-      </ThemeContextProvider>,
+      <Provider store={store}>
+        <ThemeContextProvider value={contextThemeValue}>
+          <FetchServiceProvider value={contextFetchService}>
+            <TasksGrid {...props} />
+          </FetchServiceProvider>
+        </ThemeContextProvider>
+      </Provider>,
     );
-    console.log(wrapper.debug());
   });
 
   it('should render spinner at the start', () => {
-    console.log(wrapper.debug());
+    // console.log(wrapper.debug());
     expect(wrapper.find(Spinner)).toHaveLength(1);
   });
 
