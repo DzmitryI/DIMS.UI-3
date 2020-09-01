@@ -27,7 +27,6 @@ const DropDownMenu = ({ arrDropDownMenu, theme }) => {
               </li>
             );
           })}
-      </nav>
     </div>
   );
 };

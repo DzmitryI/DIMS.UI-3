@@ -140,9 +140,13 @@ class TaskPage extends Component {
     return members;
   };
 
+<<<<<<< HEAD
   onHandleInput = (controlName) => (event) => {
     this.handleInput(event, controlName);
   };
+=======
+  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+>>>>>>> DIMS/master
 
   handleInput = ({ target: { value } }, controlName) => {
     const { taskInput, task } = this.state;
@@ -281,6 +285,52 @@ class TaskPage extends Component {
     statusThePageTask();
   };
 
+<<<<<<< HEAD
+=======
+  renderInputs() {
+    const {
+      task: { description },
+      disabled,
+    } = this.state;
+    return Object.keys(this.state.taskInput).map((controlName, index) => {
+      const control = this.state.taskInput[controlName];
+      let textArea = null;
+      if (index === 0) {
+        textArea = (
+          <div className='form-group'>
+            <label htmlFor='description'>Description</label>
+            <textarea
+              id='description'
+              name='description'
+              value={description}
+              rows='7'
+              disabled={disabled}
+              onChange={this.handleTextArea}
+            />
+          </div>
+        );
+      }
+      return (
+        <React.Fragment key={`form-group ${index}`}>
+          <Input
+            id={controlName + index}
+            type={control.type}
+            value={control.value}
+            valid={control.valid}
+            touched={control.touched}
+            label={control.label}
+            disabled={disabled}
+            errorMessage={control.errorMessage}
+            shouldValidation={!!control.validation}
+            onChange={this.onHandlelInput(controlName)}
+          />
+          {textArea}
+        </React.Fragment>
+      );
+    });
+  }
+
+>>>>>>> DIMS/master
   renderCheckbox = () => {
     const { members, disabled } = this.state;
     return members.map(({ userId, checked, fullName }) => {

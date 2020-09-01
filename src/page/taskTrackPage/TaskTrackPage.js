@@ -154,10 +154,16 @@ class TaskTrackPage extends Component {
                     touched={false}
                     label='Progress (%)'
                     disabled={disabled}
+<<<<<<< HEAD
                     shouldValidation={false}
                     onChange={this.handleChange}
                     placeholder='progress'
                     min='0'
+=======
+                    value={taskTrack.trackNote}
+                    rows='7'
+                    onChange={this.handleTextArea}
+>>>>>>> DIMS/master
                   />
                 </div>
                 <TextArea value={trackNote} onChange={this.handleChange} disabled={disabled} label='Note' />
