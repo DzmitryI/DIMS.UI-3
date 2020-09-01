@@ -1,4 +1,7 @@
-function clearOblectValue(objInput, objElem) {
+import React from 'react';
+import Input from '../components/UI/input';
+
+function clearObjectValue(objInput, objElem) {
   const objInputClear = { ...objInput };
   const objElemClear = { ...objElem };
   Object.keys(objInputClear).forEach((key) => {
@@ -6,21 +9,22 @@ function clearOblectValue(objInput, objElem) {
       objInputClear[key].value = '';
       objInputClear[key].touched = false;
       objInputClear[key].valid = false;
+    }
+  });
+  Object.keys(objElemClear).forEach((key) => {
+    if (key === 'directionId') {
+      objElemClear[key] = 'direction1';
+    } else if (key === 'sex') {
+      objElemClear[key] = 'sex1';
+    } else if (['startDate', 'deadlineDate', 'birthDate', 'trackDate'].includes(key)) {
+      objElemClear[key] = new Date();
+    } else if (key === 'trackProgress') {
+      objElemClear[key] = 0;
+    } else {
       objElemClear[key] = '';
     }
   });
-  if (objElemClear.directionId) {
-    objElemClear.directionId = 'direction1';
-  }
-  if (objElemClear.sex) {
-    objElemClear.sex = 'sex1';
-  }
-  if (objElemClear.description) {
-    objElemClear.description = '';
-  }
-  if (objElemClear.trackNote) {
-    objElemClear.trackNote = '';
-  }
+
   const res = {
     objInputClear,
     objElemClear,
@@ -40,4 +44,29 @@ function updateInput(objInput, objValues) {
   return objInputUpdate;
 }
 
-export { clearOblectValue, updateInput };
+function renderInputs(inputs, disabled, onChange, onBlur, onFocus, className = '') {
+  return Object.keys(inputs).map((controlName) => {
+    const { type, value, touched, valid, label, errorMessage, validation, placeholder } = inputs[controlName];
+    return (
+      <Input
+        key={controlName}
+        id={controlName}
+        type={type}
+        value={value}
+        valid={valid}
+        touched={touched}
+        label={label}
+        disabled={disabled}
+        errorMessage={errorMessage}
+        shouldValidation={!!validation}
+        onChange={onChange(controlName)}
+        placeholder={placeholder}
+        className={className}
+        onBlur={onBlur(controlName)}
+        onFocus={onFocus(controlName)}
+      />
+    );
+  });
+}
+
+export { clearObjectValue, updateInput, renderInputs };

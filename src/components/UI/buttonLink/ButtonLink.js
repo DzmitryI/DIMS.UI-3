@@ -12,6 +12,7 @@ ButtonLink.propTypes = {
   className: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   to: PropTypes.string.isRequired,
+  name: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
 export default ButtonLink;

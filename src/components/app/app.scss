@@ -46,7 +46,7 @@ h3,
 caption {
   margin-bottom: 10px;
   text-align: left;
-  font-size: 20px;
+  font-size: 1.2rem;
 }
 
 .subtitle {
@@ -62,14 +62,30 @@ table {
     background-color: $blue;
     color: $light;
   }
+  & th:hover .up,
+  & th:hover .down {
+    visibility: visible;
+  }
+  & .up,
+  & .down {
+    visibility: hidden;
+  }
+  & .up:hover,
+  & .down:hover {
+    color: $dark;
+    cursor: pointer;
+  }
+  & .active {
+    color: $dark;
+  }
   & td {
-    padding: 10px 2px;
+    padding: 5px 2px;
     text-align: center;
     vertical-align: center;
     & span,
     span a {
-      text-decoration-line: underline;
       color: $blue;
+      text-decoration: none;
     }
     & span:hover,
     span a:hover {
@@ -78,7 +94,7 @@ table {
     }
   }
   .index {
-    min-width: 20px;
+    min-width: 1.2rem;
   }
   & .td-Fail {
     color: $red;
@@ -115,8 +131,7 @@ table {
 .grid-wrap {
   position: relative;
   width: 90%;
-  margin: 0 auto;
-  padding: 30px 0;
+  margin: 1rem auto;
   z-index: 100;
   & a {
     text-align: right;
@@ -131,9 +146,37 @@ table {
 }
 
 .row {
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 0.7rem;
+  display: flex;
   justify-content: space-evenly;
 }
 
 .close {
   display: none;
+}
+
+@media (max-width: 600px) {
+  .grid-wrap {
+    width: 95%;
+  }
+  h1,
+  .title {
+    font-size: 1.4rem;
+  }
+  caption {
+    font-size: 1rem;
+  }
+  th {
+    font-size: 14px;
+  }
+  td {
+    font-size: 12px;
+  }
+  .age,
+  .education,
+  .track {
+    display: none;
+  }
 }

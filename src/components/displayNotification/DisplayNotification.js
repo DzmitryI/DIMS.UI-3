@@ -6,7 +6,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 class DisplayNotification extends Component {
   componentDidMount() {
-    const { status, title } = this.props.notification;
+    const {
+      notification: { title = '', status = 'success' },
+    } = this.props;
     this.notify(status, title);
   }
 
@@ -21,7 +23,7 @@ class DisplayNotification extends Component {
   render() {
     return (
       <div>
-        <ToastContainer newestOnTop={false} rtl={false} pauseOnVisibilityChange={false} />
+        <ToastContainer />
       </div>
     );
   }
@@ -30,6 +32,7 @@ class DisplayNotification extends Component {
 DisplayNotification.propTypes = {
   status: PropTypes.string,
   title: PropTypes.string,
+  notification: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 DisplayNotification.defaultProps = {

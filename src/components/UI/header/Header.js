@@ -5,14 +5,18 @@ import { NavLink } from 'react-router-dom';
 import ButtonLink from '../buttonLink';
 import ColorSwitch from '../../colorSwitch';
 import DropDownMenu from '../dropDownMenu';
-import { TABLE_ROLES } from '../../helpersComponents';
-import { logout } from '../../../store/actions/auth';
+import { TABLE_ROLES } from '../../helpersComponentPageMaking';
+import { logout } from '../../../redux/actions/auth';
 import { withTheme } from '../../../hoc';
 import imgMain from '../../../assets/images/main.png';
 
-const Header = (props) => {
-  const { isAuthenticated, email, theme, logout } = props;
+const Header = ({ isAuthenticated, email, theme, logout }) => {
+  const { isAdmin, isMentor } = TABLE_ROLES;
   let arrLinks = [];
+  const arrDropDownMenu = [
+    { to: '/AboutApp', name: 'About app', click: null },
+    { to: '/Auth', name: 'Logout', click: logout },
+  ];
 
   const renderLinks = (links) => {
     return links.map((link) => (
@@ -22,7 +26,7 @@ const Header = (props) => {
     ));
   };
 
-  if (isAuthenticated && (email === TABLE_ROLES.ADMIN || email === TABLE_ROLES.MENTOR)) {
+  if (isAuthenticated && (email === isAdmin || email === isMentor)) {
     arrLinks = arrLinks.concat({ to: '/MembersGrid', label: 'Members Grid' });
     arrLinks = arrLinks.concat({ to: '/TasksGrid', label: 'Tasks Grid' });
   } else if (isAuthenticated) {
@@ -38,7 +42,7 @@ const Header = (props) => {
       </div>
       <ul className='nav'>{renderLinks(arrLinks)}</ul>
       <ColorSwitch />
-      <DropDownMenu to='/AboutApp' />
+      <DropDownMenu arrDropDownMenu={arrDropDownMenu} />
       <ButtonLink className='btn-logout' onClick={logout} name='Logout' to='/Auth' />
     </div>
   );
@@ -51,7 +55,7 @@ Header.propTypes = {
   logout: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ auth: { email } }) => {
+const mapStateToProps = ({ authData: { email } }) => {
   return {
     email,
   };

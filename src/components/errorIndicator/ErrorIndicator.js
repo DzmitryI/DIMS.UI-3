@@ -6,7 +6,7 @@ import './errorIndicator.scss';
 const ErrorIndicator = ({ errorMessage }) => {
   return (
     <div className='error-wrap'>
-      <img src={imgError} width='128' alt='img error' />
+      <img src={imgError} width='128px' alt='img error' />
       <span>{errorMessage}</span>
       <span>(but we already to fix it)</span>
     </div>

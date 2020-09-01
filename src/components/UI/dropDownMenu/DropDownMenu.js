@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { withTheme } from '../../../hoc';
 
-const DropDownMenu = ({ to, theme }) => {
+const DropDownMenu = ({ arrDropDownMenu, theme }) => {
   const burgerMenu = useRef(null);
   const dropdownMenuClick = () => {
     burgerMenu.current.classList.toggle('show');
+    burgerMenu.current.classList.toggle('close');
   };
 
   return (
@@ -14,19 +15,25 @@ const DropDownMenu = ({ to, theme }) => {
       <div className={`burger-line first burger-line--${theme}`} />
       <div className={`burger-line second burger-line--${theme}`} />
       <div className={`burger-line third burger-line--${theme}`} />
-      <nav className='burger-menu' ref={burgerMenu}>
-        <li>
-          <NavLink to={to} className='burger-menu-item'>
-            About app
-          </NavLink>
-        </li>
+      <nav className='burger-menu close' ref={burgerMenu}>
+        {arrDropDownMenu.length &&
+          arrDropDownMenu.map((curMenu) => {
+            const { to, name, click } = curMenu;
+            return (
+              <li key={to} onClick={click}>
+                <Link to={to} className={`burger-menu-item burger-menu-item--${theme}`}>
+                  {name}
+                </Link>
+              </li>
+            );
+          })}
       </nav>
     </div>
   );
 };
 
 DropDownMenu.propTypes = {
-  to: PropTypes.string.isRequired,
+  arrDropDownMenu: PropTypes.array.isRequired,
   theme: PropTypes.string.isRequired,
 };
 

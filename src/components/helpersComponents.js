@@ -1,67 +1,59 @@
-import React from 'react';
 import FetchService from '../services/fetchFirebase';
 import DisplayNotification from './displayNotification';
-import { FetchServiceProvider, RoleContextProvider, ThemeContextProvider } from './context';
 
 const fetchService = new FetchService();
 const notification = new DisplayNotification();
-
-const headerTasksGrid = ['', 'Name', 'Start', 'Deadline', ''];
-const headerTaskTrackGrid = ['', 'Task', 'Note', 'Date', ''];
-const headerMembersGrid = ['', 'Full Name', 'Direction', 'Education', 'Start', 'Age', ''];
-const headerMemberTasksGrid = ['', 'Name', 'Start', 'Deadline', 'Status', '', '(Available only for Admin)'];
-const headerMemberProgressGrid = ['', 'Task', 'Note', 'Date'];
-const headerAboutPage = ['Actions', 'Admin', 'Mentor', 'Member'];
-
-const h1TaskPage = new Map([
-  ['Create', 'Create Task page'],
-  ['Edit', 'Edit Task page'],
-  ['Detail', 'Detail Task page'],
-]);
-const h1MemberPage = new Map([
-  ['Create', 'Create Member page'],
-  ['Edit', 'Edit Member page'],
-  ['Detail', 'Detail Member page'],
-]);
-const h1TaskTrackPage = new Map([
-  ['Create', 'Create Task Tracks page'],
-  ['Edit', 'Edit Task Tracks page'],
-  ['Detail', 'Detail Task Tracks page'],
-]);
-
-const TABLE_ROLES = {
-  ADMIN: 'admin@mail.ru',
-  MENTOR: 'mentor@mail.ru',
-};
 
 const getDate = (date) => {
   const [year, month, day] = date.split('-');
   return `${day.slice(0, 2)}.${month}.${year}`;
 };
 
-const SetUp = ({ fetchServiceValue, roleValue, ThemeValue, component }) => {
-  return (
-    <FetchServiceProvider value={fetchServiceValue}>
-      <RoleContextProvider value={roleValue}>
-        <ThemeContextProvider value={ThemeValue}>{component}</ThemeContextProvider>
-      </RoleContextProvider>
-    </FetchServiceProvider>
-  );
+const getDateToComparison = (date) => {
+  return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
 };
 
-async function updateMemberProgress(userId = '', taskId = '') {
+const getAllPointsForPeriod = ({ startDate, deadlineDate }, memberProgresses) => {
+  const arrData = [];
+  while (startDate.toISOString().slice(0, 10) <= deadlineDate.toISOString().slice(0, 10)) {
+    const result = memberProgresses.filter(
+      (memberProgress) => getDateToComparison(new Date(memberProgress.trackDate)) === getDateToComparison(startDate),
+    );
+    const points = {};
+    if (result.length) {
+      for (const value of result) {
+        points[value.name] = +value.trackProgress;
+      }
+      arrData.push({
+        name: `${startDate.getDate()}/${startDate.getMonth()}`,
+        ...points,
+      });
+    }
+    startDate.setDate(startDate.getDate() + 1);
+  }
+  return arrData;
+};
+
+const countAge = (value) => {
+  const curDate = new Date();
+  const birthDate = new Date(value);
+  const age = curDate.getFullYear() - birthDate.getFullYear();
+  return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
+};
+
+async function updateDataMemberProgress(userId = '', taskId = '') {
   let memberProgresses = [];
   const userTasks = await fetchService.getAllUserTasks();
   let curUserTasks = [];
   let result = '';
   if (userTasks.length) {
     if (userId) {
-      result = userTasks.find((userTask) => userTask.userId === userId);
+      result = userTasks.filter((userTask) => userTask.userId === userId);
     } else if (taskId) {
-      result = userTasks.find((userTask) => userTask.taskId === taskId);
+      result = userTasks.filter((userTask) => userTask.taskId === taskId);
     }
-    if (result) {
-      curUserTasks = curUserTasks.concat(result);
+    if (result.length) {
+      curUserTasks = curUserTasks.concat(...result);
     }
     if (curUserTasks.length) {
       const usersTaskTrack = await fetchService.getAllUserTaskTrack();
@@ -80,7 +72,67 @@ async function updateMemberProgress(userId = '', taskId = '') {
   return memberProgresses;
 }
 
-const updateMemberTasks = async (userId) => {
+async function updateDataMemberChart(userId = '', taskId = '') {
+  const memberProgresses = [];
+  const allMemberTasks = new Set();
+  const arrDates = {
+    startDate: new Date(),
+    deadlineDate: new Date(),
+  };
+  const userTasks = await fetchService.getAllUserTasks();
+  let curUserTasks = [];
+  let result = '';
+  if (userTasks.length) {
+    if (userId) {
+      result = userTasks.filter((userTask) => userTask.userId === userId);
+    } else if (taskId) {
+      result = userTasks.filter((userTask) => userTask.taskId === taskId);
+    }
+    if (result.length) {
+      curUserTasks = curUserTasks.concat(...result);
+    }
+    if (curUserTasks.length) {
+      const usersTaskTrack = await fetchService.getAllUserTaskTrack();
+      if (usersTaskTrack.length) {
+        for (const curUserTask of curUserTasks) {
+          for (const userTaskTrack of usersTaskTrack) {
+            if (curUserTask.userTaskId === userTaskTrack.userTaskId) {
+              const [response] = await fetchService.getTask(curUserTask.taskId);
+              memberProgresses.push({ ...userTaskTrack, ...response });
+              allMemberTasks.add(response.name);
+              if (new Date(response.startDate) < arrDates.startDate) {
+                arrDates.startDate = new Date(response.startDate);
+              }
+              if (new Date(response.deadlineDate) > arrDates.deadlineDate) {
+                arrDates.deadlineDate = new Date(response.deadlineDate);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  for (const memberTask of allMemberTasks) {
+    const curProgress = memberProgresses.filter((curMemberProgress) => curMemberProgress.name === memberTask);
+    curProgress.sort(getSort('up', 'trackDate'));
+    const startDate = new Date(curProgress[0].trackDate);
+    let { trackProgress, name } = curProgress[0];
+    const finishDate = new Date(curProgress[curProgress.length - 1].trackDate);
+    while (startDate.toISOString().slice(0, 10) <= finishDate.toISOString().slice(0, 10)) {
+      const res = curProgress.filter((elem) => elem.trackDate.slice(0, 10) === startDate.toISOString().slice(0, 10));
+      if (res.length) {
+        trackProgress = res[0].trackProgress;
+      } else {
+        memberProgresses.push({ trackProgress, name, trackDate: startDate.toISOString() });
+      }
+      const nextDay = startDate.getDate() + 1;
+      startDate.setDate(nextDay);
+    }
+  }
+  return [memberProgresses, arrDates, Array.from(allMemberTasks)];
+}
+
+const updateDataMemberTasks = async (userId) => {
   let tasks = [];
   const userTasks = await fetchService.getAllUserTasks();
   if (userTasks.length) {
@@ -131,20 +183,22 @@ async function deleteAllElements(id, element) {
   }
 }
 
+function getSort(sort, param, param2 = null) {
+  if (!param2) {
+    return sort === 'up' ? (a, b) => (a[param] > b[param] ? 1 : -1) : (a, b) => (a[param] > b[param] ? -1 : 1);
+  }
+  return sort === 'up'
+    ? (a, b) => (a[param][param2] > b[param][param2] ? 1 : -1)
+    : (a, b) => (a[param][param2] > b[param][param2] ? -1 : 1);
+}
+
 export {
-  headerTasksGrid,
-  headerTaskTrackGrid,
-  headerMembersGrid,
-  headerMemberTasksGrid,
-  headerMemberProgressGrid,
-  headerAboutPage,
-  h1TaskPage,
-  h1MemberPage,
-  h1TaskTrackPage,
-  TABLE_ROLES,
   getDate,
-  SetUp,
-  updateMemberProgress,
-  updateMemberTasks,
+  countAge,
+  updateDataMemberProgress,
+  updateDataMemberChart,
+  updateDataMemberTasks,
   deleteAllElements,
+  getSort,
+  getAllPointsForPeriod,
 };

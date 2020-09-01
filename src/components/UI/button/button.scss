@@ -11,7 +11,7 @@ $red-light: rgba(230, 30, 30, 0.6);
 $grey: rgb(204, 204, 204);
 
 .btn {
-  width: 44%;
+  width: 6rem;
   max-width: 7rem;
   min-width: 4rem;
   padding: 5px;
@@ -42,9 +42,10 @@ $grey: rgb(204, 204, 204);
 
 .btn-register,
 .btn-add,
+.btn-auth,
 .btn-close {
   width: 7.5rem;
-  height: 2.5rem;
+  height: 2rem;
 }
 
 .btn-logout {
@@ -80,6 +81,7 @@ $grey: rgb(204, 204, 204);
 }
 
 .btn-add,
+.btn-auth,
 .btn-success {
   background-color: $green-light;
   &:not(:disabled):hover {
@@ -94,5 +96,22 @@ $grey: rgb(204, 204, 204);
   &:not(:disabled):hover {
     border-color: $dark;
     color: $dark;
+  }
+}
+
+@media (max-width: 600px) {
+  .btn-logout {
+    display: none;
+  }
+  .btn-register,
+  .btn-add,
+  .btn-delete,
+  .btn-edit,
+  .btn-progress,
+  .btn-tasks,
+  .btn-success,
+  .btn-fail {
+    font-size: 13px;
+    max-width: 5rem;
   }
 }

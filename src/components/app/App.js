@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import MembersGrid from '../membersGrid';
 import MemberTasksGrid from '../memberTasksGrid';
 import MemberProgressGrid from '../memberProgressGrid';
@@ -10,13 +12,14 @@ import MemberPage from '../../page/memberPage';
 import TaskPage from '../../page/taskPage';
 import TaskTrackPage from '../../page/taskTrackPage';
 import AboutAppPage from '../../page/aboutAppPage';
+import ChartPage from '../../page/chartPage';
 import Header from '../UI/header';
 import Main from '../UI/main';
 import Auth from '../auth';
+import Registration from '../registration';
 import DisplayNotification from '../displayNotification';
 import FetchFirebase from '../../services/fetchFirebase';
-import FetchAzure from '../../services/fetchAzure';
-import { autoLogin } from '../../store/actions/auth';
+import { autoLogin } from '../../redux/actions/auth';
 import { ThemeContextProvider, RoleContextProvider, FetchServiceProvider } from '../context';
 
 class App extends Component {
@@ -25,12 +28,13 @@ class App extends Component {
     isTask: false,
     isMemberTasks: false,
     isTaskTrack: false,
+    index: '',
     title: '',
     subtitle: '',
     curMember: [],
     curTask: [],
     track: {},
-    userId: null,
+    userId: '',
     taskId: '',
     userTaskId: '',
     theme: 'light',
@@ -45,24 +49,20 @@ class App extends Component {
   }
 
   async componentDidUpdate(prevProps) {
-    const { email, base } = this.props;
-    let fetchService = {};
+    const { email } = this.props;
+
+    const fetchService = new FetchFirebase();
     if (email !== prevProps.email) {
       if (!email) {
         this.setState({ theme: 'light' });
       }
-      if (base === 'firebase') {
-        fetchService = new FetchFirebase();
-      } else {
-        fetchService = new FetchAzure();
-      }
       try {
         const members = await fetchService.getAllMember();
-        const member = members.find((member) => member.email === email);
-        this.setState({ userId: member ? member.userId : '', fetchService });
+        const member = members.find((curMember) => curMember.email === email);
+        this.setState({ userId: member ? member.userId : '', fetchService, title: member ? member.name : '' });
       } catch ({ message }) {
-        this.setState({ onNotification: true, notification: { status: 'error', title: message } });
-        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
+        this.setState({ onNotification: true, notification: { title: message, status: 'error' } });
+        setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
       }
     }
   }
@@ -72,38 +72,46 @@ class App extends Component {
     this.setState({ theme });
   };
 
-  onRegisterClickHandler = (directions, title = '', member = []) => {
+  onRegisterClickHandler = (directions, title = '', index, member = [], memberId = '') => {
+    const { isRegister } = this.state;
     this.setState({
-      isRegister: !this.state.isRegister,
+      isRegister: !isRegister,
       directions,
       title,
+      index,
       curMember: member,
+      userId: memberId,
     });
   };
 
-  onCreateTaskClickHandler = (title = '', task = []) => {
+  onCreateTaskClickHandler = (index, title = '', task = []) => {
+    const { isTask } = this.state;
     this.setState({
-      isTask: !this.state.isTask,
+      isTask: !isTask,
       title,
       curTask: task,
+      index,
     });
   };
 
   onTaskClickHandler = (userId, title) => {
+    const { isMemberTasks } = this.state;
     this.setState({
-      isMemberTasks: !this.state.isMemberTasks,
+      isMemberTasks: !isMemberTasks,
       userId,
       title,
     });
   };
 
-  onTrackClickHandler = (userTaskId = '', title = '', subtitle = '', track = {}) => {
+  onTrackClickHandler = (index, userTaskId = '', title = '', subtitle = '', track = {}) => {
+    const { isTaskTrack } = this.state;
     this.setState({
-      isTaskTrack: !this.state.isTaskTrack,
+      isTaskTrack: !isTaskTrack,
       userTaskId,
       title,
       subtitle,
       track,
+      index,
     });
   };
 
@@ -126,7 +134,6 @@ class App extends Component {
     const {
       isRegister,
       isTask,
-      isTaskTrack,
       title,
       subtitle,
       curMember,
@@ -140,12 +147,13 @@ class App extends Component {
       fetchService,
       onNotification,
       notification,
+      index,
     } = this.state;
     const { isAuthenticated, email } = this.props;
-
     let routes = (
       <Switch>
         <Route path='/Auth' exact component={Auth} />
+        <Route path='/Registration' component={Registration} />
         <Redirect to='/Auth' />
       </Switch>
     );
@@ -210,8 +218,8 @@ class App extends Component {
                   {...props}
                   onOpenTaskTracksClick={this.onOpenTaskTracksHandler}
                   onTrackClick={this.onTrackClickHandler}
+                  onCreateTaskClick={this.onCreateTaskClickHandler}
                   taskId={taskId}
-                  isOpen={isTaskTrack}
                 />
               )}
             />
@@ -231,26 +239,22 @@ class App extends Component {
               {routes}
               <MemberPage
                 onRegisterClick={this.onRegisterClickHandler}
-                isOpen={isRegister}
                 title={title}
                 member={curMember}
                 directions={directions}
+                index={index}
               />
-              <TaskPage
-                onCreateTaskClick={this.onCreateTaskClickHandler}
-                isOpen={isTask}
-                title={title}
-                task={curTask}
-              />
+              <TaskPage onCreateTaskClick={this.onCreateTaskClickHandler} title={title} task={curTask} index={index} />
               <TaskTrackPage
                 onTrackClick={this.onTrackClickHandler}
-                isOpen={isTaskTrack}
                 track={track}
                 title={title}
                 taskId={taskId}
                 userTaskId={userTaskId}
                 subtitle={subtitle}
+                index={index}
               />
+              <ChartPage userId={userId} />
             </ThemeContextProvider>
           </RoleContextProvider>
         </FetchServiceProvider>
@@ -260,18 +264,23 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = ({ auth: { token, email, base } }) => {
-  return {
-    isAuthenticated: !!token,
-    email,
-    base,
-  };
+App.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired,
+  autoLogin: PropTypes.func.isRequired,
+  email: PropTypes.string,
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    autoLogin: () => dispatch(autoLogin()),
-  };
+App.defaultProps = {
+  email: null,
 };
+
+const mapStateToProps = ({ authData: { token, email } }) => ({
+  isAuthenticated: !!token,
+  email,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  autoLogin: bindActionCreators(autoLogin, dispatch),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

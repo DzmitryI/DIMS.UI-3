@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../../components/spinner';
 import DisplayNotification from '../../components/displayNotification';
 import Backdrop from '../../components/UI/backdrop';
-import Input from '../../components/UI/input';
 import Select from '../../components/UI/select';
 import Button from '../../components/UI/button';
-import { createControl, validateControl } from '../../services/helpers';
-import { clearOblectValue, updateInput } from '../helpersPage';
-import { h1MemberPage } from '../../components/helpersComponents';
+import DatePicker from '../../components/datePicker';
+import { createControl, validateControl, fillControl, formValid } from '../../services/helpers';
+import { clearObjectValue, updateInput, renderInputs } from '../helpersPage';
+import { h1MemberPage } from '../../components/helpersComponentPageMaking';
 import { withFetchService } from '../../hoc';
+import imgChart from '../../assets/images/chart.png';
+
+import { statusThePageChart, statusThePageMember } from '../../redux/actions/statusThePage';
 
 class MemberPage extends Component {
   state = {
@@ -37,6 +41,13 @@ class MemberPage extends Component {
         },
         { required: true, email: true },
       ),
+      skype: createControl(
+        {
+          label: 'Skype',
+          errorMessage: 'enter skype',
+        },
+        { required: true },
+      ),
       education: createControl(
         {
           label: 'Education',
@@ -44,18 +55,17 @@ class MemberPage extends Component {
         },
         { required: true },
       ),
-      birthDate: createControl(
+      address: createControl(
         {
-          label: 'Bith date',
-          errorMessage: 'enter bith date',
-          type: 'date',
+          label: 'Address',
+          errorMessage: 'enter address',
         },
         { required: true },
       ),
       universityAverageScore: createControl(
         {
-          label: 'University average score',
-          errorMessage: 'enter university average score',
+          label: 'University score',
+          errorMessage: 'enter average score',
           type: 'number',
         },
         { required: true },
@@ -68,33 +78,12 @@ class MemberPage extends Component {
         },
         { required: true },
       ),
-      address: createControl(
-        {
-          label: 'Address',
-          errorMessage: 'enter address',
-        },
-        { required: true },
-      ),
       mobilePhone: createControl(
         {
           label: 'Mobile phone',
           errorMessage: 'enter mobile phone',
-          placeholder: '+375 xx xxxxxxx',
-        },
-        { required: true },
-      ),
-      skype: createControl(
-        {
-          label: 'Skype',
-          errorMessage: 'enter skype',
-        },
-        { required: true },
-      ),
-      startDate: createControl(
-        {
-          label: 'Start date',
-          errorMessage: 'enter start date',
-          type: 'date',
+          // placeholder: '+375 xx xxxxxxx',
+          pattern: '2-[0-9]{3}-[0-9]{3}',
         },
         { required: true },
       ),
@@ -125,15 +114,16 @@ class MemberPage extends Component {
       lastName: '',
       email: '',
       education: '',
-      birthDate: '',
+      birthDate: new Date('01/01/2000'),
       universityAverageScore: '',
       mathScore: '',
       address: '',
       mobilePhone: '',
       skype: '',
-      startDate: '',
+      startDate: new Date(),
       directionId: 'direction1',
       sex: 'sex1',
+      index: '',
     },
     userId: null,
     disabled: false,
@@ -141,9 +131,14 @@ class MemberPage extends Component {
     directions: [],
     onNotification: false,
     notification: {},
-    error: false,
-    errorMessage: '',
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { index } = nextProps;
+    return {
+      member: { ...prevState.member, index },
+    };
+  }
 
   componentDidUpdate(prevProps) {
     const { member, directions, title } = this.props;
@@ -197,19 +192,54 @@ class MemberPage extends Component {
     }
   }
 
-  onHandlelInput = (controlName) => (event) => this.handleInput(event, controlName);
+  onHandleInput = (controlName) => (event) => {
+    this.handleInput(event, controlName);
+  };
 
   handleInput = ({ target: { value } }, controlName) => {
     const { memberInput, member } = this.state;
     memberInput[controlName].value = value;
     memberInput[controlName].touched = true;
-    memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
     member[controlName] = value;
-    let isFormValid = true;
-    Object.keys(memberInput).forEach((name) => {
-      isFormValid = memberInput[name].valid && isFormValid;
-    });
-    this.setState({ memberInput, member, isFormValid });
+    this.setState({ memberInput, member, isFormValid: formValid(memberInput) });
+  };
+
+  onHandleFinishEditing = (controlName) => (event) => {
+    this.handleFinishEditing(event, controlName);
+  };
+
+  handleFinishEditing = ({ target: { value } }, controlName) => {
+    const { memberInput } = this.state;
+    memberInput[controlName].valid = validateControl(value, memberInput[controlName].validation);
+    this.setState({ memberInput, isFormValid: formValid(memberInput) });
+  };
+
+  onHandleFocus = (controlName) => () => {
+    this.handleFocus(controlName);
+  };
+
+  handleFocus = (controlName) => {
+    let { memberInput } = this.state;
+    memberInput = fillControl(memberInput, controlName);
+    this.setState({ memberInput });
+  };
+
+  handleShowChart = () => {
+    this.props.statusThePageChart(true);
+  };
+
+  onHandleChangeDate = (id) => (value) => {
+    this.handleChangeDate(value, id);
+  };
+
+  handleChangeDate = (value, id) => {
+    const { member } = this.state;
+    member[id] = value;
+    this.setState({ member });
+  };
+
+  onHandleSelect = (controlName) => (event) => {
+    this.handleSelect(event, controlName);
   };
 
   onHandlelSelect = (controlName) => (event) => this.handleSelect(event, controlName);
@@ -231,39 +261,19 @@ class MemberPage extends Component {
     event.preventDefault();
   };
 
-  async changeMember(value) {
-    const { userId, member, memberInput, directions } = this.state;
-    const { fetchService, onRegisterClick } = this.props;
-    let notification = '';
-    try {
-      if (value === 'edit') {
-        await fetchService.editMember(userId, member);
-        notification = { title: `Member: ${member.name} ${member.lastName} was edited` };
-      } else {
-        await fetchService.setMember(member);
-        notification = { title: `New member: ${member.name} ${member.lastName} was added` };
-      }
-      this.setState({ onNotification: true, notification });
-      const res = clearOblectValue(memberInput, member);
-      this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
-      onRegisterClick(directions);
-    } catch ({ message }) {
-      this.setState({ onNotification: true, notification: { status: 'error', title: message } });
-    }
-    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 1000);
-  }
-
   createMemberHandler = () => {
     if (!this.state.userId) {
       this.changeMember('add');
     } else {
       this.changeMember('edit');
     }
+    this.props.statusThePageMember();
   };
 
   buttonCloseClick = () => {
     const { directions, memberInput, member } = this.state;
-    const res = clearOblectValue(memberInput, member);
+    const { onRegisterClick, statusThePageMember } = this.props;
+    const res = clearObjectValue(memberInput, member);
     this.setState({
       memberInput: res.objInputClear,
       member: res.objElemClear,
@@ -272,38 +282,38 @@ class MemberPage extends Component {
       disabled: false,
       loading: true,
     });
-    this.props.onRegisterClick(directions);
+    onRegisterClick(directions);
+    statusThePageMember();
   };
 
-  renderInputs() {
-    const { disabled, memberInput } = this.state;
-    return Object.keys(memberInput).map((controlName, index) => {
-      const control = memberInput[controlName];
-      return (
-        <Input
-          key={controlName + index}
-          id={controlName + index}
-          type={control.type}
-          value={control.value}
-          valid={control.valid}
-          touched={control.touched}
-          label={control.label}
-          disabled={disabled}
-          errorMessage={control.errorMessage}
-          shouldValidation={!!control.validation}
-          onChange={this.onHandlelInput(controlName)}
-          placeholder={control.placeholder}
-        />
-      );
-    });
+  async changeMember(value) {
+    const { userId, member, memberInput, directions } = this.state;
+    const { fetchService, onRegisterClick } = this.props;
+    let notification = '';
+    try {
+      if (value === 'edit') {
+        await fetchService.editMember(userId, member);
+        notification = { title: `✔️ Member: ${member.name} ${member.lastName} was edited` };
+      } else {
+        await fetchService.setMember(member);
+        notification = { title: `✔️ New member: ${member.name} ${member.lastName} was added` };
+      }
+      this.setState({ onNotification: true, notification });
+      const res = clearObjectValue(memberInput, member);
+      this.setState({ memberInput: res.objInputClear, member: res.objElemClear, userId: '' });
+      onRegisterClick(directions);
+    } catch ({ message }) {
+      this.setState({ onNotification: true, notification: { title: `❗️ ${message}`, status: 'error' } });
+    }
+    setTimeout(() => this.setState({ onNotification: false, notification: {} }), 5000);
   }
 
   renderSelect() {
     const { memberSelect, member, disabled } = this.state;
     return Object.keys(memberSelect).map((controlName) => {
       const control = memberSelect[controlName];
-      let defaultValue = false;
-      let options = [];
+      let defaultValue;
+      let options;
       const { directions } = this.props;
       if (controlName === memberSelect.direction.name) {
         defaultValue = member.directionId;
@@ -321,7 +331,7 @@ class MemberPage extends Component {
           key={controlName}
           id={controlName}
           disabled={disabled}
-          onChange={this.onHandlelSelect(controlName)}
+          onChange={this.onHandleSelect(controlName)}
         />
       );
     });
@@ -329,55 +339,102 @@ class MemberPage extends Component {
 
   render() {
     const {
-      member: { name, lastName },
+      member: { startDate, birthDate },
       disabled,
       loading,
       isFormValid,
       onNotification,
       notification,
+      memberInput,
     } = this.state;
-    const { isOpen, title } = this.props;
-
+    const { isMemberPageOpen, title } = this.props;
     return (
       <>
         {onNotification && <DisplayNotification notification={notification} />}
-        <div className={`page-wrap ${isOpen ? '' : 'close'}`}>
+        <div className={`page-wrap ${isMemberPageOpen ? '' : 'close'}`}>
           <h1 className='title'>{title}</h1>
-          <form onSubmit={this.submitHandler} className='page-form'>
+          <form onSubmit={this.submitHandler} className='page-form member'>
             {loading ? (
               <Spinner />
             ) : (
               <>
-                <h1 className='subtitle'>{`${name} ${lastName}`}</h1>
-                {this.renderInputs()}
-                {this.renderSelect()}
-                <div className='form-group row'>
-                  <Button
-                    className='btn-add'
-                    disabled={disabled || !isFormValid}
-                    type='submit'
-                    onClick={this.createMemberHandler}
-                    name='Save'
+                <div className='icon-close' onClick={this.buttonCloseClick}>
+                  &#10006;
+                </div>
+                <div className='form-group-members'>
+                  {renderInputs(
+                    memberInput,
+                    disabled,
+                    this.onHandleInput,
+                    this.onHandleFinishEditing,
+                    this.onHandleFocus,
+                    'form-group-member',
+                  )}
+                </div>
+                <div className='row'>
+                  <DatePicker
+                    date={birthDate}
+                    id='birthDate'
+                    label='Birth date'
+                    disabled={disabled}
+                    onChange={this.onHandleChangeDate('birthDate')}
                   />
+                  <DatePicker
+                    date={startDate}
+                    id='startDate'
+                    label='Start date'
+                    disabled={disabled}
+                    onChange={this.onHandleChangeDate('startDate')}
+                  />
+                </div>
+                <div className='row'>{this.renderSelect()}</div>
+                <div className='form-group row'>
+                  {!disabled && (
+                    <Button
+                      className='btn-add'
+                      disabled={disabled || !isFormValid}
+                      type='submit'
+                      onClick={this.createMemberHandler}
+                      name='Save'
+                    />
+                  )}
                   <Button className='btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
+                </div>
+                <div className='chart_wrap'>
+                  <div className='imgMain-wrap' onClick={this.handleShowChart}>
+                    <img src={imgChart} alt='chart icon' />
+                  </div>
                 </div>
               </>
             )}
           </form>
         </div>
-        {isOpen && <Backdrop />}
+        {isMemberPageOpen && <Backdrop className='backdrop-member' />}
       </>
     );
   }
 }
 
 MemberPage.propTypes = {
-  member: PropTypes.array.isRequired,
-  directions: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
-  fetchService: PropTypes.object.isRequired,
   onRegisterClick: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
+  isMemberPageOpen: PropTypes.bool.isRequired,
+  statusThePageChart: PropTypes.func.isRequired,
+  statusThePageMember: PropTypes.func.isRequired,
+  member: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  fetchService: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
 };
 
-export default withFetchService(MemberPage);
+const mapStateToProps = ({ statusThePage: { isMemberPageOpen } }) => ({
+  isMemberPageOpen,
+});
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    statusThePageChart: (status) => dispatch(statusThePageChart(status)),
+    statusThePageMember: () => dispatch(statusThePageMember()),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withFetchService(MemberPage));

@@ -7,10 +7,21 @@ import ErrorIndicator from '../errorIndicator/ErrorIndicator';
 import Button from '../UI/button';
 import HeaderTable from '../UI/headerTable';
 import ButtonLink from '../UI/buttonLink';
-import { headerMembersGrid, h1MemberPage, getDate } from '../helpersComponents';
-import { withTheme } from '../../hoc';
-import { fetchMembers, fetchMembersDelete } from '../../store/actions/members';
-import Cell from '../UI/cell/Cell';
+import { getDate, countAge, getSort } from '../helpersComponents';
+import { headerMembersGrid, h1MemberPage, TABLE_ROLES, handleSortEnd } from '../helpersComponentPageMaking';
+import { withTheme, withRole } from '../../hoc';
+import {
+  fetchMembers,
+  fetchMembersSuccess,
+  fetchMemberChangeIndex,
+  fetchMembersDelete,
+  membersSort,
+} from '../../redux/actions/members';
+import { statusThePageMember } from '../../redux/actions/statusThePage';
+import Cell from '../UI/cell';
+import Row from '../UI/row';
+
+const { isAdmin } = TABLE_ROLES;
 
 class MembersGrid extends Component {
   async componentDidMount() {
@@ -24,19 +35,22 @@ class MembersGrid extends Component {
   }
 
   onRegisterClick = () => {
-    const { directions } = this.props;
-    this.props.onRegisterClick(directions, h1MemberPage.get('Create'));
+    const { directions, members, statusPageMember, onRegisterClick } = this.props;
+    onRegisterClick(directions, h1MemberPage.get('Create'), members.length);
+    statusPageMember(true);
   };
 
   onChangeClick = ({ target }) => {
     const { directions, members, onRegisterClick } = this.props;
     const memberId = target.closest('tr').id;
-    const member = members.filter((member) => member.userId === memberId);
+    const member = members.filter((curMember) => curMember.userId === memberId);
+    const [curMember] = member;
     if (target.id === 'edit') {
-      onRegisterClick(directions, h1MemberPage.get('Edit'), member);
+      onRegisterClick(directions, h1MemberPage.get('Edit'), curMember.index, member, memberId);
     } else {
-      onRegisterClick(directions, h1MemberPage.get('Detail'), member);
+      onRegisterClick(directions, h1MemberPage.get('Detail'), curMember.index, member, memberId);
     }
+    this.props.statusPageMember(true);
   };
 
   onDeleteClick = async ({ target }) => {
@@ -58,48 +72,87 @@ class MembersGrid extends Component {
     this.props.onProgressClick(memberId, name);
   };
 
-  countAge = (value) => {
-    const curDate = new Date();
-    const birthDate = new Date(value);
-    const age = curDate.getFullYear() - birthDate.getFullYear();
-    return curDate.setFullYear(curDate.getFullYear()) < birthDate.setFullYear(curDate.getFullYear()) ? age - 1 : age;
+  moveRow = (dragIndex, hoverIndex) => {
+    let { members } = this.props;
+    const changeMembers = [...members];
+    const { directions, fetchMembersSuccess, fetchMemberChangeIndex } = this.props;
+    const dragRow = changeMembers[dragIndex];
+    dragRow.index = hoverIndex;
+    fetchMemberChangeIndex(dragRow.userId, dragRow);
+    const hoverRow = changeMembers[hoverIndex];
+    hoverRow.index = dragIndex;
+    fetchMemberChangeIndex(hoverRow.userId, hoverRow);
+    members = changeMembers;
+    members.sort(getSort('up', 'index'));
+    fetchMembersSuccess(members, directions);
   };
 
-  renderTBody = (members, directions) => {
+  handleSortClick = ({ target: { classList } }) => {
+    const { members, directions, membersSort } = this.props;
+    handleSortEnd();
+    classList.toggle('active');
+    membersSort(members, directions, classList);
+  };
+
+  renderTBody = (members, directions, email) => {
     return members.map((member, index) => {
       const { userId, fullName, directionId, education, startDate, birthDate, age } = member;
       const curDirect = directions.find((direction) => direction.value === directionId);
       return (
-        <tr key={userId} id={userId}>
-          <Cell className='td index' value={index + 1} />
-          <Cell value={<span onClick={this.onChangeClick}>{`${fullName}`}</span>} />
-          <Cell value={`${!!curDirect && curDirect.name}`} />
-          <Cell value={`${education}`} />
-          <Cell value={getDate(startDate)} />
-          <Cell value={(birthDate && `${this.countAge(birthDate)}`) || age} />
-          <Cell
-            className='td buttons-wrap'
-            value={
-              <>
-                <ButtonLink
-                  className='btn-progress'
-                  onClick={this.onProgressClick}
-                  name='Progress'
-                  to='/MemberProgressGrid'
-                />
-                <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
-                <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
-                <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
-              </>
-            }
-          />
-        </tr>
+        <Row
+          key={userId}
+          id={userId}
+          index={index}
+          moveRow={this.moveRow}
+          value={
+            <>
+              <Cell className='td index' value={index + 1} />
+              <Cell value={<span onClick={this.onChangeClick}>{fullName}</span>} />
+              <Cell value={!!curDirect && curDirect.name} />
+              <Cell className='td education' value={education} />
+              <Cell value={getDate(startDate)} />
+              <Cell className='td age' value={(birthDate && countAge(birthDate)) || age} />
+              <Cell
+                className='td buttons-wrap'
+                value={
+                  <>
+                    <div>
+                      <ButtonLink
+                        className='btn-progress'
+                        onClick={this.onProgressClick}
+                        name='Progress'
+                        to='/MemberProgressGrid'
+                      />
+                      <ButtonLink className='btn-tasks' onClick={this.onShowClick} name='Tasks' to='/MemberTasksGrid' />
+                    </div>
+                    {isAdmin === email && (
+                      <div>
+                        <Button className='btn-edit' onClick={this.onChangeClick} id='edit' name='Edit' />
+                        <Button className='btn-delete' onClick={this.onDeleteClick} name='Delete' />
+                      </div>
+                    )}
+                  </>
+                }
+              />
+            </>
+          }
+        />
       );
     });
   };
 
   render() {
-    const { members, directions, loading, onNotification, notification, theme, error, errorMessage } = this.props;
+    const {
+      members,
+      directions,
+      loading,
+      onNotification,
+      notification,
+      theme,
+      email,
+      error,
+      errorMessage,
+    } = this.props;
     if (loading) {
       return <Spinner />;
     }
@@ -110,12 +163,12 @@ class MembersGrid extends Component {
           <ErrorIndicator errorMessage={errorMessage} />
         ) : (
           <>
-            <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />
+            {isAdmin === email && <Button className='btn-register' onClick={this.onRegisterClick} name='Register' />}
             <table border='1' className={`${theme}--table`}>
               <thead>
-                <HeaderTable arr={headerMembersGrid} />
+                <HeaderTable arr={headerMembersGrid} onClick={this.handleSortClick} />
               </thead>
-              <tbody>{members && this.renderTBody(members, directions)}</tbody>
+              <tbody>{members && this.renderTBody(members, directions, email)}</tbody>
             </table>
           </>
         )}
@@ -127,8 +180,9 @@ class MembersGrid extends Component {
 
 MembersGrid.propTypes = {
   isRegister: PropTypes.bool.isRequired,
-  members: PropTypes.array.isRequired,
-  directions: PropTypes.array.isRequired,
+  members: PropTypes.arrayOf(PropTypes.object).isRequired,
+  directions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  email: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
   error: PropTypes.bool.isRequired,
   errorMessage: PropTypes.string.isRequired,
@@ -140,27 +194,33 @@ MembersGrid.propTypes = {
   onProgressClick: PropTypes.func.isRequired,
   fetchMembersDelete: PropTypes.func.isRequired,
   fetchMembers: PropTypes.func.isRequired,
+  fetchMembersSuccess: PropTypes.func.isRequired,
+  fetchMemberChangeIndex: PropTypes.func.isRequired,
+  membersSort: PropTypes.func.isRequired,
+  statusPageMember: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({
   members: { members, directions, loading, error, errorMessage, onNotification, notification },
-}) => {
-  return {
-    members,
-    directions,
-    loading,
-    error,
-    errorMessage,
-    onNotification,
-    notification,
-  };
-};
+}) => ({
+  members,
+  directions,
+  loading,
+  error,
+  errorMessage,
+  onNotification,
+  notification,
+});
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchMembers: () => dispatch(fetchMembers()),
     fetchMembersDelete: (memberId, members) => dispatch(fetchMembersDelete(memberId, members)),
+    fetchMembersSuccess: (members, directions) => dispatch(fetchMembersSuccess(members, directions)),
+    fetchMemberChangeIndex: (memberId, member) => dispatch(fetchMemberChangeIndex(memberId, member)),
+    membersSort: (members, directions, classList) => dispatch(membersSort(members, directions, classList)),
+    statusPageMember: (status) => dispatch(statusThePageMember(status)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(MembersGrid));
+export default connect(mapStateToProps, mapDispatchToProps)(withRole(withTheme(MembersGrid)));
