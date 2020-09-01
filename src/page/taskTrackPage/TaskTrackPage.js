@@ -18,7 +18,7 @@ class TaskTrackPage extends Component {
     taskTrack: {
       trackDate: new Date(),
       trackNote: '',
-      trackProgress: '0',
+      trackProgress: 0,
       index: '',
     },
     disabled: false,
@@ -162,13 +162,15 @@ class TaskTrackPage extends Component {
                 </div>
                 <TextArea value={trackNote} onChange={this.handleChange} disabled={disabled} label='Note' />
                 <div className='form-group row'>
-                  <Button
-                    className='btn-add'
-                    disabled={disabled}
-                    type='submit'
-                    name='Save'
-                    onClick={this.createTaskTrackHandler}
-                  />
+                  {!disabled && (
+                    <Button
+                      className='btn-add'
+                      disabled={disabled}
+                      type='submit'
+                      name='Save'
+                      onClick={this.createTaskTrackHandler}
+                    />
+                  )}
                   <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
                 </div>
               </>

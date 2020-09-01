@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useReducer, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -15,6 +15,15 @@ import { withFetchService, withRole, withTheme } from '../../hoc';
 import { statusThePageTrack } from '../../redux/actions/statusThePage';
 import Cell from '../UI/cell/Cell';
 import Row from '../UI/row/Row';
+import reducer from './MemberTasksGridReducer';
+import {
+  ERROR,
+  ERROR_MESSAGE,
+  LOADING,
+  NOTIFICATION,
+  ON_NOTIFICATION,
+  USER_TASKS,
+} from '../../redux/actions/actionTypes';
 
 const MemberTasksGrid = ({
   userId,
@@ -26,24 +35,26 @@ const MemberTasksGrid = ({
   email,
   statusPageTrack,
 }) => {
-  const [userTasks, setUserTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [onNotification, setOnNotification] = useState(false);
-  const [notification, setNotification] = useState({});
-  const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const { isAdmin, isMentor } = TABLE_ROLES;
   const role = email === isAdmin || email === isMentor;
 
+  const [{ userTasks, loading, onNotification, notification, error, errorMessage }, dispatch] = useReducer(reducer, {
+    userTasks: [],
+    loading: true,
+    notification: {},
+    error: false,
+    errorMessage: '',
+  });
+
   const fetchData = useCallback(async () => {
     try {
-      setUserTasks(await updateDataMemberTasks(userId));
-      setLoading(false);
-      setOnNotification(false);
+      dispatch({ type: USER_TASKS, userTasks: await updateDataMemberTasks(userId) });
+      dispatch({ type: LOADING, loading: false });
+      dispatch({ type: ON_NOTIFICATION, onNotification: false });
     } catch ({ message }) {
-      setLoading(false);
-      setError(true);
-      setErrorMessage(message);
+      dispatch({ type: LOADING, loading: false });
+      dispatch({ type: ERROR, error: true });
+      dispatch({ type: ERROR_MESSAGE, errorMessage: message });
     }
   }, [userId]);
 
@@ -60,8 +71,8 @@ const MemberTasksGrid = ({
       const tracks = await updateDataMemberProgress('', taskId);
       onTrackClick(tracks.length, userTaskId, h1TaskTrackPage.get('Create'), taskName);
     } catch ({ message }) {
-      setError(true);
-      setErrorMessage(message);
+      dispatch({ type: ERROR, error: true });
+      dispatch({ type: ERROR_MESSAGE, errorMessage: message });
     }
 
     statusPageTrack(true);
@@ -77,7 +88,7 @@ const MemberTasksGrid = ({
     } else {
       userTasksArr.sort(getSort('down', className));
     }
-    setUserTasks(userTasksArr);
+    dispatch({ type: USER_TASKS, userTasks: userTasksArr });
   };
 
   const onOpenTaskTracksClickHandler = ({ target }) => {
@@ -99,27 +110,28 @@ const MemberTasksGrid = ({
       await fetchService.editTaskState(stateId, taskState);
       const index = userTasks.findIndex((userTask) => userTask.stateId === stateId);
       userTasks[index].stateName = taskState.stateName;
-      setUserTasks(userTasks);
-      setNotification({ title: `Task state was edited` });
-      setOnNotification(true);
+      dispatch({ type: USER_TASKS, userTasks });
+      dispatch({ type: NOTIFICATION, notification: { title: `Task state was edited` } });
+      dispatch({ type: ON_NOTIFICATION, onNotification: true });
     } catch ({ message }) {
-      setLoading(false);
-      setError(true);
-      setErrorMessage(message);
+      dispatch({ type: LOADING, loading: false });
+      dispatch({ type: ERROR, error: true });
+      dispatch({ type: ERROR_MESSAGE, errorMessage: message });
     }
-    setTimeout(() => setOnNotification(false), 5000);
+    setTimeout(() => dispatch({ type: ON_NOTIFICATION, onNotification: false }), 5000);
   };
 
   const moveRow = (dragIndex, hoverIndex) => {
     const dragRow = userTasks[dragIndex];
-    setUserTasks(
-      update(userTasks, {
+    dispatch({
+      type: USER_TASKS,
+      userTasks: update(userTasks, {
         $splice: [
           [dragIndex, 1],
           [hoverIndex, 0, dragRow],
         ],
       }),
-    );
+    });
   };
 
   const renderTBody = (userTasks) => {

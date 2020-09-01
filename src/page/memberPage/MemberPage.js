@@ -387,13 +387,15 @@ class MemberPage extends Component {
                 </div>
                 <div className='row'>{this.renderSelect()}</div>
                 <div className='form-group row'>
-                  <Button
-                    className='btn-add'
-                    disabled={disabled || !isFormValid}
-                    type='submit'
-                    onClick={this.createMemberHandler}
-                    name='Save'
-                  />
+                  {!disabled && (
+                    <Button
+                      className='btn-add'
+                      disabled={disabled || !isFormValid}
+                      type='submit'
+                      onClick={this.createMemberHandler}
+                      name='Save'
+                    />
+                  )}
                   <Button className='btn-close' onClick={this.buttonCloseClick} name='Back to grid' />
                 </div>
                 <div className='chart_wrap'>

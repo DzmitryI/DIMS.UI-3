@@ -370,13 +370,15 @@ class TaskPage extends Component {
                   </>
                 )}
                 <div className='form-group row'>
-                  <Button
-                    className='btn-add'
-                    type='submit'
-                    name='Save'
-                    disabled={disabled || !isFormValid}
-                    onClick={this.createTaskHandler}
-                  />
+                  {!disabled && (
+                    <Button
+                      className='btn-add'
+                      type='submit'
+                      name='Save'
+                      disabled={disabled || !isFormValid}
+                      onClick={this.createTaskHandler}
+                    />
+                  )}
                   <Button className='btn-close' name='Back to grid' onClick={this.buttonCloseClick} />
                 </div>
               </>

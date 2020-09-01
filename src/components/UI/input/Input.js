@@ -57,7 +57,7 @@ Input.propTypes = {
   shouldValidation: PropTypes.bool.isRequired,
   errorMessage: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
   onBlur: PropTypes.func,
   onFocus: PropTypes.func,
   className: PropTypes.string,
